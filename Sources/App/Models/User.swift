@@ -17,6 +17,10 @@ final class User {
     var id: Node?
     var username: String
     var password: String
+    var admin: Bool
+    var receive: Bool
+    var analyze: Bool
+    var review: Bool
     // used by fluent internally
     var exists: Bool = false
     static var entity = "users"   //db table name
@@ -25,12 +29,21 @@ final class User {
         self.id = nil
         self.username = username
         self.password = password
+        self.admin = false
+        self.receive = false
+        self.analyze = false
+        self.review = false
+
     }
 
     init(node: Node, in context: Context) throws {
         id = try node.extract("id")
         username = try node.extract("username")
         password = try node.extract("password")
+        self.admin = try node.extract("admin")
+        self.receive = try node.extract("receive")
+        self.analyze = try node.extract("analyze")
+        self.review = try node.extract("review")
     }
 }
 
@@ -39,7 +52,11 @@ extension User: Model {
         return try Node(node: [
             "id": id,
             "username": username,
-            "password": password
+            "password": password,
+            "admin": admin,
+            "receive": receive,
+            "analyze": analyze,
+            "review": review
             ])
     }
 }
@@ -50,6 +67,10 @@ extension User: Preparation {
             user.id()
             user.string("username")
             user.string("password")
+            user.bool("admin")
+            user.bool("receive")
+            user.bool("analyze")
+            user.bool("review")
         })
     }
 

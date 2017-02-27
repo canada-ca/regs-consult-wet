@@ -8,7 +8,6 @@ let drop = Droplet()
 drop.middleware.append(CorsMiddleware())
 
 try drop.addProvider(VaporMySQL.Provider.self)
-
 let auth = AuthMiddleware(user: User.self)
 drop.middleware.append(auth)
 

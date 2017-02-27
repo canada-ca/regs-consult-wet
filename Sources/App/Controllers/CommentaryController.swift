@@ -19,7 +19,7 @@ final class CommentaryController{
         case fullText
         case onlyComments
     }
-    static let cookieComment = "consult-comment"
+    
     init(to drop: Droplet) {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
@@ -46,7 +46,7 @@ final class CommentaryController{
         var commentary: Commentary?
         var commentJWT: JWT?
         var refreshOfCookie = false
-        if let incookie = request.cookies[CommentsController.cookieComment] {
+        if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
         pubDrop.console.info("Headers \(request.headers)")
@@ -101,12 +101,12 @@ final class CommentaryController{
                                          signer: jwtSigner)
                 }
                 if let token = try commentJWT?.createToken() {
-                    let myCookie = Cookie(name: CommentsController.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
+                    let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
                     resp.cookies.insert(myCookie)
                 }
             } else {
                 //need to kill the cookie for various reasons above
-                let myCookie = Cookie(name: CommentsController.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }
@@ -127,7 +127,7 @@ final class CommentaryController{
         var commentary: Commentary?
         var commentJWT: JWT?
         var refreshOfCookie = false
-        if let incookie = request.cookies[CommentsController.cookieComment] {
+        if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
         pubDrop.console.info("Headers \(request.headers)")
@@ -138,7 +138,7 @@ final class CommentaryController{
 
             //need to kill the cookie for various reasons above
             if  let domname = pubDrop.config["app", "appdomain"]?.string {
-                let myCookie = Cookie(name: CommentsController.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
             return resp
@@ -206,12 +206,12 @@ final class CommentaryController{
                                          signer: jwtSigner)
                 }
                 if let token = try commentJWT?.createToken() {
-                    let myCookie = Cookie(name: CommentsController.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
+                    let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
                     resp.cookies.insert(myCookie)
                 }
             } else {
                 //need to kill the cookie for various reasons above
-                let myCookie = Cookie(name: CommentsController.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }
@@ -229,7 +229,7 @@ final class CommentaryController{
         guard documentdata != nil else {return Response(redirect: "/")}
         var commentary: Commentary?
         var commentJWT: JWT?
-        if let incookie = request.cookies[CommentsController.cookieComment] {
+        if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
         let detectedLanguage = languageDetect(request)

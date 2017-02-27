@@ -11,7 +11,7 @@ import FluentMySQL
 final class CommentsController{
     let pubDrop: Droplet
     let jwtSigner: Signer
-    static let cookieComment = "consult-comment"
+    
     init(to drop: Droplet) {
         pubDrop = drop
         jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
@@ -34,7 +34,7 @@ final class CommentsController{
         var commentary: Commentary?
         var commid: UInt? //Commentary.id
         var commentJWT: JWT?
-        if let incookie = request.cookies[CommentsController.cookieComment] {
+        if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
 
@@ -178,7 +178,7 @@ final class CommentsController{
             commentJWT = try JWT(payload: Node.object(["commid":Node(commid!)]),
                                  signer: jwtSigner)
             if let token = try commentJWT?.createToken() {
-                let myCookie = Cookie(name: CommentsController.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: pubDrop.config["app", "appdomain"]?.string ?? "example.com", httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: pubDrop.config["app", "appdomain"]?.string ?? "example.com", httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }

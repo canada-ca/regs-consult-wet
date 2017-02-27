@@ -18,7 +18,7 @@ final class AnalyzeController{
         case fullText
         case onlyComments
     }
-    static let cookieComment = "consult-comment"
+    
     init(to drop: Droplet) {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
