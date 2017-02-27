@@ -1,5 +1,5 @@
 import HTTP
-
+import JWT
 import JSON
 import Vapor
 import Auth
@@ -8,6 +8,7 @@ import Foundation
 
 final class PublisherController {
     let pubDrop: Droplet
+    let jwtSigner: Signer
     let templateDir: String
     let filePackDir: String
     let fm = FileManager()
@@ -16,19 +17,46 @@ final class PublisherController {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
+        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
         let protect = ProtectMiddleware(error:
             Abort.custom(status: .forbidden, message: "Not authorized.")
         )
-        let prepare = drop.grouped("prepare").grouped(protect)
+        let prepare = drop.grouped("prepare")
 
 
         prepare.get { request in
+            //TODO: list of docs
             return "document info"
         }
         prepare.post("publish",":id", handler: publishDocument)
         prepare.post("load",":filename", handler: loadDocument)
     }
+
+    func getUserFromCookie(_ request: Request)throws -> User {
+        var userJWT: JWT?
+        do {
+            if let incookie = request.cookies[ConsultConstants.cookieUser] {
+                userJWT = try JWT(token: incookie)
+            }
+            if userJWT != nil {
+                try userJWT!.verifySignature(using: jwtSigner)
+                if let username = userJWT!.payload["user"]?.string {
+                    if let user = try User.query().filter("username", username).first() {
+                        return user
+                    }
+                }
+            }
+        }catch {
+
+        }
+        throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+    }
+
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
+        let user = try getUserFromCookie(request)
+        guard user.admin else {
+            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+        }
         guard let documentId = request.parameters["filename"]?.string else {
             throw Abort.badRequest
         }
@@ -57,6 +85,10 @@ final class PublisherController {
         }
     }
     func publishDocument(_ request: Request)throws -> ResponseRepresentable {
+        let user = try getUserFromCookie(request)
+        guard user.admin else {
+            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+        }
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
         }

@@ -40,6 +40,41 @@ $(document).ready(
                 $(id).removeClass( "btn-default btn-primary btn-success" ).addClass( cls);
 
             }
+            var interfaceUpdate = function (data){
+                var commty = data["commentary"]
+                if (typeof  commty != "undefined") {
+                    if (typeof  commty["name"] != "undefined") {
+                        $("#commentator-name").val(commty["name"])
+                    }
+                    if (typeof  commty["organization"] != "undefined") {
+                        $("#commentator-org").val(commty["organization"])
+                    }
+                    if (typeof  commty["email"] != "undefined") {
+                        $("#commentator-email").val(commty["email"])
+                    }
+                    if (typeof  commty["represents"] != "undefined") {
+                        $("#commentator-identity").val(commty["represents"])
+                    }
+                    if (typeof  commty["submitstatus"] != "undefined") {
+                        switch (commty["submitstatus"]) {
+                            case "ready":
+                                buttonHighlight("#comment-submit-button", "btn-primary");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-primary");
+                                break;
+                            case "submitted":
+                                buttonHighlight("#comment-submit-button", "btn-success");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-success");
+                                $("#comment-submit-button").text(langfrag.submitted);
+                                $("#comment-submit-buttonalt").text(langfrag.submitted);
+                                break;
+                            default:
+                                buttonHighlight("#comment-submit-button", "btn-default");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-default");
+                        }
+                    }
+
+                }
+            }
             var getcommentary = function (tooltype){
                 var loadCommentArea = function (selector, text){
 
@@ -73,39 +108,7 @@ $(document).ready(
                         buttonHighlight("#comment-summary-button", "btn-primary");
                         buttonHighlight("#comment-summary-buttonalt", "btn-primary");
                     };
-                    var commty = data["commentary"]
-                    if (typeof  commty != "undefined") {
-                        if (typeof  commty["name"] != "undefined") {
-                            $("#commentator-name").val(commty["name"])
-                        }
-                        if (typeof  commty["organization"] != "undefined") {
-                            $("#commentator-org").val(commty["organization"])
-                        }
-                        if (typeof  commty["email"] != "undefined") {
-                            $("#commentator-email").val(commty["email"])
-                        }
-                        if (typeof  commty["represents"] != "undefined") {
-                            $("#commentator-identity").val(commty["represents"])
-                        }
-                        if (typeof  commty["submitstatus"] != "undefined") {
-                            switch (commty["submitstatus"]) {
-                                case "ready":
-                                    buttonHighlight("#comment-submit-button", "btn-primary");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                    break;
-                                case "submitted":
-                                    buttonHighlight("#comment-submit-button", "btn-success");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                    $("#comment-submit-button").text(langfrag.submitted);
-                                    $("#comment-submit-buttonalt").text(langfrag.submitted);
-                                    break;
-                                default:
-                                    buttonHighlight("#comment-submit-button", "btn-default");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                            }
-                        }
-
-                    }
+                    interfaceUpdate(data);
                 }
                     });
                 
@@ -191,37 +194,7 @@ $(document).ready(
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
-                        var commty = data["commentary"]
-                        if (typeof  commty != "undefined") {
-                            if (typeof  commty["name"] != "undefined") {
-                                $("#commentator-name").val(commty["name"])
-                            }
-                            if (typeof  commty["organization"] != "undefined") {
-                                $("#commentator-org").val(commty["organization"])
-                            }
-                            if (typeof  commty["email"] != "undefined") {
-                                $("#commentator-email").val(commty["email"])
-                            }
-                            if (typeof  commty["represents"] != "undefined") {
-                                $("#commentator-identity").val(commty["represents"])
-                            }
-                            if (typeof  commty["submitstatus"] != "undefined") {
-                                switch (commty["submitstatus"]) {
-                                    case "ready":
-                                        buttonHighlight("#comment-submit-button", "btn-primary");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                        break;
-                                    case "submitted":
-                                        buttonHighlight("#comment-submit-button", "btn-success");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                        break;
-                                    default:
-                                        buttonHighlight("#comment-submit-button", "btn-default");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                                }
-                            }
-                            
-                        }
+                        interfaceUpdate(data);
 
                     },
                     error: function(errMsg) {
@@ -253,38 +226,8 @@ $(document).ready(
                         $( "#submit-panel" ).trigger( "open.wb-overlay" );
                     }
 
+                    interfaceUpdate(data);
 
-                    var commty = data["commentary"]
-                    if (typeof  commty != "undefined") {
-                        if (typeof  commty["name"] != "undefined") {
-                            $("#commentator-name").val(commty["name"])
-                        }
-                        if (typeof  commty["organization"] != "undefined") {
-                            $("#commentator-org").val(commty["organization"])
-                        }
-                        if (typeof  commty["email"] != "undefined") {
-                            $("#commentator-email").val(commty["email"])
-                        }
-                        if (typeof  commty["represents"] != "undefined") {
-                            $("#commentator-identity").val(commty["represents"])
-                        }
-                        if (typeof  commty["submitstatus"] != "undefined") {
-                            switch (commty["submitstatus"]) {
-                                case "ready":
-                                    buttonHighlight("#comment-submit-button", "btn-primary");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                    break;
-                                case "submitted":
-                                    buttonHighlight("#comment-submit-button", "btn-success");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                    break;
-                                default:
-                                    buttonHighlight("#comment-submit-button", "btn-default");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                            }
-                        }
-
-                    }
 
                 },
                 error: function(errMsg) {

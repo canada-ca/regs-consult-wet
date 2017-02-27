@@ -12,10 +12,12 @@ import Base62
 import Node
 import HTTP
 
+
 struct ConsultConstants {
     static let cookieComment = "consult-comment"
     static let cookieUser = "consult-user"
     }
+
 
 func UniqueIDBase62String() -> String {
         return encode(integer: UInt64(UniqueID32())) //    32 bits to match INT(10) mysql id
