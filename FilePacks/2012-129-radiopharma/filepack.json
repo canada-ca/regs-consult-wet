@@ -1,0 +1,177 @@
+{
+
+    "type": "proposedregulation",
+    "known-as": "2012-129-radiopharmaceuticals",
+    "publishing-ref": "2012-129",
+    "document-id": "demo",
+    "publishing-pageprefix": "sor-dors129",
+    "publishing-folder-path": "rp-pr/p1/2012/2012-06-20/html/",
+    "publishing-date":"2012-06-20 15:00:00",
+    "archived": true,
+    "org-type":[
+                {"value":"Academia","text-eng":"Academia","text-fra":"Établissements d'enseignement"},
+                {"value":"Industry association","text-eng":"Industry association","text-fra":"Association de l'industrie"},
+                {"value":"Business-Industry","text-eng":"Business-Industry","text-fra":"Entreprises et industrie"},
+                {"value":"Professionals-Health","text-eng":"Professionals-Health","text-fra":"Professionnels de la santé"},
+                {"value":"Hospitals","text-eng":"Hospitals","text-fra":"Hôpitaux"},
+                {"value":"Community and Consumer Groups","text-eng":"Community and Consumer Groups","text-fra":"Groupes communautaires et de consommateurs"},
+                {"value":"Governments","text-eng":"Governments","text-fra":"Administrations publiques"},
+                {"value":"Media","text-eng":"Media","text-fra":"Médias"}
+                ],
+
+    "en-CA": {
+        "title":"Regulations Amending the Food and Drug Regulations (Positron-emitting Radiopharmaceuticals)"
+    },
+    "fr-CA": {
+        "title":"Règlement modifiant le Règlement sur les aliments et drogues (produits pharmaceutiques radioactifs émetteurs de positrons)"
+    },
+
+    "reg-tags":[
+               {
+                "type":"comment",
+                "line-eng": 12,
+                "line-fra": 12,
+                "ref":"C.01A.002(1)"
+                },
+                {
+                "type":"comment",
+                "line-eng": 16,
+                "line-fra": 16,
+                "ref":"C.03.202(1)"
+                },
+                {
+                "type":"comment",
+                "line-eng": 20,
+                "line-fra": 20,
+                "ref":"C.03.203(1)"
+                },
+                {
+                "type":"comment",
+                "line-eng": 23,
+                "line-fra": 23,
+                "ref":"C.03.204"
+                },
+            {
+            "type":"comment",
+            "line-eng": 47,
+            "line-fra": 47,
+            "ref":"C.03.301"
+            },
+            {
+            "type":"comment",
+            "line-eng": 51,
+            "line-fra": 51,
+            "ref":"C.03.302"
+            },
+            {
+            "type":"comment",
+            "line-eng": 60,
+            "line-fra": 60,
+            "ref":"C.03.303"
+            },
+            {
+            "type":"comment",
+            "line-eng": 74,
+            "line-fra": 74,
+            "ref":"C.03.304"
+            },
+            {
+            "type":"comment",
+            "line-eng": 90,
+            "line-fra": 90,
+            "ref":"C.03.305"
+            },
+            {
+            "type":"comment",
+            "line-eng": 104,
+            "line-fra": 104,
+            "ref":"C.03.306"
+            },
+            {
+            "type":"comment",
+            "line-eng": 137,
+            "line-fra": 137,
+            "ref":"C.03.307"
+            },
+            {
+            "type":"comment",
+            "line-eng": 139,
+            "line-fra": 139,
+            "ref":"C.03.308"
+            },
+            {
+            "type":"comment",
+            "line-eng": 141,
+            "line-fra": 141,
+            "ref":"C.03.309"
+            },
+            {
+            "type":"comment",
+            "line-eng": 143,
+            "line-fra": 143,
+            "ref":"C.03.310"
+            },
+            {
+            "type":"comment",
+            "line-eng": 156,
+            "line-fra": 156,
+            "ref":"C.03.311"
+            },
+            {
+            "type":"comment",
+            "line-eng": 175,
+            "line-fra": 175,
+            "ref":"C.03.312"
+            },
+            {
+            "type":"comment",
+            "line-eng": 184,
+            "line-fra": 184,
+            "ref":"C.03.313"
+            },
+            {
+            "type":"comment",
+            "line-eng": 192,
+            "line-fra": 192,
+            "ref":"C.03.314"
+            },
+            {
+            "type":"comment",
+            "line-eng": 211,
+            "line-fra": 211,
+            "ref":"C.03.315"
+            },
+            {
+            "type":"comment",
+            "line-eng": 214,
+            "line-fra": 214,
+            "ref":"C.03.316"
+            },
+            {
+            "type":"comment",
+            "line-eng": 236,
+            "line-fra": 236,
+            "ref":"C.03.317"
+            },
+            {
+            "type":"comment",
+            "line-eng": 243,
+            "line-fra": 243,
+            "ref":"C.03.318"
+            },
+            {
+            "type":"comment",
+            "line-eng": 250,
+            "line-fra": 250,
+            "ref":"C.03.319"
+            },
+            {
+            "type":"comment",
+            "line-eng": 252,
+            "line-fra": 252,
+            "ref":"General",
+            "prompt-eng":"Enter any other comments here.",
+            "prompt-fra":"Entrer d'autres commentaires ici."
+            }
+            ]
+}

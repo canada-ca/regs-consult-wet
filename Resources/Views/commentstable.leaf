@@ -1,0 +1,44 @@
+
+#if(lang-fra) {
+table class="wb-tables table table-striped table-hover comment-comments" data-wb-tables='{ "ordering": false }'>
+<thead>
+<tr>
+<th>Name</th>
+<th>New submissions</th>
+<th>In progress</th>
+<th>Engine version</th>
+<th>CSS grade</th>
+</tr>
+</thead>
+<tr class="gradeC">
+<td>Tasman</td>
+<td>Internet Explorer 5.2</td>
+<td>Mac OS 8-X</td>
+<td class="center">1</td>
+<td class="center">C</td>
+</tr>
+</table>
+
+} ##else() {
+<h3>Comments</h3>
+<table class="wb-tables table table-striped table-hover comment-comments" data-wb-tables='{ "ordering": false }'>
+<thead>
+<tr>
+<th>reference</th>
+<th>Stakholder</th>
+<th>Name</th>
+<th>Comment</th>
+<th>Notes</th>
+<th>Disposal</th>
+</tr>
+</thead>
+<tr class="gradeC">
+<td>Reg C 3.0.6 (1)</td>
+<td>Personal Views</td>
+<td>Steve Hume</td>
+<td class="center">I like this</td>
+<td class="center">Decide at meeting</td>
+<td class="center"></td>
+</tr>
+</table>
+}

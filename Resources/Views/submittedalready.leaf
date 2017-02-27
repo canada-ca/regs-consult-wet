@@ -1,0 +1,10 @@
+<h3>Your comments have already been submitted.</h3>
+#if(emailoption) { #if(lang-fra) { d } ##else() {
+ <p>Send a copy of your comments to yourself.</p>
+<a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/email/">Send yourself an email copy</a>
+} }
+ #if(startnewoption) { #if(lang-fra) { t } ##else() {
+ <p>If you wish to send in a new commentary or are finished with tnis document.</p>
+<a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/new/">Start a new commentary</a>
+} }
+ <a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/clear/">Clear browser</a>

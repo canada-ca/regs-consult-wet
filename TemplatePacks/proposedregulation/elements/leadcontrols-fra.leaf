@@ -1,0 +1,74 @@
+<form method="get" action="#()commentsubmission" id="commentform" name="commentsubmission" role="form">
+<h2 id="formlead">Donnez vos commentaires</h2>
+<div class="well">
+<div class="form-group">
+<label for="commentator-identity">
+<span class="field-name">Choisissez la perspective qui vous représente le mieux </span><strong class="required">(obligatoire)</strong>
+</label>
+<select id="commentator-identity" class="form-control commentator">
+<option value="">-- Sélectionner --</option>
+<option value="Personal views">Opinion personnelle</option>
+#loop(org-type,"org") {
+<option value="#(org.value)">#(org.text-eng)</option>
+}
+<option value="Other">Autre</option>
+</select>
+</div>
+<div class="form-group">
+<label for="commentator-name"><span class="field-name">Votre nom</span></label>
+<input  id="commentator-name" class="form-control commentator"  "type="text" />
+</div>
+<div class="form-group">
+<label for="commentator-org"><span class="field-name">Nom de l'organisation que vous représentez</span></label>
+<input  id="commentator-org" class="form-control commentator" type="text" />
+</div>
+<div class="form-group">
+<label for="commentator-email"><span class="field-name">Votre adresse courriel</span></label>
+<input class="form-control commentator" id="commentator-email"  type="email" />
+</div>
+<p><a href="#()right-panel-version" aria-controls="right-panel-version" class="overlay-lnk" role="button">Confidentialité</a></p>
+<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:30%;">
+<header class="modal-header">
+<h2 class="modal-title">Confidentialité</h2>
+</header>
+<div class="modal-body">
+<div class="mrgn-bttm-lg">
+<p>Les commentaires, ainsi que les renseignements personnels qui les accompagnent, y compris les renseignements d’identification ou les coordonnées personnelles, sont protégés par la Loi sur la protection des renseignements personnels du Canada et sont versés dans les fichiers de renseignements personnels
+<a href="http://www.infosource.gc.ca/emp/emp03-eng.asp#()psu914">PSU 914 </a> et
+<a href="http://www.infosource.gc.ca/emp/emp03-eng.asp#()psu938">PSU 938 </a>que l’on peut consulter sur
+<a href="http://www.infosource.gc.ca/emp/emptb-eng.asp">INFOSOURCE</a>.</p>
+</div>
+</div>
+<div class="modal-body">
+<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Fermer</button>
+</div>
+</section>
+
+<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:60%;top:30%;">
+<header class="modal-header">
+<h2 class="modal-title">Submit Verification</h2>
+</header>
+<div id="submit-panel-content" class="modal-body">
+<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Yes Submit</button>
+</div>
+<div class="modal-body">
+<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Close</button>
+</div>
+</section>
+
+<ul class="list-unstyled lst-spcd">
+<li>
+<p>Les cases de commentaires en surbrillance sont intégrées au Résumé de l’étude d’impact de la réglementation et au texte réglementaire proposé ci-dessous.</p>
+<p> <a href="#()reg">Passer à la première case de commentaires</a></p>
+</li>
+<li>
+<ul class="list-inline lst-spcd">
+<li>
+<a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/summary/">Voir le résumé</a>
+</li>
+<li>
+<button id="comment-submit-button" class="btn btn-lg btn-default mrgn-rght-md" type="button" >Soumettre vos commentaires</button>
+</ul>
+</li>
+</ul>
+</div>

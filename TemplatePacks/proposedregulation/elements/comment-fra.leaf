@@ -1,0 +1,3 @@
+<details class="addcomment"  id="#(reftype)-#(ref)">
+<summary>#if(prompt) {#(prompt)} ##if(ref) {Ajoutez vos commentaires sur #(ref)} ##else() {Ajoutez vos commentaires sur ce qui précède.}</summary>
+</details>

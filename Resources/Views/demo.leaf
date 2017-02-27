@@ -1,0 +1,9 @@
+#extend("welcome2")
+
+
+
+#export("core") {
+<div class="message">
+<h1>#(message) and nest</h1>
+</div>
+}
