@@ -1,0 +1,26 @@
+<div><details>
+<summary>How to print this page</summary>
+Use the print command in your browser menu. This will give you the most options, such as access to a PDF output.
+</details>
+</div>
+<div class="row">
+<div class="col-sm-6">
+<div class="checkboxcomment">
+<input id="toggle-fulltext" type="checkbox" checked>
+<label for="toggle-fulltext">
+Display full text
+</label>
+</div>
+</div>
+<!-- /.col-sm-6 -->
+<div class="col-sm-6">
+<div class="checkboxcomment">
+<input id="toggle-emptycomments" type="checkbox" >
+<label for="toggle-emptycomments">
+Display empty comments
+</label>
+</div>
+</div>
+</div><!-- /.col-sm-6 -->
+</div><!-- /.row -->
+<div id="commentpreview" class="hideempty showorigtext">

@@ -1,0 +1,27 @@
+<div>
+<details>
+<summary>Comment imprimer cette page</summary>
+Utilisez la commande d'impression dans le menu de votre navigateur. Cela vous donnera le plus d'options, comme l'accès à une sortie PDF.
+</details>
+</div>
+<div class="row">
+<div class="col-md-6">
+<div class="checkboxcomment">
+<input id="toggle-fulltext" type="checkbox" checked>
+<label for="toggle-fulltext">
+Afficher le texte intégral
+</label>
+</div>
+</div>
+<!-- /.col-md-6 -->
+<div class="col-md-6">
+<div class="checkboxcomment">
+<input id="toggle-emptycomments" type="checkbox" >
+<label for="toggle-emptycomments">
+Afficher les commentaires vus
+</label>
+</div>
+</div>
+</div><!-- /.col-md-6 -->
+</div><!-- /.row -->
+<div id="commentpreview" class="hideempty showorigtext">

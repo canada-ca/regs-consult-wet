@@ -1,0 +1,1309 @@
+@charset "utf-8";
+
+/*body {font-size:100%; font-family: Verdana,Arial,Helvetica,sans-serif,"Arial Unicode MS";}*/
+
+/** 
+GAZETTE SPECIFIC CSS TO MODIFY OR AUGMENT THE WET3 CSS3 LOOK
+NOTE: do not use the HTML5 'rem' size as IE8 is too stupid to handle it. use 'em' instead.
+**/
+/** GAZETTE NEW CSS **/
+div#canada-gazette-banner-dummy {
+margin:0 auto;
+height:0.7em;
+width:auto;
+border:0;
+background-color:#fff;
+padding: 0;
+}
+div#inner-banner-img { /* see @media at end of page for width and height */
+margin:0 auto;
+background: #fff url(/images/gazetteheader-kaboom.jpg) no-repeat left bottom;
+-webkit-border-radius:10px !important;
+-webkit-border-radius:10px !important;
+-moz-border-radius:10px 10px 10px 10px !important;
+border-radius:10px !important;
+border-radius:10px !important;
+}
+
+#archive-table {
+width:auto; margin:auto;
+}
+#archive-table th {
+text-align:center !important;
+}
+#archive-table td {
+text-align:center;
+}
+#archive-table td ul {
+margin:2px 1em;
+}
+#archive-table td ul li {
+padding:.25em 0;
+}
+#archive-table td ul li a{
+white-space:nowrap;
+}
+
+h1.PublicationIndex {font-size:150%;font-weight:bold; border-bottom:0; text-decoration:none; color:#333; }
+h3.uppercase {font-size:100% !important; color: #000 !important;}
+#gazette_content h3 {font-size:120%; color:#333;}
+h3.sitemap {font-size:140% !important;}
+
+.plain-text a{
+color:#333 !important;
+text-decoration:underline !important;
+background-color: transparent !important;
+font-weight:normal !important;
+text-decoration:none;
+}
+
+div.showhide{
+display:block;
+float:left;
+position:relative;
+top:4px;
+border:1px solid #146094; 
+-webkit-border-top-left-radius:10px;
+-webkit-border-top-right-radius:10px;
+-moz-border-radius:10px 10px 0px 0px;
+border-top-left-radius:10px;
+border-top-right-radius:10px;
+text-align:left;
+}
+p.notice-box-text {
+padding: 0 1em;
+}
+.floatLeft {
+float:left;
+}
+div.spacer {
+margin-top:1em;
+}
+.sitemap ul ul ul ul{
+list-style:circle;
+}
+.sitemap ul ul ul ul  ul {
+list-style:disc;
+}
+.display-none {
+display:none;
+}
+.display-block {
+display:block;
+}
+
+div#gazette-content div.center {
+margin-top:0px !important;
+}
+
+ul#latest-publications {
+list-style:none;
+list-style-position: outside;
+margin:0;
+padding:0;
+}
+ul#latest-publications li {
+margin-bottom:.3em;
+}
+ul#latest-publications  li p{
+padding:0;
+margin:0;
+}
+
+/** GAZETTE CSS WET3 OVERRIDES **/
+.hidden-h1 {
+display:none;
+}
+h1.hide-internal {
+display:none !important;
+}
+div.block-center, table.block-center{
+   margin:0 auto;
+}
+div.center img , div#content img{
+height:auto;
+width: auto !important;
+}
+th {
+text-align:left !important;
+}
+h1#wb-cont {
+margin-top:.5em;
+}
+
+#gazette_content img {
+margin:0;
+}
+
+#gazette_content .center{
+margin-top:0 !important;
+}
+#archived {
+margin-bottom:.5em !important;
+}
+h2.publication_archive {
+font-size:130%;
+}
+ul#search-links li {
+display:inline;
+padding:0 1em 0 0;
+}
+
+.mb-mega .mb-sm-open  h4{
+font-size:1em !important;
+}
+
+/**
+GAZETTE CLF2 CARRY OVER FROM OLD INSTITUTION AND BASE CSS TO RENDER THE OLD XHTML PAGES BODY CONTENT
+**/
+
+h1.pubdate {font-size: 100% !important; font-weight: normal !important; margin-top: 1em !important; border:none; color:#333;}
+h1.publication, h1.category, h1.alignCenter {font-size:150%;font-weight:bold; border-bottom:0; color:#333; }
+h1.department {font-size:150%;font-weight:bold; color:#333;}
+h2.publication  {font-size:150% !important; font-weight:bold; color:#333; margin-top: 0; margin-bottom:0; }
+h2.department {font-size:135% !important; font-weight:bold; color:#333; margin-top: .5em; margin-bottom:0; }
+h2.section {color: #333333;font-size: 140% !important;font-weight: bold;}
+
+.alignRight, .right {
+text-align: right;
+}
+.alignLeft{
+text-align:left;
+}
+.alignCenter{
+text-align:center;
+}
+td p, th p {
+word-wrap: break-word;
+}
+td p.alignRight {
+padding:0 .25em !important;
+white-space:nowrap;
+word-wrap: break-word;
+}
+th p.alignRight {
+padding:0 .25em !important;
+
+word-wrap: break-word;
+}
+p.noticeInfo {
+font-size: 70%;
+text-align: right;
+}
+div.publication-index {
+border-top: 1px solid #999;
+overflow: auto;
+padding: 1em 0;
+}
+table {
+font-size:100%;
+}
+table th {
+background-color:#fff;
+border:none;
+line-height:1.2em;
+font-weight:normal;
+}
+table  td {
+border: none;
+line-height:1.2em;
+}
+table th, table td {
+padding-top: 2px;
+padding-bottom: 2px;
+}
+.table100{
+width:100%;
+}
+.table90 {
+width: 90% !important;
+}
+.table80 {
+width: 80%;
+margin-left:10% !important;
+}
+.table70 {
+width: 70%;
+margin-left:15% !important;
+}
+.table60 {
+width: 60%;
+margin-left:20% !important;
+}
+.table50 {
+width: 50%;
+margin-left:25% !important;
+}
+.table100, .table90, .table80, .table70, .table60, .table50 {
+background-color: #FFFFFF !important;
+}
+div.TableBlack {
+padding-bottom: 0.5em;
+padding-top: 0.5em;
+/*border-top: solid #999999 2px;
+width: 98%;*/
+overflow: auto;
+}
+div.TableBlackSecond {
+padding-bottom: 0.5em;
+padding-top: 0.5em;
+/*border-top: solid #999999 1px;
+border-bottom: solid #000000 1px;
+border-style:solid; 
+border-width:thin;
+ width: 99%;*/
+overflow: auto;
+}
+.tabblack-html {
+/* background-color: #CC0000; */
+float: left;
+padding-left:0.5em;
+}
+.tabblack-pdf {
+/* background-color: #F0F0F0;*/ 
+padding-right: 3em;
+float: right;
+}
+
+.tableNewRed {
+border-style: solid;
+border-color: #CC0000;
+border-width: 1px;
+}
+.tableRed {
+border-style: solid;
+border-color: #CC0000;
+border-width: 2px;
+}
+
+.tableNewGreen {
+border-style: solid;
+border-color: #006699;
+border-width: 1px;
+}
+
+.tableGreen {
+border-style: solid;
+border-color: #006699;
+border-width: 2px;
+}
+
+div.center table.table100 {
+border-collapse:collapse;
+border: 1px solid #D4D4D4;
+}
+div.center th.border-all, div.center td.border-all {
+display: table-cell;
+float: none;
+border-collapse:collapse;
+border: 1px solid #D4D4D4;
+outline-style:none;
+}
+th.border-all, td.border-all {
+display: table-cell;
+float: none;
+border-collapse:collapse;
+border: 1px solid #333;
+outline-style:none;
+}
+.centerBold {
+font-weight:700;
+text-align:center !important;
+}
+.hidden {
+display:none;
+}
+.border-t p, .border-r p, .border-l p, .border-b p, .border-td  p {
+    padding:0 !important;
+}
+/* td {border:none; }*/
+.border-alld {border:double black 3px;}
+.border-td {border-top:double black 3px;}
+.border-bd {border-bottom:double black 3px;}
+.border-ld {border-left:double black 3px;}
+.border-rd {border-right:double black 3px;}
+.border-all {border:solid black 1px;}
+.border-b {border-bottom:solid black 1px;}
+.border-l {border-left:solid black 1px;}
+.border-r {border-right:solid black 1px;}
+.border-t {border-top:solid black 1px;}  
+
+.alignTop{vertical-align:top;}
+.alignBottom{vertical-align:bottom;}
+.alignBottomCenter{vertical-align:bottom; text-align:center !important;}
+      
+.textBoxBlackBorder {
+border-color: #999;
+border-style: solid;
+border-width: thin;
+margin:8px auto;
+padding: 2px 10px 2px 2px;
+width: 90%;
+}
+.indent-0-0 {text-indent:0em !important;}
+.indent-1-0 {text-indent:1em !important;}
+.indent-0-1 {text-indent:-1em !important;margin-left:1em !important;}
+.indent-1-1 {margin-left:1em !important;}
+.indent-1-2 {text-indent:-1em !important;margin-left:2em !important;}
+.indent-1-3 {text-indent:-1em !important;margin-left:3em !important;}
+.indent-2-2 {margin-left:2em !important;}
+.indent-2-3 {text-indent:-1em !important;margin-left:3em !important;}
+.indent-3-3 {margin-left:3em !important;}
+.indent-4-4 {margin-left:4em !important;}
+.indent-5-5 {margin-left:5em !important;}
+.indent-6-6 {margin-left:6em !important;}
+.indent-7-7 {margin-left:7em !important;}
+
+/* style for the lower-alpha in parentheses for english pages*/
+ol.ooen {
+list-style-type: none;
+counter-reset: item;
+padding-left: 18px;
+/*font-style:italic;*/
+}
+ol.ooen /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: "("counter(item, lower-alpha)")";
+}
+ol.ooen span {
+font-style:normal;
+}
+
+/* style for the lower-alpha in parentheses for french pages*/
+ol.oofr {
+list-style-type: none;
+counter-reset: item;
+/*font-style:italic;*/
+}
+ol.oofr /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: ""counter(item, lower-alpha)")";
+}
+ol.oofr span {
+font-style:normal;
+}
+/* style for the lower-roman in parentheses */
+ol.ii li {
+list-style-type: none;
+counter-reset: item;
+font-style:normal;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ol.ii /*li:before*/ {
+counter-increment: item;
+content: "("counter(item, lower-roman)") ";
+padding-left: 24px;
+}
+
+/* style for the lower-alpha in parentheses for english pages*/
+.oo-en li {
+list-style-type:none;
+counter-reset: item;
+padding-left: 18px;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+.oo-en /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: "("counter(item, lower-alpha)")";
+}
+.oo-en span {
+font-style:normal;
+}
+
+/* style for the lower-alpha in parentheses for french pages*/
+.oo-fr li {
+list-style-type:none;
+counter-reset: item;
+padding-left: 18px;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+.oo-fr /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: ""counter(item, lower-alpha)")";
+}
+.oo-fr span {
+font-style:normal;
+}
+/* style for the lower-roman in parentheses */
+ol.ii {
+list-style-type:none;
+counter-reset: item;
+font-style:normal;
+}
+ol.ii /*li:before*/ {
+counter-increment: item;
+content: "("counter(item, lower-roman)") ";
+padding-left: 24px;
+}
+/* unordered list for the lower-alpha */
+/* style for the lower-alpha in parentheses for english pages*/
+ul.ooen {
+list-style-type: none;
+counter-reset: item;
+padding-left: 18px;
+/*font-style:italic;*/
+}
+ul.ooen /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: "("counter(item, lower-alpha)")";
+}
+ul.ooen span {
+font-style:normal;
+}
+
+/* style for the lower-alpha in parentheses for french pages*/
+ul.oofr {
+list-style-type: none;
+counter-reset: item;
+/*font-style:italic;*/
+}
+ul.oofr /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: ""counter(item, lower-alpha)")";
+}
+ul.oofr span {
+font-style:normal;
+}
+/* style for the lower-roman in parentheses */
+ul.ii li {
+list-style-type: none;
+counter-reset: item;
+font-style:normal;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ul.ii /*li:before*/ {
+counter-increment: item;
+content: "("counter(item, lower-roman)") ";
+padding-left: 24px;
+}
+
+/* style for the lower-alpha in parentheses for english pages*/
+.oo-en li {
+list-style-type:none !important;
+counter-reset: item;
+padding-left: 18px;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+.oo-en /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: "("counter(item, lower-alpha)")";
+}
+.oo-en span {
+font-style:normal;
+}
+
+/* style for the lower-alpha in parentheses for french pages*/
+.oo-fr li {
+list-style-type:none !important;
+counter-reset: item;
+padding-left: 18px;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+.oo-fr /*li:before*/ {
+counter-increment: item;
+font-style: normal/*italic*/;
+content: ""counter(item, lower-alpha)")";
+}
+.oo-fr span {
+font-style:normal;
+}
+/* style for the lower-roman in parentheses */
+ul.ii {
+list-style-type:none;
+counter-reset: item;
+font-style:normal;
+}
+ul.ii /*li:before*/ {
+counter-increment: item;
+content: "("counter(item, lower-roman)") ";
+padding-left: 24px;
+}
+ul.noBulletIndex {
+margin-left: 0;
+padding-left: 0; 
+}
+ul.noBulletIndex li {
+list-style-type: none !important;
+margin-left: 0px; 
+margin-top: 2px;
+margin-bottom: 4px;
+}
+
+ul.noBullet li {
+list-style-type: none !important;
+margin-left: 0px; 
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ul.disc li {
+list-style-type: disc;
+padding-left: 24px;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ul.square {
+list-style-type: square;
+}
+ul.circle li {
+list-style-type: circle;
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ol.lower-alpha {
+list-style-type: lower-alpha;
+padding-left: 18px;
+}
+ol.upper-alpha {
+list-style-type: upper-alpha;
+padding-left: 36px;
+}
+ol.lower-roman {
+list-style-type: lower-roman;
+padding-left: 24px;
+}
+ol.upper-roman {
+    list-style-type: upper-roman;
+    padding-left: 48px;
+}
+/*  end lists */
+.smallSize {
+font-size: 80%;
+}
+table.with_borders { 
+border-collapse:collapse;
+}
+table.with_borders ,table.with_borders  th, table.with_borders td {
+border: 1px solid #999;
+}
+div.PublicationIndex {
+border:none;
+padding:0 0 .75em 0;
+}
+.advanced-search {
+border-style: none; 
+background-color: #b3ddf9; 
+overflow:auto; 
+width:80%; 
+padding:5px;
+}
+.headerGreen {
+font-size: 1.2em;
+font-weight: bold;
+color:#555;
+}
+ul.noBulletIndex {
+margin-left: 0;
+padding-left: 0;
+}
+ul.noBulletIndex li {
+list-style-type: none;
+margin-bottom: 4px;
+margin-left: 0;
+margin-top: 2px;
+}
+ul.noBullet li {
+list-style-type: none;
+margin-left: 0px; 
+margin-top: 2px;
+margin-bottom: 4px;
+}
+ul.cititlelist {
+list-style-type: none;
+margin: 1em 0.5em;
+padding: 0;
+}
+ul.cilist {
+width:100%;
+display:inline; 
+float:right;
+}
+ul.cititlelist li {
+margin: 0.5em 0 !important;
+}
+li.cilistinner {
+display: inline;
+float: left;
+margin: 0 !important;
+padding: 0 0 0 1em;
+text-align: left;
+}
+.rss-list img {
+margin-bottom:0 !important;
+}
+
+ul.show-rss-list li{
+background-image: url('/images/rss-transparent.png');
+background-repeat: no-repeat;
+background-position:  0 .2em;
+padding-left:1.75em;
+display:block !important;
+line-height:1.75em;
+position:relative;
+left:-1.5em;
+}
+
+p.boldLeft {
+font-weight: bold;
+}
+p.italicLeft{
+font-style:italic;
+}
+#cont {
+ display: block;
+line-height:0;
+height: 0;
+overflow: hidden;
+}
+
+/* FROM OLD BASE.CSS */
+.widthFull {
+    width: 98.5%;
+}
+.width95 {
+    width: 95%;
+}
+.width90 {
+    width: 90%;
+}
+.width85 {
+    width: 85%;
+}
+.width80 {
+    width: 80%;
+}
+.width75 {
+    width: 75%;
+}
+.width70 {
+    width: 70%;
+}
+.width65 {
+    width: 65%;
+}
+.width60 {
+    width: 60%;
+}
+.width55 {
+    width: 55%;
+}
+.width50 {
+    width: 50%;
+}
+.width45 {
+    width: 45%;
+}
+.width40 {
+    width: 40%;
+}
+.width35 {
+    width: 35%;
+}
+.width30 {
+    width: 30%;
+}
+.width25 {
+    width: 25%;
+}
+.width20 {
+    width: 20%;
+}
+.width15 {
+    width: 15%;
+}
+.width10 {
+    width: 10%;
+}
+.width5 {
+    width: 5%;
+}
+/**
+INDESIGN STYLES, started on 2012-12-03
+**/
+/* new h4 styles bold and italic styles for the part II and part I regulations subtitles , and
+   new h5 subheadline style bold and italic styles for the part I supplement sub-subtitles */
+h1, h2, h3, h4, h5, h6 {
+color:#000;
+}
+h4.subtitle {font-size: 1.025641rem font-style: normal !important; font-weight: normal !important;}
+
+
+h4.headline, h5.headline {
+font-size: 100%;
+font-style: italic;
+font-weight: bold; 
+color:#000;
+}
+h5.subtitle {
+font-size: 100%;
+font-weight: bold; 
+color:#000;
+ }
+h5.subheadline {
+font-size: 100%;
+font-weight:normal !important; 
+ color:#000;
+}
+h5.subheadlineunder {
+font-weight:normal;
+font-size: 100%; 
+text-decoration:underline !important;
+color:#000;
+}
+/* new h4 style bold for the part II and part I regulations subtitles */
+h4.subheadline {
+font-size: 100%;
+font-weight: bold; 
+color:#000;
+}
+/* new h3 styles for part I  notices subtitles */
+h3.subtitle {
+font-size: 100%;
+font-style: normal;
+font-weight: normal !important;
+color:#000;
+}
+h3.headline {
+font-size: 100%;
+font-style: italic;
+font-weight: bold; 
+color:#000;
+}
+/* new h4 styles for part II and part I regulations subtitles */
+h4.subtitle {
+font-size: 100%;
+font-style: normal;
+font-weight: normal !important;
+color:#000;
+}
+/*css clf2 to clf3 created by Paul - version: 2013-04-18*/
+
+h1.roman {
+font-style: normal;
+font-weight: normal !important;
+}
+h1.bold {font-weight: bold;}
+h1.italic {
+font-style: italic; 
+/*font-weight: normal !important;*/
+}
+h1.uppercase {
+text-transform:uppercase;
+/*font-weight: normal !important;*/
+}
+h1.underline {
+text-decoration:underline;
+font-weight: normal !important;
+}
+h2.roman {
+font-style: normal;
+font-size: 1.276923rem;
+font-weight: normal !important;
+}
+h2.bold {
+font-weight: bold;
+font-size: 1.276923rem;
+}
+h2.italic {
+font-style: italic;
+font-size: 1.276923rem;
+font-weight: normal !important;/*font-weight: normal !important;*/}
+h2.uppercase {
+text-transform:uppercase;
+}
+h2.underline {
+text-decoration:underline;
+font-size: 1.276923rem;
+font-weight: normal !important;
+}
+h3.roman {
+font-style: normal;
+font-size: 1.165641rem;
+font-weight: normal !important;
+}
+h3.bold {
+font-weight: bold;
+font-size: 1.165641rem;
+}
+h3.italic {
+font-style: italic;
+font-size: 1.165641rem;
+font-weight: normal !important;
+}
+h3.uppercase {
+text-transform:uppercase;
+font-size: 1.165641rem;
+font-style: normal;
+/*font-weight: normal !important;*/
+}
+h3.underline {
+text-decoration:underline;
+font-size: 1.165641rem;
+font-weight: normal !important;
+}
+h4.roman {
+font-style: normal;
+/*font-size: 0.974358rem;*/
+font-size: 0.9256401rem;
+font-weight: normal !important;
+}
+h4.bold {
+font-weight: bold;
+font-size: 0.9256401rem;
+}
+h4.italic {
+font-style: italic;
+font-size: 0.9256401rem;
+font-weight: normal !important;
+}
+h4.uppercase {
+text-transform:uppercase;
+font-size: 0.9256401rem;
+/*font-weight: normal !important;*/
+}
+h4.underline {
+text-decoration:underline;
+font-size: 0.9256401rem;
+font-weight: normal !important;
+}
+h5.roman {
+font-style: normal;
+font-size: 0.913069rem;
+font-weight: normal !important;
+}
+h5.bold {
+font-weight: bold;
+font-size: 0.913069rem;
+}
+h5.italic {
+font-style: italic;
+font-size: 0.913069rem;
+font-weight: normal !important;
+}
+h5.uppercase {
+text-transform:uppercase;
+font-size: 0.913069rem;
+/*font-weight: normal !important;*/
+}
+h5.underline {
+text-decoration:underline;
+font-style:normal;
+font-size: 0.913069rem; 
+font-weight:normal !important;
+}
+h6.roman {
+font-style:normal;
+font-size: 0.903069rem;
+font-weight:normal !important;
+}
+h6.bold {
+font-weight: bold; 
+font-size: 0.903069rem;
+}
+h6.italic {
+font-style: italic; 
+font-size:0.903069rem; 
+font-weight: normal !important;
+}
+h6.uppercase {
+text-transform:uppercase; 
+font-size:0.903069rem; 
+/*font-weight: normal !important;*/
+}
+h6.underline {
+text-decoration:underline;
+font-style:normal;
+font-size:0.903069rem;
+font-weight:normal !important;
+}
+
+/* New styles for the Consolidated Index */
+
+sup {
+vertical-align: super;
+font-size: smaller;
+}
+
+.consolidatedIndex {
+column-count:1;
+column-gap: 100px;
+}
+
+.instr1{font-weight: bold;
+color: black;
+}
+
+.instr2{
+font-weight: normal;
+position: relative;
+color: black;
+}
+
+
+.actEng{
+font-weight: bold;
+font-size:large;
+}
+
+.actFre{
+font-weight: normal;
+position: relative;
+font-size:small;
+color:black;
+}
+
+.italic{
+font-style: italic;
+}
+
+.actRegEng{
+font-weight: bold;
+position:relative;
+font-size:90%;
+color:black;
+}
+
+.actRegFre{
+font-weight: normal;
+position: relative;
+font-size:90%;
+color:black;
+}
+
+.actOrdCatEng{
+font-weight: bold;
+position:relative;
+font-size:90%;
+color:black;
+}
+
+.actOrdCatFre{
+font-weight: normal;
+font-style: italic;
+position: relative;
+font-size:80%;
+color:black;
+}
+
+.actOrdEng{
+font-weight: bold;
+font-size:90%;
+position: relative;
+color:black;
+}
+
+.actRegAmendLev1NoBold{
+font-weight: normal;
+font-size:90%;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+color: black;
+}
+
+
+.actRegEngNoBold{
+font-weight: normal;
+position:relative;
+font-size:90%;
+color:black;
+}
+
+
+.actOrdFre{
+font-weight: normal;
+font-style: italic;
+position: relative;
+font-size:80%;
+color:black;
+}
+
+.actRegAmendLoc123{
+font-weight: bold;
+font-size:medium;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+}
+
+.actRegAmendLev1{
+font-weight: bold;
+font-size:90%;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+color: black;
+}
+
+.actRegAmendLev2{
+font-weight: bold;
+font-size:90%;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+color: black;
+}
+
+.actRegAmendLev3{
+font-weight: bold;
+font-size:90%;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+color: black;
+}
+
+.actRegAmendLoc{
+font-weight: bold;
+font-size:90%;
+position: relative;
+padding-left: 1.5em;
+text-indent:-1.5em;
+color:black;
+}
+
+.actRegAmendTxt{
+font-weight: normal;
+padding-left: 0.1em;
+color:black;
+}
+
+.actRegAmendTxt123{
+font-weight: normal;
+padding-left: 0.1em;
+}
+
+.actRegAmendTxtR{
+font-weight: normal;
+position: relative;
+color: black;
+}
+
+.actRegAmendDef{
+font-weight: bold;
+padding-left: 0.1em;
+color:black;
+}
+
+.edNote{
+left: 10px;
+font-size:80%;
+font-weight: normal;
+}
+
+.edNoteHeading {
+font-size:100%;
+font-weight: bold;
+}
+
+.edNoteURL {
+font-weight: normal;
+position: relative;
+left: 10px;
+color: black;
+}
+
+.edContactTitle {
+font-weight: normal;
+position: relative;
+color:black;
+}
+
+.edContactText {
+font-weight: normal;
+font-size:90%;
+position: relative;
+color:black;
+}
+
+.edContactURL {
+font-weight: normal;
+position: relative;
+color:black;
+}
+
+/*end of css clf2 to clf3 created by Paul*/
+/**
+PRINTING-ONLY STYLES OVERRIDE
+**/
+@media print {
+    #canada-gazette-banner, #wb-sec, #gz-right-inner-col {
+    display:none !important;
+    }
+    #revolving-images{
+    display:none !important;
+    }
+    #publication-container, #news-box {
+    background:none;
+    width:98%;
+    }
+    div.gazette-list-notice, div.gazette-message-notice  {
+    border-bottom: medium none;
+    border-top: 1px solid #ccc !important;
+    padding-bottom: 0.5em;
+    }
+    div.gazette-list-notice, div.gazette-message-notice, ul.gazette-list {
+    border-left: 1px solid #ccc !important;
+    border-right: 1px solid #ccc !important;
+    margin: 0;
+    padding: 0;
+    }
+    ul.gazette-list {
+    border-bottom: 1px solid #ccc !important;
+    list-style-position: inside;
+    list-style-type: none;
+    }
+    ul.gazette-list li {
+    border-top: 1px solid #ccc !important;
+    }
+}
+/**
+GAZETTE MODIFICATIONS TO WET3 CSS FOR DYNAMIC BROWSER WIDTH ADJUSTMENT
+when using '@media only screen and (min-width:xxx)', order from low to high xxx values.
+When using '@media only screen and (max-width:xxx)', order from high to low xxx values.
+Handle min-width first, then max-width.
+**/
+
+@media only screen and (min-width:768px){
+    #canada-gazette-banner {
+    width:766px !important; /* scale down to 80% */
+    height: 77px !important;
+    }
+    #canada-gazette-banner-dummy {
+    width:766px !important; /* scale down to 80% */
+    }
+    #canada-gazette-banner-img {
+    width:748px !important;
+    height: 77px !important;
+    }
+    #inner-banner-img {
+    width:555px !important;
+    height: 73px !important;
+    }
+    div.wet-boew-menubar.mb-mega {
+        font-size:1em;
+    }
+    div#hand_held_navigation {
+    display:none;
+    }
+    div.gz-side-list-box {
+    width:172px;
+    height:60px;
+    }
+    div.gz-side-list-box a {
+     font-size:125%;
+     font-weight:700;
+    }
+}
+@media only screen and (min-width:960px) {
+    #canada-gazette-banner {
+    width:958px !important; /* scale down to 100% */
+    height: 97px !important;
+    }
+    #canada-gazette-banner-dummy {
+    width:958px !important; /* scale down to 100% */
+    }
+    #canada-gazette-banner-img{
+    width:940px !important;
+    height: 97px !important;
+    }
+    #inner-banner-img {
+    width:700px !important;
+    height: 92px !important;
+    }
+    div.wet-boew-menubar.mb-mega {
+    font-size:1em;
+    }
+    div#hand_held_navigation {
+    display:none;
+    }
+    div#hand_held_navigation {
+    display:none;
+    }
+    div.gz-side-list-box {
+    width:220px;
+    height:70px;
+    }
+    div.gz-side-list-box a {
+     font-size:160%;
+     font-weight:normal;
+    }
+    div.gz-side-list-box a,div.gz-side-list-box a.nav-current , div.gz-side-list-box a:link{
+    margin-top:.4em;
+    }
+}
+@media only screen and (min-width:1200px) {
+    #canada-gazette-banner {
+    width:1198px !important; /* scale down to 125% */
+    height: 117px !important;
+    }
+    #canada-gazette-banner-dummy {
+    width:1198px !important; /* scale down to 125% */
+    }
+    #canada-gazette-banner-img {
+    width:1178px !important;
+    height: 117px !important;
+    background-size:1178px 120px !important;
+    }
+    #inner-banner-img {
+    width:880px !important;
+    height: 105px !important;
+    }
+    div.wet-boew-menubar.mb-mega {
+    font-size:1em;
+    }
+    div#hand_held_navigation {
+    display:none;
+    }
+    div.gz-side-list-box {
+    width:280px;
+    /*height:89px;*/
+    
+    }
+    div.gz-side-list-box a {
+     font-size:165%;
+     font-weight:normal;
+    }
+    div.gz-side-list-box a,div.gz-side-list-box a.nav-current , div.gz-side-list-box a:link{
+    margin-top:.4em;
+    }
+}
+@media only screen and (max-width:767px) {
+/*  #canada-gazette-banner, #wb-sec, #gz-right-inner-col */
+    #canada-gazette-banner, #inner-banner {
+    display:none !important;
+    }
+
+    #gz-right-inner-col {
+    max-width:280px;
+    margin:auto;
+    }
+    
+    #publication-container:before {
+    background:none;
+    }
+    div#hand_held_navigation {
+    display:block;
+    }
+    div#introText {
+    display:none;
+    }
+    img#nav-rss {
+        width: 172px;
+    }
+    #rss-show-hide-list {
+        margin-top:1em;
+    }
+}

@@ -1,0 +1,16 @@
+/* IE8 (and below) is too dumb to handle dynamic sizing, so do static sizing */
+div#inner-banner {
+margin:0 auto;
+width:712px;
+height:97px;
+}
+div#inner-banner-img {
+background: #fff url(/images/gazetteheader-kaboom.jpg) no-repeat left bottom;
+width:700px !important;
+height:97px !important;
+}
+ul.gazette-list li div.pub-list {
+padding: .15em 1em .5em 1em !important;
+text-align:left;
+}
+

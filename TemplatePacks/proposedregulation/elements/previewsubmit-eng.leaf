@@ -1,0 +1,13 @@
+<h2 id="formsummary">Preview and submit your comments</h2>
+<div class="well">
+
+<ul class="list-inline lst-spcd">
+<li>
+<a class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/preview/">Preview and print your comments</a>
+</li>
+<li>
+<a class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/">Submit your comments</a>
+</li>
+</ul>
+</div>
+

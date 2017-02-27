@@ -1,0 +1,9 @@
+<meta name="description" content="#if(archived) {ARCHIVED — }July 04, 2012, Part Ⅱ, Part 2, Volume 146, Number 14, Canada Gazette" />
+<meta name="dcterms.description" content="#if(archived) {ARCHIVED — }July 04, 2012, Part Ⅱ, Part 2, Volume 146, Number 14, Canada Gazette" />
+<meta name="dcterms.creator" content="Government of Canada, Public Works and Government Services Canada, Public Services and Procurement Canada, Integrated Services Branch, Canada Gazette" />
+<meta name="dcterms.title" content="#if(archived) {ARCHIVED — }Canada Gazette – #(title)" />
+<meta name="dcterms.issued" title="W3CDTF" content="2012-07-04" />
+<meta name="dcterms.modified" title="W3CDTF" content="2012-08-29" />
+<meta name="dcterms.subject" title="gccore" content="Regulations; Parliament; Law; Government Communications; Appointments; Consultations; Public Notices; Media; Governor General; Cabinet;" />
+<meta name="dcterms.language" title="ISO639-2" content="eng" />
+<meta name="keywords" content="#(title)" />

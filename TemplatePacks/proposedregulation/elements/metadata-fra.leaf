@@ -1,0 +1,9 @@
+<meta name="description" content="#if(archived) {ARCHIVÉE — }Le 04 juillet 2012, Partie Ⅱ, Partie 2, Volume 146, numéro 14, Gazette du Canada" />
+<meta name="dcterms.description" content="#if(archived) {ARCHIVÉE — }Le 04 juillet 2012, Partie Ⅱ, Partie 2, Volume 146, numéro 14, Gazette du Canada" />
+<meta name="dcterms.creator" content="Gouvernement du Canada, Travaux publics et Services gouvernementaux Canada, Services publics et Approvisionnement Canada, Direction générale des services intégrés, Gazette du Canada" />
+<meta name="dcterms.title" content="#if(archived) {ARCHIVÉE — }Gazette du Canada – #(title)" />
+<meta name="dcterms.issued" title="W3CDTF" content="2012-07-04" />
+<meta name="dcterms.modified" title="W3CDTF" content="2012-08-29" />
+<meta name="dcterms.subject" title="gccore" content="Règlements; Parlement; Droit; Communications gouvernementales; Nomination; Consultation; Avis public; Média; Gouverneur général; Conseil des ministres;" />
+<meta name="dcterms.language" title="ISO639-2" content="fra" />
+<meta name="keywords" content="#(title)" />

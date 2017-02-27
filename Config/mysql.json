@@ -1,0 +1,8 @@
+{
+    "host": "example.com",
+    "user": "admin",
+    "password": "pw",
+    "database": "consultation",
+    "port": "3306",
+    "encoding": "utf8"
+}

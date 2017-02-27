@@ -1,0 +1,8 @@
+Packages
+.build
+xcuserdata
+*.xcodeproj
+Config/secrets
+node_modules
+Public/dist
+

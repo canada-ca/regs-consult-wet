@@ -1,0 +1,7 @@
+            <h1 id="commentsummary" data-documentid="#(document-id)" data-documentlink="#(document-link)#(eng-page)">#(title)</h1>
+            <div > <a id="cont"></a>
+                <h2>Current status: Open </h2>
+                <p>Published and opened for input on October 15, 2016 </p>
+                <p>Number of days for comments: 30 days (Until November 14, 2016).</p>
+<a class="btn btn-lg btn-default mrgn-rght-md" href="#(document-link)#(eng-page)">Edit or Add and Submit</a></li>
+            </div>
