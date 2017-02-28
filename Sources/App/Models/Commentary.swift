@@ -20,6 +20,7 @@ struct CommentaryConstants {
     static let organization = "organization"
     static let createddate = "createddate"
     static let submitteddate = "submitteddate"
+    static let verification = "verification"
     static let submitted = "submitted"
     static let acknowledgeddate = "acknowledgeddate"
     static let status = "status"
@@ -51,6 +52,7 @@ struct Commentary: Model {
     var organization: String?
     var createddate: Date?
     var submitteddate: Date?
+    var verification: Bool
     var submitted: Bool
     var acknowledgeddate: Date?
     var status: String?
@@ -125,6 +127,7 @@ struct Commentary: Model {
             } else {
                 // leave as is
             }
+            verification = node[CommentaryConstants.verification]?.bool ?? false
             submitted = node[CommentaryConstants.submitted]?.bool ?? false
             status = node[CommentaryConstants.status]?.string ?? CommentaryStatus.new
         }
@@ -140,6 +143,7 @@ struct Commentary: Model {
             organization = updates.organization ?? organization
             createddate = updates.createddate ?? createddate
             submitteddate = updates.submitteddate ?? submitteddate
+            verification = updates.verification
             submitted = updates.submitted
             acknowledgeddate = updates.acknowledgeddate ?? acknowledgeddate
             status = updates.status ?? status
@@ -181,6 +185,7 @@ extension Commentary: NodeRepresentable {
                 CommentaryConstants.organization: organization,
                 CommentaryConstants.createddate: createddate == nil ? nil : createddate!.timeIntervalSince1970,
                 CommentaryConstants.submitteddate: submitteddate == nil ? nil : submitteddate!.timeIntervalSince1970,
+                CommentaryConstants.verification: verification,
                 CommentaryConstants.submitted: submitted,
                 CommentaryConstants.acknowledgeddate: acknowledgeddate == nil ? nil : acknowledgeddate!.timeIntervalSince1970,
                 CommentaryConstants.status: status
@@ -203,6 +208,7 @@ extension Commentary: Preparation {
             commentary.string(CommentaryConstants.organization, optional: true)
             commentary.double(CommentaryConstants.createddate, optional: true)
             commentary.double(CommentaryConstants.submitteddate, optional: true)
+            commentary.bool(CommentaryConstants.verification)
             commentary.bool(CommentaryConstants.submitted)
             commentary.double(CommentaryConstants.acknowledgeddate, optional: true)
             commentary.string(CommentaryConstants.status, optional: true)
