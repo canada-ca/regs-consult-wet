@@ -1,10 +1,14 @@
 #if(missingselection) {<p class="bg-warning">You need to select the point of view you best represent.</p>}
 ##else() {
-#if(emailoption) { <p>You did supply a valid email address. Select verification if you want confirmations.</p>
-<p><a  class="btn btn-lg btn-primary mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/verifyemail">Confirm submit with email verification</a></p>}
+#if(ready) {
+#if(emailoption) { <p>You entered a valid email address. Select verification if you want confirmations.</p>
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verifyemail" "type="button" >Confirm submit with email verification</button>
+}
 ##else() {
 <p class="bg-info">You did not supply a valid email address. No verification will be sent.</p>}
-#if(ready) {
-<a  class="btn btn-lg btn-primary mrgn-rght-md" href="/documents/#(document-id)/commentaries/submit/verify">Confirm submit</a></p>
+
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Confirm submit</button>
+} ##else() {
+<p class="bg-warning">Too early to submit try in a few minutes.</p>
 }
 }

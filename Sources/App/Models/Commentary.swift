@@ -28,7 +28,8 @@ struct CommentaryConstants {
 
 struct CommentaryStatus {
     static let new = "new"
-
+    static let attemptedsubmit = "attemptedsubmit"
+    static let submitted = "submitted"
     static let notuseful = "notuseful"
     static let abuse = "abuse"
 
@@ -153,7 +154,7 @@ struct Commentary: Model {
     func submitReadiness() -> String? {
         if submitted {
             return CommentarySubmitStatus.submitted
-        } else if (represents?.isEmpty)! {
+        } else if (represents ?? "").isEmpty {
             return CommentarySubmitStatus.missinginfo
         } else if createddate != nil && ((createddate?.timeIntervalSinceNow)! < TimeInterval(-180.0)) {
             return CommentarySubmitStatus.ready

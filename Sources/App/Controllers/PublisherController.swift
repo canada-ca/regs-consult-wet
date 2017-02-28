@@ -85,10 +85,11 @@ final class PublisherController {
         }
     }
     func publishDocument(_ request: Request)throws -> ResponseRepresentable {
-        let user = try getUserFromCookie(request)
-        guard user.admin else {
-            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
-        }
+//        let user = try getUserFromCookie(request)
+//        guard user.admin else {
+//            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+//        }
+
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
         }

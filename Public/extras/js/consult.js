@@ -3,7 +3,7 @@
  * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
  * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
  */
-$(document).ready(
+;$(document).ready(
 
     function() {
         "use strict";
@@ -205,11 +205,15 @@ $(document).ready(
             }
             var postsubmit = function (e){
                 // Get some values from elements on the identity:
-
-                
+                e.preventDefault();
+                // Get some values from elements on the comment:
+                var det = $(e.target).attr("data-command");
+                if (typeof  det == "undefined") {
+                    det = "request";
+                }
 
                 var docid =  $("#commentsummary").attr("data-documentid");
-                var url = "/documents/" + docid + "/commentaries/submit/request/";
+                var url = "/documents/" + docid + "/commentaries/submit/" + det + "/";
                 // Send the data using post
                 var posting = $.ajax({
                 type: "POST",
@@ -260,12 +264,9 @@ $(document).ready(
                 var doclink =  $("#commentsummary").attr("data-documentlink");
                 window.location = doclink + "?#" + encodeURIComponent(sel)
             });
-            $("#comment-submit-button").on("click", function(event) {
-                postsubmit(event);
-            });
-            $("#comment-submit-buttonalt").on("click", function(event) {
-                postsubmit(event);
-            });
+
+            $(add_button).on("click", ".comment-submit-control", postsubmit);
+            
             if ( $('#commentpreview').length == 0) {
                 getcommentary();
             }

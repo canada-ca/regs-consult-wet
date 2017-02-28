@@ -169,6 +169,31 @@ final class CommentaryController{
                 stateOfCommentary["emailoption"] = true
             }
             switch command {
+                case "verify","verifyemail":
+                    if !(commentary!.submitted) { //prevent reversion from submit
+                        commentary!.verification = command == "verify" ? false : true //true if email confirmations selected
+                        commentary!.status = CommentaryStatus.attemptedsubmit //a special status to capture attempts that may not make it to full submit
+                        if commentary!.submitReadiness() == CommentarySubmitStatus.ready {
+                            commentary!.submitted = true
+                            commentary!.status = CommentaryStatus.submitted
+                            if let submittedalready = try? submitRender.make("submitconfirmation", stateOfCommentary) {
+                                response["overlayhtml"] = try? Node(submittedalready.data.string())
+                            }
+                        } else {
+                            if let submitverify = try? submitRender.make("submitrequest", stateOfCommentary) {
+                                response["overlayhtml"] = try? Node(submitverify.data.string())
+                            }
+                        }
+                        try commentary!.save()
+
+                    } else {
+                        stateOfCommentary["startnewoption"] = true
+                        if let submittedalready = try? submitRender.make("submittedalready", stateOfCommentary) {
+                            response["overlayhtml"] = try? Node(submittedalready.data.string())
+                        }
+                }
+                case "new","clear":
+                    commentary = nil
                 case "request":
                     fallthrough
                 default:
