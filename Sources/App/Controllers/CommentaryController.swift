@@ -186,9 +186,7 @@ final class CommentaryController{
                         default:
                             break
                         }
-                        if let submitverify = try? submitRender.make("submitrequest", [
-                            "document-id": documentId
-                            ]) {
+                        if let submitverify = try? submitRender.make("submitrequest", stateOfCommentary) {
                             response["overlayhtml"] = try? Node(submitverify.data.string())
                         }
                     }
