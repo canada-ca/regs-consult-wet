@@ -18,9 +18,9 @@ final class PublisherController {
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
         jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
-        let protect = ProtectMiddleware(error:
-            Abort.custom(status: .forbidden, message: "Not authorized.")
-        )
+//        let protect = ProtectMiddleware(error:
+//            Abort.custom(status: .forbidden, message: "Not authorized.")
+//        )
         let prepare = drop.grouped("prepare")
 
 

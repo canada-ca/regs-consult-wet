@@ -45,7 +45,7 @@ final class CommentaryController{
         guard documentdata != nil else {throw Abort.custom(status: .notFound, message: "document unknown")}
         var commentary: Commentary?
         var commentJWT: JWT?
-        var refreshOfCookie = false
+
         if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
@@ -55,11 +55,8 @@ final class CommentaryController{
                 try commentJWT!.verifySignature(using: jwtSigner)
                 commid = commentJWT!.payload["commid"]?.uint
             } catch {
-                refreshOfCookie = true            }
-        } else {
-            refreshOfCookie = true
+                            }
         }
-
         if  commid != nil {
             do{
                 pubDrop.console.info("looking for \(commid!)")
@@ -85,8 +82,6 @@ final class CommentaryController{
             }
             response["comments"] = Node(results)
             response["commentary"] = commentary!.nodeForJSON()
-        } else {
-            refreshOfCookie = true
         }
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
@@ -126,17 +121,17 @@ final class CommentaryController{
         guard documentdata != nil else {throw Abort.custom(status: .notFound, message: "document unknown")}
         var commentary: Commentary?
         var commentJWT: JWT?
-        var refreshOfCookie = false
         if let incookie = request.cookies[ConsultConstants.cookieComment] {
             commentJWT = try? JWT(token: incookie)
         }
         pubDrop.console.info("Headers \(request.headers)")
+        let detectedLanguage = languageDetect(request)
         if command == "clear" {
-            let detectedLanguage = languageDetect(request)
+
             let resp = Response(status: .found)
             resp.headers["Location"] = documentdata?.publishedURL(languageStr: detectedLanguage)?.absoluteString ?? "/"
 
-            //need to kill the cookie for various reasons above
+            //need to kill the cookie to do the clear
             if  let domname = pubDrop.config["app", "appdomain"]?.string {
                 let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
@@ -148,10 +143,8 @@ final class CommentaryController{
                 try commentJWT!.verifySignature(using: jwtSigner)
                 commid = commentJWT!.payload["commid"]?.uint
             } catch {
-                refreshOfCookie = true            }
-        } else {
-            refreshOfCookie = true
-        }
+                            }
+        } 
 
         if  commid != nil {
             do{
@@ -163,24 +156,36 @@ final class CommentaryController{
             }
 
         }
+        var stateOfCommentary: [String : NodeConvertible] = [ "document-id": documentId,
+                                  "lang-eng": detectedLanguage == "eng" ? true : false,
+                                 "lang-fra": detectedLanguage == "fra" ? true : false
+        ]
+
         var response: [String: Node] = [:]
         if commentary != nil {
+            if (commentary!.email?.value ?? "").isEmpty {
+                stateOfCommentary["emailoption"] = false
+            } else {
+                stateOfCommentary["emailoption"] = true
+            }
             switch command {
                 case "request":
                     fallthrough
                 default:
                     if commentary!.submitted {
-                        if let submittedalready = try? submitRender.make("submittedalready", [
-                            "document-id": documentId,
-                            "startnewoption": true,
-                            "emailoption": true,
-                            "lang-eng": true,
-                            "lang-fra": false
-
-                            ]) {
+                        stateOfCommentary["startnewoption"] = true
+                        if let submittedalready = try? submitRender.make("submittedalready", stateOfCommentary) {
                             response["overlayhtml"] = try? Node(submittedalready.data.string())
                         }
                     } else {
+                        switch commentary!.submitReadiness() {
+                        case .some(CommentarySubmitStatus.missinginfo):
+                            stateOfCommentary["missingselection"] = true
+                        case .some(CommentarySubmitStatus.ready):
+                            stateOfCommentary["ready"] = true
+                        default:
+                            break
+                        }
                         if let submitverify = try? submitRender.make("submitrequest", [
                             "document-id": documentId
                             ]) {
@@ -190,8 +195,6 @@ final class CommentaryController{
 
             }
             response["commentary"] = commentary!.nodeForJSON()
-        } else {
-            refreshOfCookie = true
         }
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"

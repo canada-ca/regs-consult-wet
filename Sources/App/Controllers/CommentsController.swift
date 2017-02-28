@@ -69,8 +69,8 @@ final class CommentsController{
                 }
             }
 
-            commentary = try Commentary(node: [Commentary.Constants.id:newDbId,
-                                               Commentary.Constants.documentId:documentdata?.id], in: [])
+            commentary = try Commentary(node: [CommentaryConstants.id:newDbId,
+                                               CommentaryConstants.documentId:documentdata?.id], in: [])
             try commentary!.save()
             commid = commentary?.id?.uint
             commentJWT = nil //need to force a new jwt cookie as old commentary not valid
@@ -103,39 +103,29 @@ final class CommentsController{
                 let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 if !(newitem == commentary?.name) {
-                    do{
+
 
                         commentary?.name = newitem
-                    } catch {
-                        //new value bad
-                        pubDrop.console.info("New name value bad \(newitem)")
-                    }
+                    
                 }
             }
             if let item = commentator["organization"]?.string  {
                 let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 if !(newitem == commentary?.organization) {
-                    do{
+
 
                         commentary?.organization = newitem
-                    } catch {
-                        //new value bad
-                        pubDrop.console.info("New organization value bad \(newitem)")
-                    }
+
                 }
             }
             if let item = commentator["represents"]?.string  {
                 let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 if !(newitem == commentary?.represents) {
-                    do{
 
                         commentary?.represents = newitem
-                    } catch {
-                        //new value bad
-                        pubDrop.console.info("New represents value bad \(newitem)")
-                    }
+
                 }
             }
             responseDict["commentary"] = commentary!.nodeForJSON()
