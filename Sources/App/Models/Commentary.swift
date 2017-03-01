@@ -156,7 +156,7 @@ struct Commentary: Model {
             return CommentarySubmitStatus.submitted
         } else if (represents ?? "").isEmpty {
             return CommentarySubmitStatus.missinginfo
-        } else if createddate != nil && ((createddate?.timeIntervalSinceNow)! < TimeInterval(-180.0)) {
+        } else if createddate != nil && ((createddate?.timeIntervalSinceNow)! < TimeInterval(-60.0)) {
             return CommentarySubmitStatus.ready
         }
         return nil

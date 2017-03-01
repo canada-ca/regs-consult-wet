@@ -143,6 +143,7 @@
                 // Get some values from elements on the comment:
                 var det = $(e.target).closest("details");
                 var refid = det.attr("id");
+                var reftext = det.attr("data-ref");
                 var commenttext = det.find("textarea").val();
                 var docid =  $("#commentsummary").attr("data-documentid");
                 var url = "/documents/" + docid + "/comments/";
@@ -152,9 +153,13 @@
                 var posting = $.ajax({
                 type: "POST",
                 url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                     // The key needs to match your method's input parameter (case-sensitive).
                 data: JSON.stringify({ "comments":[{
                     "ref": refid,
+                    "reftext": reftext,
                     "text": commenttext
                     }] }),
                 contentType: "application/json; charset=utf-8",
@@ -184,6 +189,9 @@
                 var posting = $.ajax({
                     type: "POST",
                     url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                         // The key needs to match your method's input parameter (case-sensitive).
                     data: JSON.stringify({ "commentary":{
                         "represents": commidentity,
@@ -194,6 +202,11 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
+                        var overlay = data["overlayhtml"]
+                        if (typeof  overlay != "undefined") {
+                            $("#submit-panel-content").html(overlay);
+                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                        }
                         interfaceUpdate(data);
 
                     },
@@ -218,9 +231,12 @@
                 var posting = $.ajax({
                 type: "POST",
                 url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                     // The key needs to match your method's input parameter (case-sensitive).
-                data: JSON.stringify({ 
-                     }),
+//                data: JSON.stringify({ 
+//                     }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){

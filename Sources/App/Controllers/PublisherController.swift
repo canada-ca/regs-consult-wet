@@ -192,6 +192,7 @@ final class PublisherController {
                             } else {
                                 substitutions["prompt"] = nil
                             }
+                            substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
                             let insertType = (tag["type"] as? String ?? "comment") + "-" + lang.0
                             if let meta = try? tempRenderer.make(insertType, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
                                 dataString[linenum - 1] = dataString[linenum - 1].appending(templstr)

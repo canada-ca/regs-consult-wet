@@ -28,7 +28,7 @@ final class CommentaryController{
         jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
         let previewer = drop.grouped("documents",":id","commentaries")
         previewer.get("summary", handler: commentarySummary)
-        previewer.get("submit",":command", handler: commentarySubmit)
+//        previewer.get("submit",":command", handler: commentarySubmit)
         previewer.post("submit",":command", handler: commentarySubmit)
 
         previewer.get( handler: commentaryLoad)
@@ -151,6 +151,8 @@ final class CommentaryController{
                 pubDrop.console.info("looking for \(commid!)")
 
                 commentary = try Commentary.find(Node(commid!))
+                pubDrop.console.info("found \(commentary!)")
+
             } catch{
                 throw Abort.custom(status: .internalServerError, message: "commentary lookup failure")
             }
@@ -161,7 +163,7 @@ final class CommentaryController{
                                  "lang-fra": detectedLanguage == "fra" ? true : false
         ]
 
-        var response: [String: Node] = [:]
+        var responseDict: [String: Node] = [:]
         if commentary != nil {
             if (commentary!.email?.value ?? "").isEmpty {
                 stateOfCommentary["emailoption"] = false
@@ -177,11 +179,11 @@ final class CommentaryController{
                             commentary!.submitted = true
                             commentary!.status = CommentaryStatus.submitted
                             if let submittedalready = try? submitRender.make("submitconfirmation", stateOfCommentary) {
-                                response["overlayhtml"] = try? Node(submittedalready.data.string())
+                                responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                             }
                         } else {
                             if let submitverify = try? submitRender.make("submitrequest", stateOfCommentary) {
-                                response["overlayhtml"] = try? Node(submitverify.data.string())
+                                responseDict["overlayhtml"] = try? Node(submitverify.data.string())
                             }
                         }
                         try commentary!.save()
@@ -189,7 +191,7 @@ final class CommentaryController{
                     } else {
                         stateOfCommentary["startnewoption"] = true
                         if let submittedalready = try? submitRender.make("submittedalready", stateOfCommentary) {
-                            response["overlayhtml"] = try? Node(submittedalready.data.string())
+                            responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                         }
                 }
                 case "new","clear":
@@ -200,7 +202,7 @@ final class CommentaryController{
                     if commentary!.submitted {
                         stateOfCommentary["startnewoption"] = true
                         if let submittedalready = try? submitRender.make("submittedalready", stateOfCommentary) {
-                            response["overlayhtml"] = try? Node(submittedalready.data.string())
+                            responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                         }
                     } else {
                         switch commentary!.submitReadiness() {
@@ -212,17 +214,17 @@ final class CommentaryController{
                             break
                         }
                         if let submitverify = try? submitRender.make("submitrequest", stateOfCommentary) {
-                            response["overlayhtml"] = try? Node(submitverify.data.string())
+                            responseDict["overlayhtml"] = try? Node(submitverify.data.string())
                         }
                     }
 
             }
-            response["commentary"] = commentary!.nodeForJSON()
+            responseDict["commentary"] = commentary!.nodeForJSON()
         }
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
         ]
-        let json = JSON(Node(response))
+        let json = JSON(Node(responseDict))
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         // cookie refresh if configuration specified
         if  let domname = pubDrop.config["app", "appdomain"]?.string {

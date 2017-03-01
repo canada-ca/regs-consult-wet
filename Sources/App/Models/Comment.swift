@@ -10,6 +10,7 @@ struct Comment: Model {
         static let documentId = "document_id"
         static let commentaryId = "commentary_id"
         static let document = "document"
+        static let linenumber = "linenumber"
         static let reference = "reference"
         static let text = "text"
         static let status = "status"
@@ -24,6 +25,7 @@ struct Comment: Model {
 
     var commentary: Node?
     var document: Node?
+    var linenumber: Int
     var reference: String?
     var text: String?
     var status: String?
@@ -56,6 +58,7 @@ extension Comment: NodeConvertible {
 
         commentary = try node.extract(Constants.commentaryId)
         document = try node.extract(Constants.documentId)
+        linenumber = try node.extract(Constants.linenumber)
         reference = try node.extract(Constants.reference)
         text = try node.extract(Constants.text)
         status = try node.extract(Constants.status)
@@ -70,6 +73,7 @@ extension Comment: NodeConvertible {
                 Constants.id: id,
                 Constants.commentaryId: commentary,
                 Constants.documentId: document,
+                Constants.linenumber: linenumber,
                 Constants.reference: reference,
                 Constants.text: text,
                 Constants.status: status
@@ -88,6 +92,7 @@ extension Comment: Preparation {
             comment.id()
             comment.parent(Commentary.self, optional: false)
             comment.parent(Document.self, optional: false)
+            comment.int(Constants.linenumber, optional: false)
             comment.string(Constants.reference, optional: true)
             comment.data(Constants.text, optional: true)
             comment.string(Constants.status, optional: true)
@@ -108,6 +113,7 @@ extension Comment {
         id = updates.id ?? id
         commentary = updates.commentary ?? commentary
         document = updates.document ?? document
+        linenumber = updates.linenumber
         reference = updates.reference ?? reference
         text = updates.text ?? text
         status = updates.status ?? status
@@ -116,14 +122,19 @@ extension Comment {
 
     func nodeForJSON()  -> Node? {
         guard let ref = self.reference else { return nil}
+        let tagType = String(ref.characters.prefix(4))
         return Node(["ref": Node(ref),
+                     "lineid": Node(tagType + String(self.linenumber)),  //ex: reg-34
             "text":Node(self.text ?? ""),
             "status":Node(self.status ?? "")
             ])
     }
     func nodeForReviewJSON()  -> Node? {
         guard let ref = self.reference else { return nil}
+        let tagType = String(ref.characters.prefix(4))
+
         var commnode = Node(["ref": Node(ref),
+                             "lineid": Node(tagType + String(self.linenumber)),  //ex: reg-34
                              "text":Node(self.text ?? ""),
                              "status":Node(self.status ?? "")
             ])

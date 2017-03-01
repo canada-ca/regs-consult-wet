@@ -11,9 +11,11 @@ import FluentMySQL
 final class CommentsController{
     let pubDrop: Droplet
     let jwtSigner: Signer
+    let submitRender: LeafRenderer
     
     init(to drop: Droplet) {
         pubDrop = drop
+        submitRender = LeafRenderer(viewsDir: drop.viewsDir)
         jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
         drop.post("documents",":id","comments", handler: commentDocument)
 
@@ -81,84 +83,108 @@ final class CommentsController{
         guard commentary != nil else {throw Abort.custom(status: .conflict, message: "cannot locate commentary")}
 
         var responseDict = ["updatestatus":Node(documentId)]
-        //process update from tne commentator identity
-        if let commentator = request.data["commentary"]?.object {
-            if let item = commentator["email"]?.string  {
-                let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+        if commentary!.submitted {
+            let detectedLanguage = languageDetect(request)
+            var stateOfCommentary: [String : NodeConvertible] = [ "document-id": documentId,
+                                                                  "lang-eng": detectedLanguage == "eng" ? true : false,
+                                                                  "lang-fra": detectedLanguage == "fra" ? true : false
+            ]
 
-                if !(newitem == commentary?.email?.value) {
-                    do{
-                        let updateem =  Email(value: newitem)
-                        if !newitem.isEmpty {
-                            try Email.validate(input: updateem)
-                        }
-                        commentary?.email = updateem
-                    } catch {
-                        //new value bad
-                        pubDrop.console.info("New email value bad \(newitem)")
-                    }
-                }
+            if (commentary!.email?.value ?? "").isEmpty {
+                stateOfCommentary["emailoption"] = false
+            } else {
+                stateOfCommentary["emailoption"] = true
             }
-            if let item = commentator["name"]?.string  {
-                let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
-                if !(newitem == commentary?.name) {
-
-
-                        commentary?.name = newitem
-                    
-                }
+            stateOfCommentary["startnewoption"] = true
+            if let submittedalready = try? submitRender.make("submittedalready", stateOfCommentary) {
+                responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
             }
-            if let item = commentator["organization"]?.string  {
-                let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                if !(newitem == commentary?.organization) {
 
 
-                        commentary?.organization = newitem
-
-                }
-            }
-            if let item = commentator["represents"]?.string  {
-                let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
-
-                if !(newitem == commentary?.represents) {
-
-                        commentary?.represents = newitem
-
-                }
-            }
             responseDict["commentary"] = commentary!.nodeForJSON()
 
-        }
-        try commentary!.save()
-        //update from tne array of comments
-        if let commarray = request.json?["comments"]?.array {
-            for ind in 0..<commarray.count {
-                if let update = commarray[ind].object {
-                    if let ref = update["ref"]?.string {
-                        var comment = try Comment.query().filter("commentary_id", commentary!.id!).filter("reference", ref as NodeRepresentable).first()
-                        if comment == nil {
-                            comment = try Comment(node: [
-                                Comment.Constants.documentId: documentdata!.id!,
-                                Comment.Constants.commentaryId: commentary!.id!,
-                                Comment.Constants.reference: ref,
-                                Comment.Constants.text: update["text"]?.string,
-                                Comment.Constants.status: Comment.Status.new
+        } else {
+            //process update from tne commentator identity
+            if let commentator = request.data["commentary"]?.object {
+                if let item = commentator["email"]?.string  {
+                    let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
-                                               ], in: [])
-                        } else {
-                            if documentdata?.id == comment?.document {
-                                comment?.text = update["text"]?.string
+                    if !(newitem == commentary?.email?.value) {
+                        do{
+                            let updateem =  Email(value: newitem)
+                            if !newitem.isEmpty {
+                                try Email.validate(input: updateem)
                             }
+                            commentary?.email = updateem
+                        } catch {
+                            //new value bad
+                            pubDrop.console.info("New email value bad \(newitem)")
                         }
-                        try comment!.save()
+                    }
+                }
+                if let item = commentator["name"]?.string  {
+                    let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                    if !(newitem == commentary?.name) {
+
+
+                            commentary?.name = newitem
+                        
+                    }
+                }
+                if let item = commentator["organization"]?.string  {
+                    let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                    if !(newitem == commentary?.organization) {
+
+
+                            commentary?.organization = newitem
+
+                    }
+                }
+                if let item = commentator["represents"]?.string  {
+                    let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                    if !(newitem == commentary?.represents) {
+
+                            commentary?.represents = newitem
+
+                    }
+                }
+                responseDict["commentary"] = commentary!.nodeForJSON()
+
+            }
+            try commentary!.save()
+            //update from tne array of comments
+            if let commarray = request.json?["comments"]?.array {
+                for ind in 0..<commarray.count {
+                    if let update = commarray[ind].object {
+                        if let ref = update["ref"]?.string, let reftext = update["reftext"]?.string{
+                            var comment = try Comment.query().filter("commentary_id", commentary!.id!).filter("reference", ref as NodeRepresentable).first()
+                            if comment == nil {
+                                let index4 = ref.index(ref.startIndex, offsetBy: 4)
+                                comment = try Comment(node: [
+                                    Comment.Constants.documentId: documentdata!.id!,
+                                    Comment.Constants.commentaryId: commentary!.id!,
+                                    Comment.Constants.linenumber:  Int(String(ref.characters.suffix(from: index4))) ?? 0,
+                                    Comment.Constants.reference: reftext,
+                                    Comment.Constants.text: update["text"]?.string,
+                                    Comment.Constants.status: Comment.Status.new
+
+                                                   ], in: [])
+                            } else {
+                                if documentdata?.id == comment?.document {
+                                    comment?.text = update["text"]?.string
+                                }
+                            }
+                            try comment!.save()
+                        }
                     }
                 }
             }
+
         }
-
-
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
         ]
