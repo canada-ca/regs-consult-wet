@@ -177,6 +177,7 @@ final class CommentaryController{
                         commentary!.status = CommentaryStatus.attemptedsubmit //a special status to capture attempts that may not make it to full submit
                         if commentary!.submitReadiness() == CommentarySubmitStatus.ready {
                             commentary!.submitted = true
+                            commentary!.submitteddate = Date()
                             commentary!.status = CommentaryStatus.submitted
                             if let submittedalready = try? submitRender.make("submitconfirmation", stateOfCommentary) {
                                 responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
