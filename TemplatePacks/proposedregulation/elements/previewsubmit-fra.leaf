@@ -3,10 +3,10 @@
 
 <ul class="list-inline lst-spcd">
 <li>
-<button class="btn btn-lg btn-default mrgn-rght-md"><a href="/documents/#(document-id)/commentaries/preview/">Prévisualiser et imprimer vos commentaires</a></button>
+<button class="btn btn-lg btn-default mrgn-rght-md"><a href="/documents/#(document-id)/commentaries/preview/">Aperçu et impression des commentaires</a></button>
 </li>
 <li>
-<button class="btn btn-lg btn-default mrgn-rght-md"><a href="/documents/#(document-id)/commentaries/submit/">Soumettre vos commentaires</a></button>
+<button class="btn btn-lg btn-default mrgn-rght-md"><a href="/documents/#(document-id)/commentaries/submit/">Envoi des commentaires</a></button>
 </li>
 </ul>
 </div>
