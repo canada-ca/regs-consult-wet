@@ -151,7 +151,7 @@ final class CommentaryController{
                 pubDrop.console.info("looking for \(commid!)")
 
                 commentary = try Commentary.find(Node(commid!))
-                pubDrop.console.info("found \(commentary!)")
+//                pubDrop.console.info("found \(commentary!)")
 
             } catch{
                 throw Abort.custom(status: .internalServerError, message: "commentary lookup failure")

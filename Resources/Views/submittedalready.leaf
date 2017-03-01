@@ -1,4 +1,4 @@
 <h3>Your comments have already been submitted.</h3>
  <p>To submit new comments, clear browser. Then reload the page.</p>
 <button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="clear" "type="button" >Clear browser</button>
-<button  class="btn btn-lg btn-default mrgn-rght-md"  onclick="myFunction(window.location.reload(true);)" type="button" >Reload page</button>
+<button  class="btn btn-lg btn-default mrgn-rght-md"  onclick="window.location.reload(true);" type="button" >Reload page</button>

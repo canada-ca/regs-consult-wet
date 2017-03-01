@@ -5,10 +5,10 @@
 <button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Confirm submit</button>
 }
 ##else() {
-<p class="bg-info">You did not supply a valid email address. We will not be able to get in touch with you for any reason.</p>}
+<p class="bg-info">You did not supply a valid email address. We will not be able to get in touch with you for any reason.</p>
 <button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Ok submit anyway</button>
 }
-
+}
  ##else() {
 <p class="bg-warning">Did you take the time to enter your comments? Try the submit button again in a few minutes.</p>
 }
