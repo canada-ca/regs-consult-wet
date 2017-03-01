@@ -100,14 +100,19 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){
-                    var comms = data["comments"]
+                    var comms = data["comments"];
                     if (typeof  comms != "undefined") {
                         comms.forEach(function(comment){
                             loadCommentArea("#" + comment["ref"],comment["text"]);
                         });
                         buttonHighlight("#comment-summary-button", "btn-primary");
                         buttonHighlight("#comment-summary-buttonalt", "btn-primary");
-                    };
+                    }
+                    var overlay = data["overlayhtml"];
+                    if (typeof  overlay != "undefined") {
+                        $("#submit-panel-content").html(overlay);
+                        $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                    }
                     interfaceUpdate(data);
                 }
                     });
@@ -164,9 +169,17 @@
                     }] }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(data){det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-check text-success" aria-hidden="true"></i>  ' + langfrag.saved + '</div>');
+                success: function(data){
+                    det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-check text-success" aria-hidden="true"></i>  ' + langfrag.saved + '</div>');
                     buttonHighlight("#comment-summary-button", "btn-primary");
                     buttonHighlight("#comment-summary-buttonalt", "btn-primary");
+                    interfaceUpdate(data);
+                    var overlay = data["overlayhtml"];
+                    if (typeof  overlay != "undefined") {
+                        $("#submit-panel-content").html(overlay);
+                        $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                    }
+
                 },
                 error: function(jqx,tstatus, errorthrown) {
                     det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-question-circle text-warning" aria-hidden="true"></i>  ' + langfrag.failedsave + ' - ' + errorthrown + ', ' + langfrag.tryagain + '</div>')
@@ -202,12 +215,13 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
-                        var overlay = data["overlayhtml"]
+                        interfaceUpdate(data);
+                        var overlay = data["overlayhtml"];
                         if (typeof  overlay != "undefined") {
                             $("#submit-panel-content").html(overlay);
                             $( "#submit-panel" ).trigger( "open.wb-overlay" );
                         }
-                        interfaceUpdate(data);
+
 
                     },
                     error: function(errMsg) {
@@ -240,13 +254,14 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){
-                    var overlay = data["overlayhtml"]
+                    interfaceUpdate(data);
+                    var overlay = data["overlayhtml"];
                     if (typeof  overlay != "undefined") {
                         $("#submit-panel-content").html(overlay);
                         $( "#submit-panel" ).trigger( "open.wb-overlay" );
                     }
 
-                    interfaceUpdate(data);
+                    
 
 
                 },

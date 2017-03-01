@@ -123,8 +123,8 @@ extension Comment {
     func nodeForJSON()  -> Node? {
         guard let ref = self.reference else { return nil}
         let tagType = String(ref.characters.prefix(4))
-        return Node(["ref": Node(ref),
-                     "lineid": Node(tagType + String(self.linenumber)),  //ex: reg-34
+        return Node(["reftext": Node(ref),
+                     "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
             "text":Node(self.text ?? ""),
             "status":Node(self.status ?? "")
             ])
@@ -133,8 +133,8 @@ extension Comment {
         guard let ref = self.reference else { return nil}
         let tagType = String(ref.characters.prefix(4))
 
-        var commnode = Node(["ref": Node(ref),
-                             "lineid": Node(tagType + String(self.linenumber)),  //ex: reg-34
+        var commnode = Node(["reftext": Node(ref),
+                             "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
                              "text":Node(self.text ?? ""),
                              "status":Node(self.status ?? "")
             ])

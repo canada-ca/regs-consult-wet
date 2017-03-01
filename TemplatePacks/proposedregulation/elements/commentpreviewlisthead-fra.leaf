@@ -1,4 +1,4 @@
-<div class="wb-eqht commentpreview #if(emptycomment) {emptycomment}"  id="#(reftype)-#(lineid) data-ref="#(reftype)-#(ref)"">
+<div class="wb-eqht commentpreview #if(emptycomment) {emptycomment}"  id="#(reftype)-#(lineid)" data-ref="#(reftype)-#(ref)">
 <section class="panel panel-default" style="vertical-align: top;>
 <header class="panel-heading">
 <h5 class="panel-title">#if(prompt) {#(prompt)} ##if(ref) {Section régulation #(ref)}</h5>

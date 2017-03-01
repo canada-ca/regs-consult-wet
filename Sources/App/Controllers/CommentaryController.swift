@@ -428,6 +428,7 @@ final class CommentaryController{
                                 substitutions["emptycomment"] = true
                                 substitutions["commenttext"] = nil
                             }
+                            substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
                             let insertTypehead = (tag["type"] as? String ?? "comment") + "previewlisthead-" + lang.0
                             if let meta = try? tempRenderer.make(insertTypehead, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
                                 dataString[lastline] = templstr.appending(dataString[lastline])                            }
