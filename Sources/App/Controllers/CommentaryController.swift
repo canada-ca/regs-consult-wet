@@ -148,7 +148,7 @@ final class CommentaryController{
             let mailjson = Attachment(
                 data: data,
                 mime: "application/json",
-                name: "file.json",
+                name: "Commentary\(commentary.id?.int ?? 0).json",
                 inline: false // Send as standalone attachment.
             )
             var mailtext: String = "Document: \(document.knownas ?? "")\n\nCommentary\nID: \(commentary.id?.int ?? 0)\n"

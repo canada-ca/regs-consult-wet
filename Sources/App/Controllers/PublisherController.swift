@@ -172,6 +172,8 @@ final class PublisherController {
             if let meta = try? tempRenderer.make("mainlead-" + lang.0, fnode) {
                 outDocument.append(Data(meta.data))
             }
+            if let section = fm.contents(atPath: filePack + "contenthead-" + lang.0 + ".html") {
+                outDocument.append(section) }
             if let meta = try? tempRenderer.make("leadcontrols-" + lang.0, fnode) {
                 outDocument.append(Data(meta.data))
             }
