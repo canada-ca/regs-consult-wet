@@ -86,8 +86,8 @@ final class CommentsController{
         if commentary!.submitted {
             let detectedLanguage = languageDetect(request)
             var stateOfCommentary: [String : NodeConvertible] = [ "document-id": documentId,
-                                                                  "lang-eng": detectedLanguage == "eng" ? true : false,
-                                                                  "lang-fra": detectedLanguage == "fra" ? true : false
+                                                                  "langeng": detectedLanguage == "eng" ? true : false,
+                                                                  "langfra": detectedLanguage == "fra" ? true : false
             ]
 
             if (commentary!.email?.value ?? "").isEmpty {

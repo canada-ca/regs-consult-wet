@@ -1,4 +1,11 @@
+#if(langfra) {
+<h3>Vos commentaires ont été soumis.<i class="fa fa-2x fa-check text-success" aria-hidden="true"></i></h3>
+<p>Pour soumettre de nouveaux commentaires, il faut vider la mémoire cache du navigateur, puis recharger la page.</p>
+<button  class="btn btn-lg btn-default mrgn-rght-md comment-submit-control" data-command="clear" "type="button" >Vider la mémoire cache du navigateur</button>
+<button  class="btn btn-lg btn-default mrgn-rght-md"  onclick="window.location.reload(true);" type="button" >Recharger la page</button>
+} ##else() {
 <h3>Your comments have been submitted.<i class="fa fa-2x fa-check text-success" aria-hidden="true"></i></h3>
  <p>To submit new comments, clear browser. Then reload the page.</p>
 <button  class="btn btn-lg btn-default mrgn-rght-md comment-submit-control" data-command="clear" "type="button" >Clear browser</button>
 <button  class="btn btn-lg btn-default mrgn-rght-md"  onclick="window.location.reload(true);" type="button" >Reload page</button>
+}

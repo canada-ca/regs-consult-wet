@@ -1,5 +1,5 @@
 
-#if(lang-fra) {
+#if(langfra) {
 table class="wb-tables table table-striped table-hover comment-comments" data-wb-tables='{ "ordering": false }'>
 <thead>
 <tr>

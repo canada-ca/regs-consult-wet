@@ -1,5 +1,5 @@
-<!DOCTYPE html><!--[if lt IE 9]><html class="no-js lt-ie9" lang=#if(lang-fra) {"fr"} ##else() {"en"} dir="ltr"><![endif]--><!--[if gt IE 8]><!-->
-<html class="no-js" lang=#if(lang-fra) {"fr"} ##else() {"en"} dir="ltr">
+<!DOCTYPE html><!--[if lt IE 9]><html class="no-js lt-ie9" lang=#if(langfra) {"fr"} ##else() {"en"} dir="ltr"><![endif]--><!--[if gt IE 8]><!-->
+<html class="no-js" lang=#if(langfra) {"fr"} ##else() {"en"} dir="ltr">
 <!--<![endif]-->
 <head>
 <meta charset="utf-8">
@@ -26,10 +26,10 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
 <body vocab="http://schema.org/" typeof="WebPage">
 <ul id="wb-tphp">
 <li class="wb-slc">
-<a class="wb-sl" href="#()wb-cont">#if(lang-fra) {Passer au contenu principal} ##else() {Skip to main content}</a>
+<a class="wb-sl" href="#()wb-cont">#if(langfra) {Passer au contenu principal} ##else() {Skip to main content}</a>
 </li>
 <li class="wb-slc visible-sm visible-md visible-lg">
-<a class="wb-sl" href="#()wb-info">#if(lang-fra) {Passer à «&#()160;À propos de ce site&#()160;»} ##else() {Skip to "About this site"}</a>
+<a class="wb-sl" href="#()wb-info">#if(langfra) {Passer à «&#()160;À propos de ce site&#()160;»} ##else() {Skip to "About this site"}</a>
 </li>
 </ul>
 <header role="banner">
@@ -37,7 +37,7 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
 <div id="wb-bar">
 <div class="container">
 <div class="row">
-<object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img" data=#if(lang-fra) {"/theme-gc-intranet/assets/sig-blk-fr.svg" aria-label="Gouvernement du Canada">} ##else() {"/theme-gc-intranet/assets/sig-blk-en.svg" aria-label="Government of Canada">}</object>
+<object id="gcwu-sig" type="image/svg+xml" tabindex="-1" role="img" data=#if(langfra) {"/theme-gc-intranet/assets/sig-blk-fr.svg" aria-label="Gouvernement du Canada">} ##else() {"/theme-gc-intranet/assets/sig-blk-en.svg" aria-label="Government of Canada">}</object>
 </div>
 </div>
 </div>
@@ -47,7 +47,7 @@ wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licenc
 <a href="#()">
 <span>Vue d'ensemble</span>
 </a>
-<object id="wmms" type="image/svg+xml" tabindex="-1" role="img" data="/theme-gc-intranet/assets/wmms-intra.svg" aria-label=#if(lang-fra) {"Symbole du gouvernement du Canada"} ##else() {"Symbol of the Government of Canada"}></object>
+<object id="wmms" type="image/svg+xml" tabindex="-1" role="img" data="/theme-gc-intranet/assets/wmms-intra.svg" aria-label=#if(langfra) {"Symbole du gouvernement du Canada"} ##else() {"Symbol of the Government of Canada"}></object>
 </div>
 </div>
 </div>

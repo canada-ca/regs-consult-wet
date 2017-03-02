@@ -1,5 +1,5 @@
 #if(signedon) {
-#if(lang-fra) {
+#if(langfra) {
 <section id="wb-so">
 <h2 class="wb-inv">Information de l&#()x27;utilisateur actuel</h2>
 <div class="container">
@@ -27,7 +27,7 @@
 </section>
 }
 } ##else() {
-#if(lang-fra) {
+#if(langfra) {
 <section id="wb-so">
 <h2 class="wb-inv">Information de l&#()x27;utilisateur actuel</h2>
 <div class="container">

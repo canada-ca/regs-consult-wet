@@ -224,8 +224,8 @@ final class CommentaryController{
 
         }
         var stateOfCommentary: [String : NodeConvertible] = [ "document-id": documentId,
-                                  "lang-eng": detectedLanguage == "eng" ? true : false,
-                                 "lang-fra": detectedLanguage == "fra" ? true : false
+                                  "langeng": detectedLanguage == "eng" ? true : false,
+                                 "langfra": detectedLanguage == "fra" ? true : false
         ]
 
         var responseDict: [String: Node] = [:]
@@ -429,7 +429,7 @@ final class CommentaryController{
         }
         switch type {
         case .fullText:
-            
+            // not tested yet
             if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
                 outDocument.append(section) }
 
@@ -464,9 +464,7 @@ final class CommentaryController{
                     outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
                 }
             }
-            if let meta = try? tempRenderer.make("previewsubmit-" + lang.0, fnode) {
-                outDocument.append(Data(meta.data))
-            }
+
         case .onlyComments:
             var commentDict: [String: Comment] = [:]
             for comment in comments {

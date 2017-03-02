@@ -42,7 +42,7 @@ final class AnalyzeController{
         guard documentdata != nil else {return Response(redirect: "/analyze/documents/")}  //go to list of all documents if not found
 
          return try    pubDrop.view.make("analyzecommentaries", [
-            "lang-eng": true,
+            "langeng": true,
             "signon": true,
             "signedon": true,
             "title": "Analyze commentaries"
@@ -58,7 +58,7 @@ final class AnalyzeController{
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/documents/")}  //go to list of all documents if not found
         var contextNode = Node([
-            "lang-eng": true,
+            "langeng": true,
             "signon": true,
             "signedon": true,
             "title": "Analyze comments"
