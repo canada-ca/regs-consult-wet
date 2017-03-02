@@ -1,4 +1,5 @@
 #if(langfra) {
+#if(missingselection) {<p class="bg-warning">Avant de soumettre vos commentaires, veuillez choisir la perspective qui vous représente le mieux.</p>}
 ##else() {
 #if(ready) {
 #if(emailoption) {
