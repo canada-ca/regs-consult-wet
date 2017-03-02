@@ -7,13 +7,20 @@ import JWT
 import Node
 import Cookies
 import FluentMySQL
+import Hedwig
 
+enum mailStyle {
+    case json
+    case jsonbackup
+    case html
+}
 final class CommentaryController{
     let pubDrop: Droplet
     let jwtSigner: Signer
     let templateDir: String
     let filePackDir: String
     let submitRender: LeafRenderer
+    let hedwig: Hedwig
     let fm = FileManager()
     enum PreviewView {
         case fullText
@@ -21,6 +28,12 @@ final class CommentaryController{
     }
     
     init(to drop: Droplet) {
+        hedwig = Hedwig(
+            hostName: drop.config["mail", "smtp", "hostName"]?.string ?? "example.com",
+            user:  drop.config["mail", "smtp", "user"]?.string ?? "foo@example.com",
+            password: drop.config["mail", "smtp", "password"]?.string ?? "password",
+            authMethods: [.plain, .login] // Default: [.plain, .cramMD5, .login, .xOauth2]
+        )
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
@@ -107,6 +120,58 @@ final class CommentaryController{
         }
         return resp
     }
+
+    func emailCommentary(_ request: Request, document: Document, commentary: Commentary, type: mailStyle) -> () {
+        // You can also create attachment from raw data.
+        guard let recipient = drop.config["mail", "mailto", "to"]?.string, !recipient.isEmpty else {return}
+        var response: [String: Node] = [:]
+
+        switch type {
+        case .jsonbackup:  //send a raw json of the commentary as a disaster backup.
+            var results: [Node] = []
+            if let cid = commentary.id{
+                if let comments = try? Comment.query().filter("commentary_id", cid).all() {
+                    //make Json array of comments with Node bits
+                    for comment in comments {
+                        if let thisResult = comment.nodeForJSON() {
+                            results.append(thisResult)
+                        }
+                    }
+                }
+            }
+            response["comments"] = Node(results)
+            response["commentary"] = commentary.nodeForJSON()
+            let json = JSON(Node(response))
+
+
+            let data = Data(bytes: try! json.serialize(prettyPrint: true))
+            let mailjson = Attachment(
+                data: data,
+                mime: "application/json",
+                name: "file.json",
+                inline: false // Send as standalone attachment.
+            )
+            var mailtext: String = "Document: \(document.knownas ?? "")\n\nCommentary\nID: \(commentary.id?.int ?? 0)\n"
+            mailtext   += "Name: \(commentary.name ?? "")\nOrganization: \(commentary.organization ?? "")\nEmail: \(commentary.email?.value ?? "")"
+            let mail = Mail(
+                text: mailtext,
+                from: drop.config["mail", "mailto", "from"]?.string ?? "foo@example.com",
+                to: recipient,
+                cc: drop.config["mail", "mailto", "cc"]?.string,
+                bcc: drop.config["mail", "mailto", "bcc"]?.string,
+                subject: "\(document.knownas ?? "") - " + (drop.config["mail", "mailto", "subject"]?.string ?? "Submission copy"),
+                attachments: [mailjson])
+
+            hedwig.send(mail) { error in
+                if error != nil {  self.pubDrop.console.info("email fail \(commentary)")}
+            }
+        default:
+            return  //not implemented
+        }
+
+
+    }
+
     func commentarySubmit(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -182,6 +247,7 @@ final class CommentaryController{
                             if let submittedalready = try? submitRender.make("submitconfirmation", stateOfCommentary) {
                                 responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                             }
+                            emailCommentary(request, document: documentdata!, commentary: commentary!, type: .jsonbackup)
                         } else {
                             if let submitverify = try? submitRender.make("submitrequest", stateOfCommentary) {
                                 responseDict["overlayhtml"] = try? Node(submitverify.data.string())
