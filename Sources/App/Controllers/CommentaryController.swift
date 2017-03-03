@@ -372,6 +372,7 @@ final class CommentaryController{
         //TODO: need new document types in future
         let templatePack = templateDir + "proposedregulation/elements/"
         var filejson: [String: Any] = [:]
+        var tagsA: [[String: Any]] = [[:]]
         var tags: [[String: Any]] = [[:]]
         //        let docRenderer = LeafRenderer(viewsDir: filePack)
         let tempRenderer = LeafRenderer(viewsDir: templatePack)
@@ -384,27 +385,31 @@ final class CommentaryController{
 
             if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 filejson = fj!
+                if let thetags = filejson["rias-tags"] as? [[String: Any]] {
+                    // Finally we got the tags
+                    tagsA = thetags
+                }
                 if let thetags = filejson["reg-tags"] as? [[String: Any]] {
                     // Finally we got the tags
                     tags = thetags
                     // need to unique the tags as they will need to be unique id elements in the html
                     //TODO: warn and clean step in preflight
-                    var tagset: Set<String> = []
-                    for (index, tag) in tags.enumerated() {
-                        var theref = tag["ref"] as? String
-                        if (theref ?? "").isEmpty {
-                            theref = "t-\(index)"
-                        }
-                        if tagset.contains(theref!) {
-                            theref = theref! + "-t-\(index)"
-                            guard !tagset.contains(theref!) else {
-                                return JSON(["prepare":"regulation","status":"failed"])
-                            }
-                        }
-                        tags[index]["ref"] = theref
-                        tagsDict["reg-" + theref!] = tags[index]
-                        tagset.insert(theref!)
-                    }
+//                    var tagset: Set<String> = []
+//                    for (index, tag) in tags.enumerated() {
+//                        var theref = tag["ref"] as? String
+//                        if (theref ?? "").isEmpty {
+//                            theref = "t-\(index)"
+//                        }
+//                        if tagset.contains(theref!) {
+//                            theref = theref! + "-t-\(index)"
+//                            guard !tagset.contains(theref!) else {
+//                                return JSON(["prepare":"regulation","status":"failed"])
+//                            }
+//                        }
+//                        tags[index]["ref"] = theref
+//                        tagsDict["reg-" + theref!] = tags[index]
+//                        tagset.insert(theref!)
+//                    }
                 }
             }
         }
@@ -484,6 +489,49 @@ final class CommentaryController{
                 guard let cref = comment.reference else { continue}
                 commentDict[cref] = comment
             }
+            if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
+                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                    var lastline: Int = 0
+
+                    substitutions["reftype"] = Node(String(describing: "ris"))
+                    for tag in tagsA {
+                        if let linenum = tag[lang.1] as? Int{
+                            guard linenum <= dataString.count else {continue}
+                            substitutions["ref"] = Node(tag["ref"] as! String)
+                            if let pmt = tag[lang.4] as? String {
+                                substitutions["prompt"] = Node(pmt)
+                            } else {
+                                substitutions["prompt"] = nil
+                            }
+                            if let comm = commentDict["ris-" + (tag["ref"] as! String)], let txt = comm.text {
+                                substitutions["emptycomment"] = false
+                                substitutions["commenttext"] = Node(txt)
+
+                            } else {
+                                substitutions["emptycomment"] = true
+                                substitutions["commenttext"] = nil
+                            }
+                            substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
+                            let insertTypehead = (tag["type"] as? String ?? "comment") + "previewlisthead-" + lang.0
+                            if let meta = try? tempRenderer.make(insertTypehead, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
+                                dataString[lastline] = templstr.appending(dataString[lastline])                            }
+                            let insertType = (tag["type"] as? String ?? "comment") + "previewlist-" + lang.0
+                            if let meta = try? tempRenderer.make(insertType, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
+                                dataString[linenum - 1] = dataString[linenum - 1].appending(templstr)
+                            }
+                            lastline = linenum
+
+                        }
+                    }
+                    dataString.removeSubrange(lastline..<dataString.count)
+                    substitutions["ref"] = nil
+                    substitutions["prompt"] = nil
+                    substitutions["commenttext"] = nil
+                    outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
+                    
+                    
+                }
+            }
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
                 if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     var lastline: Int = 0
@@ -518,6 +566,7 @@ final class CommentaryController{
 
                         }
                     }
+                    dataString.removeSubrange(lastline..<dataString.count)
                     substitutions["ref"] = nil
                     substitutions["prompt"] = nil
                     substitutions["commenttext"] = nil

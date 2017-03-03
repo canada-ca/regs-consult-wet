@@ -26,8 +26,8 @@ let commentController = CommentsController(to: drop)
 
 let commentaryController = CommentaryController(to: drop)
 
-let receiveController = ReceiveController(to: drop)
-let analyzeController = AnalyzeController(to: drop)
+//let receiveController = ReceiveController(to: drop)
+//let analyzeController = AnalyzeController(to: drop)
 
 //TODO: show last edited document?
 drop.get { req in

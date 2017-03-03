@@ -9,7 +9,7 @@
 <option value="">-- Sélectionner --</option>
 <option value="Personal views">Opinion personnelle</option>
 #loop(org-type,"org") {
-<option value="#(org.value)">#(org.text-eng)</option>
+<option value="#(org.value)">#(org.text-fra)</option>
 }
 <option value="Other">Autre</option>
 </select>

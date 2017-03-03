@@ -18,10 +18,10 @@ final class PublisherController {
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
         jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
-//        let protect = ProtectMiddleware(error:
-//            Abort.custom(status: .forbidden, message: "Not authorized.")
-//        )
-        let prepare = drop.grouped("prepare")
+        let protect = ProtectMiddleware(error:
+            Abort.custom(status: .forbidden, message: "Not authorized.")
+        )
+        let prepare = drop.grouped("prepare").grouped(protect)
 
 
         prepare.get { request in
@@ -53,10 +53,10 @@ final class PublisherController {
     }
 
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
-//        let user = try getUserFromCookie(request)
-//        guard user.admin else {
-//            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
-//        }
+        let user = try getUserFromCookie(request)
+        guard user.admin else {
+            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+        }
         guard let documentId = request.parameters["filename"]?.string else {
             throw Abort.badRequest
         }
@@ -86,10 +86,10 @@ final class PublisherController {
         }
     }
     func publishDocument(_ request: Request)throws -> ResponseRepresentable {
-//        let user = try getUserFromCookie(request)
-//        guard user.admin else {
-//            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
-//        }
+        let user = try getUserFromCookie(request)
+        guard user.admin else {
+            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+        }
 
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -125,23 +125,6 @@ final class PublisherController {
                 if let thetags = filejson["reg-tags"] as? [[String: Any]] {
                     // Finally we got the tags
                     tags = thetags
-//                    // need to unique the tags as they will need to be unique id elements in the html
-//                    //TODO: warn and clean step in preflight
-//                    var tagset: Set<String> = []
-//                    for (index, tag) in tags.enumerated() {
-//                        var theref = tag["ref"] as? String
-//                        if (theref ?? "").isEmpty {
-//                            theref = "t-\(index)"
-//                        }
-//                        if tagset.contains(theref!) {
-//                            theref = theref! + "-t-\(index)"
-//                            guard !tagset.contains(theref!) else {
-//                                throw Abort.custom(status: .conflict, message: "duplicate reference tags")
-//                            }
-//                        }
-//                        tags[index]["ref"] = theref
-//                        tagset.insert(theref!)
-//                    }
                 }
             }
         }
