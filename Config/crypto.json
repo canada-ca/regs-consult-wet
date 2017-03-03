@@ -9,8 +9,12 @@
         "iv": "password"
     },
     "jwtcommentary": {
-
+        "secret": "secret"        
+    },
+    "jwtuser": {
         "secret": "secret"
-        
+    },
+    "adminuser": {
+        "user": "admin"
     }
 }

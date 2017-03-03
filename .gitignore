@@ -5,4 +5,7 @@ xcuserdata
 Config/secrets
 node_modules
 Public/dist
+FilePacks/*
+!FilePacks/2012-129-radiopharma
+
 

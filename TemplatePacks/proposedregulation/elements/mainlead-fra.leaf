@@ -1,7 +1,2 @@
-            <h1 id="commentsummary" data-documentid="#(document-id)">#(title)</h1>
-            <div > <a id="cont"></a>
-                <h2>État actuel : ouvert</h2>
-                <p>Publié et ouvert au lecteur le October 15, 2016 </p>
-                <p>Nombre de jours pour les commentaires: 30 journées (Jusqu'au 14 novembre 2016).</p>
-                
-            </div>
+<div id="commentsummary" data-documentid="#(document-id)">
+<a name="cont" id="cont"></a>

@@ -18,7 +18,7 @@ final class ReceiveController{
         case fullText
         case onlyComments
     }
-    static let cookieComment = "consult-comment"
+    
     init(to drop: Droplet) {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
@@ -40,7 +40,7 @@ final class ReceiveController{
         guard documentdata != nil else {return Response(redirect: "/receive/documents/")}  //go to list of all documents if not found
 
          return try    pubDrop.view.make("receive", [
-            "lang-eng": true,
+            "langeng": true,
             "signon": true,
             "signedon": true,
             "title": "Receive commentaries"

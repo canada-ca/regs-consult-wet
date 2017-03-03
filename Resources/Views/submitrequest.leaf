@@ -1,1 +1,33 @@
-<a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/summary/">Yes</a>
+#if(langfra) {
+#if(missingselection) {<p class="bg-warning">Avant de soumettre vos commentaires, veuillez choisir la perspective qui vous représente le mieux.</p>}
+##else() {
+#if(ready) {
+#if(emailoption) {
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Confirmer pour soumettre</button>
+}
+##else() {
+<p class="bg-info">L’adresse électronique que vous avez inscrite n’est pas valide. Nous ne serons pas en mesure de communiquer avec vous.</p>
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Ok soumettre tout de même.</button>
+}
+}
+##else() {
+<p class="bg-warning">Avez-vous pris le temps d’entrer vos commentaires? Cliquer sur le bouton soumettre de nouveau dans quelques minutes.</p>
+}
+}
+} ##else() {
+#if(missingselection) {<p class="bg-warning">Select the point of view you best represent before you submit.</p>}
+##else() {
+#if(ready) {
+#if(emailoption) {
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Confirm submit</button>
+}
+##else() {
+<p class="bg-info">You did not supply a valid email address. We will not be able to get in touch with you for any reason.</p>
+<button  class="btn btn-lg btn-primary mrgn-rght-md comment-submit-control" data-command="verify" "type="button" >Ok submit anyway</button>
+}
+}
+ ##else() {
+<p class="bg-warning">Did you take the time to enter your comments? Try the submit button again in a few minutes.</p>
+}
+}
+}

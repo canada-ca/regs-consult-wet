@@ -24,10 +24,11 @@
 </div>
 <div class="form-group">
 <label for="commentator-email"><span class="field-name">Your email address</span></label>
+<p>Provide your email to allow communications about your comments.</p>
 <input class="form-control commentator" id="commentator-email"  type="email" />
 </div>
 <p><a href="#()right-panel-version" aria-controls="right-panel-version" class="overlay-lnk" role="button">Your privacy</a></p>
-<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:30%;top:30%;">
+<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:10%;">
 <header class="modal-header">
 <h2 class="modal-title">Your privacy</h2>
 </header>
@@ -46,7 +47,7 @@ information bank
 </div>
 </section>
 
-<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:60%;top:30%;">
+<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:20%;">
 <header class="modal-header">
 <h2 class="modal-title">Submit Verification</h2>
 </header>
@@ -61,7 +62,7 @@ information bank
 <ul class="list-unstyled lst-spcd">
 <li>
 <p>Highlighted comment boxes are provided in the Regulatory Impact Analysis Statement and in the Proposed Regulatory text below.</p>
-<p> <a href="#()reg">Skip to first comment box</a></p>
+<p> <a href="#()ris-10">Skip to first comment box</a></p>
 </li>
 <li>
 <ul class="list-inline lst-spcd">
@@ -69,7 +70,7 @@ information bank
 <a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/summary/">View summary</a>
 </li>
 <li>
-<button id="comment-submit-button" class="btn btn-lg btn-default mrgn-rght-md" type="button" >Submit your comments</button>
+<button id="comment-submit-button" class="btn btn-lg btn-default mrgn-rght-md comment-submit-control" data-command="request" type="button" >Submit your comments</button>
 </li>
 </ul>
 </li>

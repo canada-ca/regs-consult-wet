@@ -1,4 +1,4 @@
-<div class="previewcomment panel panel-default" id="#(reftype)-#(ref)">
+<div class="previewcomment panel panel-default" id="#(reftype)-#(lineid)" data-ref="#(reftype)-#(ref)">
 <div class="panel-body">
 <p>#(commenttext)</p>
 </div>

@@ -24,10 +24,11 @@
 </div>
 <div class="form-group">
 <label for="commentator-email"><span class="field-name">Votre adresse courriel</span></label>
+<p>Veuillez fournir votre courriel pour permettre des communications concernant vos commentaires.</p>
 <input class="form-control commentator" id="commentator-email"  type="email" />
 </div>
 <p><a href="#()right-panel-version" aria-controls="right-panel-version" class="overlay-lnk" role="button">Confidentialité</a></p>
-<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:30%;">
+<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:10%;">
 <header class="modal-header">
 <h2 class="modal-title">Confidentialité</h2>
 </header>
@@ -44,22 +45,22 @@
 </div>
 </section>
 
-<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:60%;top:30%;">
+<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:20%;">
 <header class="modal-header">
-<h2 class="modal-title">Submit Verification</h2>
+<h2 class="modal-title">Vérification de la soumission</h2>
 </header>
 <div id="submit-panel-content" class="modal-body">
-<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Yes Submit</button>
+<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Confirmer pour soumettre</button>
 </div>
 <div class="modal-body">
-<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Close</button>
+<button class="btn btn-primary" type="button" onClick="$( '.wb-overlay' ).trigger( 'close.wb-overlay' );">Fermer</button>
 </div>
 </section>
 
 <ul class="list-unstyled lst-spcd">
 <li>
 <p>Les cases de commentaires en surbrillance sont intégrées au Résumé de l’étude d’impact de la réglementation et au texte réglementaire proposé ci-dessous.</p>
-<p> <a href="#()reg">Passer à la première case de commentaires</a></p>
+<p> <a href="#()ris-10">Passer à la première case de commentaires</a></p>
 </li>
 <li>
 <ul class="list-inline lst-spcd">
@@ -67,7 +68,7 @@
 <a id="comment-summary-button" class="btn btn-lg btn-default mrgn-rght-md" href="/documents/#(document-id)/commentaries/summary/">Voir le résumé</a>
 </li>
 <li>
-<button id="comment-submit-button" class="btn btn-lg btn-default mrgn-rght-md" type="button" >Soumettre vos commentaires</button>
+<button id="comment-submit-button" class="btn btn-lg btn-default mrgn-rght-md comment-submit-control" data-command="request" type="button" >Envoi des commentaires</button>
 </ul>
 </li>
 </ul>

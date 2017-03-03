@@ -19,6 +19,8 @@ let package = Package(
         "Public",
         "Resources",
         "Tests",
+        "FilePacks",
+        "TemplatePacks",
     ]
 )
 

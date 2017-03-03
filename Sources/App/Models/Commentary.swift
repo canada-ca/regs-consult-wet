@@ -10,39 +10,42 @@ struct Email: ValidationSuite, Validatable {
         try Vapor.Email.validate(input: value.value)
     }
 }
+struct CommentaryConstants {
+    static let id = "id"
+    static let documentId = "document_id"
+    static let document = "document"
+    static let name = "name"
+    static let email = "email"
+    static let represents = "represents"
+    static let organization = "organization"
+    static let createddate = "createddate"
+    static let submitteddate = "submitteddate"
+    static let verification = "verification"
+    static let submitted = "submitted"
+    static let acknowledgeddate = "acknowledgeddate"
+    static let status = "status"
+}
+
+struct CommentaryStatus {
+    static let new = "new"
+    static let attemptedsubmit = "attemptedsubmit"
+    static let submitted = "submitted"
+    static let notuseful = "notuseful"
+    static let abuse = "abuse"
+
+}
+
+struct CommentarySubmitStatus {
+    static let submitted = "submitted"
+
+    static let missinginfo = "missing"
+    static let ready = "ready"
+
+}
+
 
 struct Commentary: Model {
-    struct Constants {
-        static let id = "id"
-        static let documentId = "document_id"
-        static let document = "document"
-        static let name = "name"
-        static let email = "email"
-        static let represents = "represents"
-        static let organization = "organization"
-        static let createddate = "createddate"
-        static let submitteddate = "submitteddate"
-        static let submitted = "submitted"
-        static let acknowledgeddate = "acknowledgeddate"
-        static let status = "status"
-    }
-
-    struct Status {
-        static let new = "new"
-        
-        static let notuseful = "notuseful"
-        static let abuse = "abuse"
-        
-    }
-
-    struct SubmitStatus {
-        static let submitted = "submitted"
-
-        static let missinginfo = "missing"
-        static let ready = "ready"
-
-    }
-    var id: Node?
+       var id: Node?
     var document: Node?
     var name: String?
     var email: Email?
@@ -50,6 +53,7 @@ struct Commentary: Model {
     var organization: String?
     var createddate: Date?
     var submitteddate: Date?
+    var verification: Bool
     var submitted: Bool
     var acknowledgeddate: Date?
     var status: String?
@@ -64,7 +68,7 @@ struct Commentary: Model {
     // MARK: NodeConvertible
 
            init(node: Node, in context: Context) throws {
-            if let suggestedId = node[Constants.id]?.uint {
+            if let suggestedId = node[CommentaryConstants.id]?.uint {
                 if suggestedId < UInt(UInt32.max) &&  suggestedId != 0{
                     id = Node(suggestedId)
                 } else {
@@ -73,18 +77,18 @@ struct Commentary: Model {
             } else {
                 id = Node(UniqueID32()) //conflict overwrite currently on caller
             }
-            document = try node.extract(Constants.documentId)
-            name = node[Constants.name]?.string
-            if let em = node[Constants.email]?.string {
+            document = try node.extract(CommentaryConstants.documentId)
+            name = node[CommentaryConstants.name]?.string
+            if let em = node[CommentaryConstants.email]?.string {
                 email = Email(value: em)
             }
 
-            represents = node[Constants.represents]?.string
-            organization = node[Constants.organization]?.string
-            if let unix = node[Constants.createddate]?.double {
+            represents = node[CommentaryConstants.represents]?.string
+            organization = node[CommentaryConstants.organization]?.string
+            if let unix = node[CommentaryConstants.createddate]?.double {
                 // allow unix timestamps (easy to send this format from Paw)
                 createddate = Date(timeIntervalSince1970: unix)
-            } else if let raw = node[Constants.createddate]?.string {
+            } else if let raw = node[CommentaryConstants.createddate]?.string {
                 // if it's a string we assume it's in mysql date format
                 // this could be expanded to support many formats
                 guard let date = dateFormatter.date(from: raw) else {
@@ -96,10 +100,10 @@ struct Commentary: Model {
                 createddate = Date()  // now
             }
             
-            if let unix = node[Constants.submitteddate]?.double {
+            if let unix = node[CommentaryConstants.submitteddate]?.double {
                 // allow unix timestamps (easy to send this format from Paw)
                 submitteddate = Date(timeIntervalSince1970: unix)
-            } else if let raw = node[Constants.submitteddate]?.string {
+            } else if let raw = node[CommentaryConstants.submitteddate]?.string {
                 // if it's a string we assume it's in mysql date format
                 // this could be expanded to support many formats
                 guard let date = dateFormatter.date(from: raw) else {
@@ -110,10 +114,10 @@ struct Commentary: Model {
             } else {
                 // leave as is
             }
-            if let unix = node[Constants.acknowledgeddate]?.double {
+            if let unix = node[CommentaryConstants.acknowledgeddate]?.double {
                 // allow unix timestamps (easy to send this format from Paw)
                 acknowledgeddate = Date(timeIntervalSince1970: unix)
-            } else if let raw = node[Constants.acknowledgeddate]?.string {
+            } else if let raw = node[CommentaryConstants.acknowledgeddate]?.string {
                 // if it's a string we assume it's in mysql date format
                 // this could be expanded to support many formats
                 guard let date = dateFormatter.date(from: raw) else {
@@ -124,8 +128,9 @@ struct Commentary: Model {
             } else {
                 // leave as is
             }
-            submitted = node[Constants.submitted]?.bool ?? false
-            status = node[Constants.status]?.string ?? Status.new
+            verification = node[CommentaryConstants.verification]?.bool ?? false
+            submitted = node[CommentaryConstants.submitted]?.bool ?? false
+            status = node[CommentaryConstants.status]?.string ?? CommentaryStatus.new
         }
     // MARK: Merge
 
@@ -139,6 +144,7 @@ struct Commentary: Model {
             organization = updates.organization ?? organization
             createddate = updates.createddate ?? createddate
             submitteddate = updates.submitteddate ?? submitteddate
+            verification = updates.verification
             submitted = updates.submitted
             acknowledgeddate = updates.acknowledgeddate ?? acknowledgeddate
             status = updates.status ?? status
@@ -147,11 +153,11 @@ struct Commentary: Model {
 
     func submitReadiness() -> String? {
         if submitted {
-            return SubmitStatus.submitted
-        } else if (represents?.isEmpty)! {
-            return SubmitStatus.missinginfo
-        } else if createddate != nil && ((createddate?.timeIntervalSinceNow)! < TimeInterval(-180.0)) {
-            return SubmitStatus.ready
+            return CommentarySubmitStatus.submitted
+        } else if (represents ?? "").isEmpty {
+            return CommentarySubmitStatus.missinginfo
+        } else if createddate != nil && ((createddate?.timeIntervalSinceNow)! < TimeInterval(-30.0)) {
+            return CommentarySubmitStatus.ready
         }
         return nil
     }
@@ -172,17 +178,18 @@ extension Commentary: NodeRepresentable {
         // database defaults to false
         return try Node.init(node:
             [
-                Constants.id: id,
-                Constants.documentId: document,
-                Constants.name: name,
-                Constants.email: email == nil ? nil : email!.value,
-                Constants.represents: represents,
-                Constants.organization: organization,
-                Constants.createddate: createddate == nil ? nil : createddate!.timeIntervalSince1970,
-                Constants.submitteddate: submitteddate == nil ? nil : submitteddate!.timeIntervalSince1970,
-                Constants.submitted: submitted,
-                Constants.acknowledgeddate: acknowledgeddate == nil ? nil : acknowledgeddate!.timeIntervalSince1970,
-                Constants.status: status
+                CommentaryConstants.id: id,
+                CommentaryConstants.documentId: document,
+                CommentaryConstants.name: name,
+                CommentaryConstants.email: email == nil ? nil : email!.value,
+                CommentaryConstants.represents: represents,
+                CommentaryConstants.organization: organization,
+                CommentaryConstants.createddate: createddate == nil ? nil : createddate!.timeIntervalSince1970,
+                CommentaryConstants.submitteddate: submitteddate == nil ? nil : submitteddate!.timeIntervalSince1970,
+                CommentaryConstants.verification: verification,
+                CommentaryConstants.submitted: submitted,
+                CommentaryConstants.acknowledgeddate: acknowledgeddate == nil ? nil : acknowledgeddate!.timeIntervalSince1970,
+                CommentaryConstants.status: status
 
             ]
         )
@@ -196,15 +203,16 @@ extension Commentary: Preparation {
         try database.create(entity) { commentary in  //3hrs debug to find MySQL need 's' added to commentary not commentaries
             commentary.id()
             commentary.parent(Document.self, optional: false)
-            commentary.string(Constants.name, optional: true)
-            commentary.string(Constants.email, optional: true)
-            commentary.string(Constants.represents, optional: true)
-            commentary.string(Constants.organization, optional: true)
-            commentary.double(Constants.createddate, optional: true)
-            commentary.double(Constants.submitteddate, optional: true)
-            commentary.bool(Constants.submitted)
-            commentary.double(Constants.acknowledgeddate, optional: true)
-            commentary.string(Constants.status, optional: true)
+            commentary.string(CommentaryConstants.name, optional: true)
+            commentary.string(CommentaryConstants.email, optional: true)
+            commentary.string(CommentaryConstants.represents, optional: true)
+            commentary.string(CommentaryConstants.organization, optional: true)
+            commentary.double(CommentaryConstants.createddate, optional: true)
+            commentary.double(CommentaryConstants.submitteddate, optional: true)
+            commentary.bool(CommentaryConstants.verification)
+            commentary.bool(CommentaryConstants.submitted)
+            commentary.double(CommentaryConstants.acknowledgeddate, optional: true)
+            commentary.string(CommentaryConstants.status, optional: true)
 
         }
     }

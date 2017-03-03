@@ -3,7 +3,7 @@
  * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
  * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
  */
-$(document).ready(
+;$(document).ready(
 
     function() {
         "use strict";
@@ -40,6 +40,41 @@ $(document).ready(
                 $(id).removeClass( "btn-default btn-primary btn-success" ).addClass( cls);
 
             }
+            var interfaceUpdate = function (data){
+                var commty = data["commentary"]
+                if (typeof  commty != "undefined") {
+                    if (typeof  commty["name"] != "undefined") {
+                        $("#commentator-name").val(commty["name"])
+                    }
+                    if (typeof  commty["organization"] != "undefined") {
+                        $("#commentator-org").val(commty["organization"])
+                    }
+                    if (typeof  commty["email"] != "undefined") {
+                        $("#commentator-email").val(commty["email"])
+                    }
+                    if (typeof  commty["represents"] != "undefined") {
+                        $("#commentator-identity").val(commty["represents"])
+                    }
+                    if (typeof  commty["submitstatus"] != "undefined") {
+                        switch (commty["submitstatus"]) {
+                            case "ready":
+                                buttonHighlight("#comment-submit-button", "btn-primary");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-primary");
+                                break;
+                            case "submitted":
+                                buttonHighlight("#comment-submit-button", "btn-success");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-success");
+                                $("#comment-submit-button").text(langfrag.submitted);
+                                $("#comment-submit-buttonalt").text(langfrag.submitted);
+                                break;
+                            default:
+                                buttonHighlight("#comment-submit-button", "btn-default");
+                                buttonHighlight("#comment-submit-buttonalt", "btn-default");
+                        }
+                    }
+
+                }
+            }
             var getcommentary = function (tooltype){
                 var loadCommentArea = function (selector, text){
 
@@ -65,47 +100,20 @@ $(document).ready(
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){
-                    var comms = data["comments"]
+                    var comms = data["comments"];
                     if (typeof  comms != "undefined") {
                         comms.forEach(function(comment){
                             loadCommentArea("#" + comment["ref"],comment["text"]);
                         });
                         buttonHighlight("#comment-summary-button", "btn-primary");
                         buttonHighlight("#comment-summary-buttonalt", "btn-primary");
-                    };
-                    var commty = data["commentary"]
-                    if (typeof  commty != "undefined") {
-                        if (typeof  commty["name"] != "undefined") {
-                            $("#commentator-name").val(commty["name"])
-                        }
-                        if (typeof  commty["organization"] != "undefined") {
-                            $("#commentator-org").val(commty["organization"])
-                        }
-                        if (typeof  commty["email"] != "undefined") {
-                            $("#commentator-email").val(commty["email"])
-                        }
-                        if (typeof  commty["represents"] != "undefined") {
-                            $("#commentator-identity").val(commty["represents"])
-                        }
-                        if (typeof  commty["submitstatus"] != "undefined") {
-                            switch (commty["submitstatus"]) {
-                                case "ready":
-                                    buttonHighlight("#comment-submit-button", "btn-primary");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                    break;
-                                case "submitted":
-                                    buttonHighlight("#comment-submit-button", "btn-success");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                    $("#comment-submit-button").text(langfrag.submitted);
-                                    $("#comment-submit-buttonalt").text(langfrag.submitted);
-                                    break;
-                                default:
-                                    buttonHighlight("#comment-submit-button", "btn-default");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                            }
-                        }
-
                     }
+                    var overlay = data["overlayhtml"];
+                    if (typeof  overlay != "undefined") {
+                        $("#submit-panel-content").html(overlay);
+                        $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                    }
+                    interfaceUpdate(data);
                 }
                     });
                 
@@ -140,6 +148,7 @@ $(document).ready(
                 // Get some values from elements on the comment:
                 var det = $(e.target).closest("details");
                 var refid = det.attr("id");
+                var reftext = det.attr("data-ref");
                 var commenttext = det.find("textarea").val();
                 var docid =  $("#commentsummary").attr("data-documentid");
                 var url = "/documents/" + docid + "/comments/";
@@ -149,16 +158,28 @@ $(document).ready(
                 var posting = $.ajax({
                 type: "POST",
                 url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                     // The key needs to match your method's input parameter (case-sensitive).
                 data: JSON.stringify({ "comments":[{
                     "ref": refid,
+                    "reftext": reftext,
                     "text": commenttext
                     }] }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(data){det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-check text-success" aria-hidden="true"></i>  ' + langfrag.saved + '</div>');
+                success: function(data){
+                    det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-check text-success" aria-hidden="true"></i>  ' + langfrag.saved + '</div>');
                     buttonHighlight("#comment-summary-button", "btn-primary");
                     buttonHighlight("#comment-summary-buttonalt", "btn-primary");
+                    interfaceUpdate(data);
+                    var overlay = data["overlayhtml"];
+                    if (typeof  overlay != "undefined") {
+                        $("#submit-panel-content").html(overlay);
+                        $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                    }
+
                 },
                 error: function(jqx,tstatus, errorthrown) {
                     det.find("div.savestatus").replaceWith('<div class="savestatus"><i class="fa fa-2x fa-question-circle text-warning" aria-hidden="true"></i>  ' + langfrag.failedsave + ' - ' + errorthrown + ', ' + langfrag.tryagain + '</div>')
@@ -181,6 +202,9 @@ $(document).ready(
                 var posting = $.ajax({
                     type: "POST",
                     url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                         // The key needs to match your method's input parameter (case-sensitive).
                     data: JSON.stringify({ "commentary":{
                         "represents": commidentity,
@@ -191,37 +215,13 @@ $(document).ready(
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
-                        var commty = data["commentary"]
-                        if (typeof  commty != "undefined") {
-                            if (typeof  commty["name"] != "undefined") {
-                                $("#commentator-name").val(commty["name"])
-                            }
-                            if (typeof  commty["organization"] != "undefined") {
-                                $("#commentator-org").val(commty["organization"])
-                            }
-                            if (typeof  commty["email"] != "undefined") {
-                                $("#commentator-email").val(commty["email"])
-                            }
-                            if (typeof  commty["represents"] != "undefined") {
-                                $("#commentator-identity").val(commty["represents"])
-                            }
-                            if (typeof  commty["submitstatus"] != "undefined") {
-                                switch (commty["submitstatus"]) {
-                                    case "ready":
-                                        buttonHighlight("#comment-submit-button", "btn-primary");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                        break;
-                                    case "submitted":
-                                        buttonHighlight("#comment-submit-button", "btn-success");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                        break;
-                                    default:
-                                        buttonHighlight("#comment-submit-button", "btn-default");
-                                        buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                                }
-                            }
-                            
+                        interfaceUpdate(data);
+                        var overlay = data["overlayhtml"];
+                        if (typeof  overlay != "undefined") {
+                            $("#submit-panel-content").html(overlay);
+                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
                         }
+
 
                     },
                     error: function(errMsg) {
@@ -232,59 +232,37 @@ $(document).ready(
             }
             var postsubmit = function (e){
                 // Get some values from elements on the identity:
-
-                
+                e.preventDefault();
+                // Get some values from elements on the comment:
+                var det = $(e.target).attr("data-command");
+                if (typeof  det == "undefined") {
+                    det = "request";
+                }
 
                 var docid =  $("#commentsummary").attr("data-documentid");
-                var url = "/documents/" + docid + "/commentaries/submit/request/";
+                var url = "/documents/" + docid + "/commentaries/submit/" + det + "/";
                 // Send the data using post
                 var posting = $.ajax({
                 type: "POST",
                 url: url,
+                xhrFields: {
+                withCredentials: true
+                    },
                     // The key needs to match your method's input parameter (case-sensitive).
-                data: JSON.stringify({ 
-                     }),
+//                data: JSON.stringify({ 
+//                     }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){
-                    var overlay = data["overlayhtml"]
+                    interfaceUpdate(data);
+                    var overlay = data["overlayhtml"];
                     if (typeof  overlay != "undefined") {
                         $("#submit-panel-content").html(overlay);
                         $( "#submit-panel" ).trigger( "open.wb-overlay" );
                     }
 
+                    
 
-                    var commty = data["commentary"]
-                    if (typeof  commty != "undefined") {
-                        if (typeof  commty["name"] != "undefined") {
-                            $("#commentator-name").val(commty["name"])
-                        }
-                        if (typeof  commty["organization"] != "undefined") {
-                            $("#commentator-org").val(commty["organization"])
-                        }
-                        if (typeof  commty["email"] != "undefined") {
-                            $("#commentator-email").val(commty["email"])
-                        }
-                        if (typeof  commty["represents"] != "undefined") {
-                            $("#commentator-identity").val(commty["represents"])
-                        }
-                        if (typeof  commty["submitstatus"] != "undefined") {
-                            switch (commty["submitstatus"]) {
-                                case "ready":
-                                    buttonHighlight("#comment-submit-button", "btn-primary");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-primary");
-                                    break;
-                                case "submitted":
-                                    buttonHighlight("#comment-submit-button", "btn-success");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-success");
-                                    break;
-                                default:
-                                    buttonHighlight("#comment-submit-button", "btn-default");
-                                    buttonHighlight("#comment-submit-buttonalt", "btn-default");
-                            }
-                        }
-
-                    }
 
                 },
                 error: function(errMsg) {
@@ -317,12 +295,9 @@ $(document).ready(
                 var doclink =  $("#commentsummary").attr("data-documentlink");
                 window.location = doclink + "?#" + encodeURIComponent(sel)
             });
-            $("#comment-submit-button").on("click", function(event) {
-                postsubmit(event);
-            });
-            $("#comment-submit-buttonalt").on("click", function(event) {
-                postsubmit(event);
-            });
+
+            $(add_button).on("click", ".comment-submit-control", postsubmit);
+            
             if ( $('#commentpreview').length == 0) {
                 getcommentary();
             }

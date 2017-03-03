@@ -1,7 +1,7 @@
 #extend("toolkit")
 
 #export("body") {
-<h1 id="wb-cont" property="name">#if(lang-fra) {Analyser les commentaires} ##else() {Analyze Commentaries}</h1>
+<h1 id="wb-cont" property="name">#if(langfra) {Analyser les commentaires} ##else() {Analyze Commentaries}</h1>
 
 #embed("documenttable")
 #embed("commentariestable")

@@ -69,11 +69,13 @@ input.commentator  {
 h5.comment-edit {
     color: #0535d2;
     background-color: lightyellow  !important;
-    text-decoration: underline
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 h5.comment-empty  {
     background-color: lightblue !important;
-    text-decoration: underline
+    text-decoration: underline;
+    cursor: pointer;
 }
 }
