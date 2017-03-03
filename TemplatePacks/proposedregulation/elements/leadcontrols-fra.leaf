@@ -28,7 +28,7 @@
 <input class="form-control commentator" id="commentator-email"  type="email" />
 </div>
 <p><a href="#()right-panel-version" aria-controls="right-panel-version" class="overlay-lnk" role="button">Confidentialité</a></p>
-<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:30%;">
+<section id="right-panel-version" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:10%;">
 <header class="modal-header">
 <h2 class="modal-title">Confidentialité</h2>
 </header>
@@ -45,7 +45,7 @@
 </div>
 </section>
 
-<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:60%;top:30%;">
+<section id="submit-panel" class="wb-overlay modal-content overlay-def wb-panel-r" style="max-width:80%;top:20%;">
 <header class="modal-header">
 <h2 class="modal-title">Vérification de la soumission</h2>
 </header>
@@ -60,7 +60,7 @@
 <ul class="list-unstyled lst-spcd">
 <li>
 <p>Les cases de commentaires en surbrillance sont intégrées au Résumé de l’étude d’impact de la réglementation et au texte réglementaire proposé ci-dessous.</p>
-<p> <a href="#()reg">Passer à la première case de commentaires</a></p>
+<p> <a href="#()ris-10">Passer à la première case de commentaires</a></p>
 </li>
 <li>
 <ul class="list-inline lst-spcd">
