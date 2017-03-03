@@ -53,10 +53,10 @@ final class PublisherController {
     }
 
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
-        let user = try getUserFromCookie(request)
-        guard user.admin else {
-            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
-        }
+//        let user = try getUserFromCookie(request)
+//        guard user.admin else {
+//            throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+//        }
         guard let documentId = request.parameters["filename"]?.string else {
             throw Abort.badRequest
         }
@@ -65,16 +65,17 @@ final class PublisherController {
 
         }
         do  {
-            let fileJson = try JSON(serialized: data.makeBytes())
-            var adict: [String: Node] = [Document.Constants.id: Base62ToNode(string: fileJson["document-id"]?.string)]
-            if let check = fileJson["known-as"], let checkstr = check.string { adict[Document.Constants.knownas] = Node(checkstr)}
+            let fj = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
+//            let fileJson = try JSON(serialized: data.makeBytes())
+            var adict: [String: Node] = [Document.Constants.id: Base62ToNode(string: fj["document-id"] as? String)]
+            if let check = fj["known-as"] as? String { adict[Document.Constants.knownas] = Node(check)}
             adict[Document.Constants.filepack] = Node(documentId)
-            if let check = fileJson["publishing-ref"], let checkstr = check.string { adict[Document.Constants.publishingref] = Node(checkstr)}
-            if let check = fileJson["publishing-date"], let checkstr = check.string { adict[Document.Constants.publishingdate] = Node(checkstr)}
-            if let check = fileJson["publishing-folder-path"], let checkstr = check.string { adict[Document.Constants.publishingpath] = Node(checkstr)}
-            if let check = fileJson["publishing-pageprefix"], let checkstr = check.string { adict[Document.Constants.publishingpageprefix] = Node(checkstr)}
+            if let check = fj["publishing-ref"] as? String { adict[Document.Constants.publishingref] = Node(check)}
+            if let check = fj["publishing-date"] as? String { adict[Document.Constants.publishingdate] = Node(check)}
+            if let check = fj["publishing-folder-path"] as? String { adict[Document.Constants.publishingpath] = Node(check)}
+            if let check = fj["publishing-pageprefix"] as? String { adict[Document.Constants.publishingpageprefix] = Node(check)}
 
-            adict[Document.Constants.archived] = Node(fileJson["archived"]?.bool ?? false)
+            adict[Document.Constants.archived] = Node(fj["archived"] as? Bool ?? false)
 
             var newDoc = try Document(node: adict, in: [])
             try newDoc.save()

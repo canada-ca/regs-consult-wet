@@ -82,19 +82,22 @@ final class CommentaryController{
         }
         var response: [String: Node] = [:]
         if commentary != nil {
-        
-            var results: [Node] = []
-            if let cid = commentary?.id{
-                let comments = try Comment.query().filter("commentary_id", cid).all()
-                //make Json array of comments with Node bits
-                for comment in comments {
-                    if let thisResult = comment.nodeForJSON() {
-                        results.append(thisResult)
+            if documentdata?.id == commentary!.document {  //could have switched documents
+                var results: [Node] = []
+                if let cid = commentary?.id{
+                    let comments = try Comment.query().filter("commentary_id", cid).all()
+                    //make Json array of comments with Node bits
+                    for comment in comments {
+                        if let thisResult = comment.nodeForJSON() {
+                            results.append(thisResult)
+                        }
                     }
                 }
+                response["comments"] = Node(results)
+                response["commentary"] = commentary!.nodeForJSON()
+            } else {
+                commentary = nil //will zap cookie
             }
-            response["comments"] = Node(results)
-            response["commentary"] = commentary!.nodeForJSON()
         }
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
