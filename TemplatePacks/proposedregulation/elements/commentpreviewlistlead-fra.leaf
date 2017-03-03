@@ -1,8 +1,5 @@
 <div>
-<details>
-<summary>Pour imprimer la page :</summary>
-Il faut utiliser la commande « Imprimer » du menu de votre navigateur. Cela vous donnera accès à plus d’options, y compris une version en format PDF.
-</details>
+<p>Il faut utiliser la commande « Imprimer » du menu de votre navigateur. Cela vous donnera accès à plus d’options, y compris une version en format PDF.</p>
 </div>
 <div class="row">
 <div class="col-md-6">
