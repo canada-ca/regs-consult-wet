@@ -523,6 +523,7 @@ final class CommentaryController{
 
                         }
                     }
+                    dataString.removeSubrange(lastline..<dataString.count)
                     substitutions["ref"] = nil
                     substitutions["prompt"] = nil
                     substitutions["commenttext"] = nil
@@ -565,6 +566,7 @@ final class CommentaryController{
 
                         }
                     }
+                    dataString.removeSubrange(lastline..<dataString.count)
                     substitutions["ref"] = nil
                     substitutions["prompt"] = nil
                     substitutions["commenttext"] = nil
