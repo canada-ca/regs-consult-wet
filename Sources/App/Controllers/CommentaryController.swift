@@ -352,7 +352,17 @@ final class CommentaryController{
 
         guard commentary != nil else {return Response(redirect: documentdata?.publishedURL(languageStr: detectedLanguage)?.absoluteString ?? "/")}
 
+        if documentdata?.id != commentary!.document {   //could have switched documents
+            let resp = Response(status: .found)
+            resp.headers["Location"] = documentdata?.publishedURL(languageStr: detectedLanguage)?.absoluteString ?? "/"
 
+            //need to kill the cookie to do the clear
+            if  let domname = pubDrop.config["app", "appdomain"]?.string {
+                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                resp.cookies.insert(myCookie)
+            }
+            return resp
+        }
         return try buildCommentaryPreview(request, document: documentdata!, commentary: commentary!, type: .onlyComments)
     }
 
