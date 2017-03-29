@@ -40,7 +40,7 @@ func Base62ToNode(string: String?) -> Node {
 
 }
 func UniqueID32() -> UInt {
-    return UInt(URandom().uint32) //    32 bits to match INT(10) mysql id
+    return UInt(arc4random()) //    32 bits to match INT(10) mysql id
 
 }
 func languageDetect(_ request: Request) -> String {

@@ -345,7 +345,7 @@ final class CommentaryController{
                 pubDrop.console.info("looking for \(commid!)")
                 commentary = try Commentary.find(Node(commid!))
             } catch{
-                pubDrop.console.info("Did not find \(commid)")
+                pubDrop.console.info("Did not find \(String(describing: commid))")
             }
         }
 

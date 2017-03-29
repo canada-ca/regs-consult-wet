@@ -114,7 +114,10 @@ extension User: Auth.User {
             throw Abort.custom(status: .forbidden, message: "Unsupported credential type: \(type).")
         }
 
-        let user = User(username: creds.username, password: BCrypt.hash(password: creds.password))
-        return user
+        if let user = try? User(username: creds.username, password: BCrypt.digest(password: creds.password, salt: BCryptSalt(workFactor:10))) {
+            return user
+        } else {
+            throw Abort.custom(status: .forbidden, message: "digest problem")
+        }
     }
 }

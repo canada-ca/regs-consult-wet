@@ -53,7 +53,7 @@ final class CommentsController{
             do{
                 commentary = try Commentary.find(Node(commid!))
             } catch{
-                pubDrop.console.info("Did not find \(commid)")
+                pubDrop.console.info("Did not find \(String(describing: commid))")
             }
         }
         // If we did not find it then we need to make one
@@ -76,7 +76,7 @@ final class CommentsController{
             try commentary!.save()
             commid = commentary?.id?.uint
             commentJWT = nil //need to force a new jwt cookie as old commentary not valid
-            pubDrop.console.info("New Commentary \(commid)")
+            pubDrop.console.info("New Commentary \(String(describing: commid))")
 
         }
 
