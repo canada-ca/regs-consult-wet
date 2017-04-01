@@ -100,7 +100,6 @@ extension User: Auth.User {
                 throw Abort.custom(status: .networkAuthenticationRequired, message: "Invalid user name or password.")
             }
 
-
         default:
             let type = type(of: credentials)
             throw Abort.custom(status: .forbidden, message: "Unsupported credential type: \(type).")

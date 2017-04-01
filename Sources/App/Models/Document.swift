@@ -36,8 +36,8 @@ struct Document: Model {
         case idTooLarge
     }
     
-    func nodeForJSON()  -> Node? {
-        var result:[String: Node] = [:]
+    func nodeForJSON() -> Node? {
+        var result: [String: Node] = [:]
         if let nm = knownas {result["knownas"] = Node(nm)}
         if let em = id {result["id"] = Node(em)}
 
@@ -58,7 +58,7 @@ extension Document: NodeConvertible {
                 throw Error.idTooLarge
             }
         } else {
-            id = Node(UniqueID32())
+            id = Node(uniqueID32())
         }
         knownas = node[Constants.knownas]?.string
         filepack = node[Constants.filepack]?.string
@@ -66,7 +66,6 @@ extension Document: NodeConvertible {
         publishingpath = node[Constants.publishingpath]?.string
         publishingpageprefix = node[Constants.publishingpageprefix]?.string
 
-        
         if let unix = node[Constants.publishingdate]?.double {
             // allow unix timestamps (easy to send this format from Paw)
             publishingdate = Date(timeIntervalSince1970: unix)
@@ -142,7 +141,8 @@ extension Document {
     }
     func publishedURL (languageStr: String?) -> URL? {
         let name = drop.config["app", "hosturl"]?.string ?? "/"
-        return URL(string: (publishingpath ?? "") + (publishingpageprefix ?? "") + ((languageStr?.hasPrefix("fr"))! ? "-fra.html" : "-eng.html"), relativeTo: URL(string: name))
+        return URL(string: (publishingpath ?? "") + (publishingpageprefix ?? "")
+            + ((languageStr?.hasPrefix("fr"))! ? "-fra.html" : "-eng.html"), relativeTo: URL(string: name))
     }
 }
 // MARK: Re-usable Date Formatter

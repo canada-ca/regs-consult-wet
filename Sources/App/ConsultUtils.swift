@@ -18,12 +18,11 @@ struct ConsultConstants {
     static let cookieUser = "consult-user"
     }
 
-
-func UniqueIDBase62String() -> String {
-        return encode(integer: UInt64(UniqueID32())) //    32 bits to match INT(10) mysql id
+func uniqueIDBase62String() -> String {
+        return encode(integer: UInt64(uniqueID32())) //    32 bits to match INT(10) mysql id
 
 }
-func Base62ToID(string: String) -> UInt {
+func base62ToID(string: String) -> UInt {
     let intg = decode(string: string)
     let max = UInt64(UInt32.max)
     if intg < max {
@@ -32,14 +31,14 @@ func Base62ToID(string: String) -> UInt {
     return 0 //    32 bits to match INT(10) mysql id
 
 }
-func Base62ToNode(string: String?) -> Node {
+func base62ToNode(string: String?) -> Node {
     if (string ?? "").isEmpty {
         return Node(UInt(0))
     }
-    return Node(Base62ToID(string:  string!)) //    32 bits to match INT(10) mysql id
+    return Node(base62ToID(string:  string!)) //    32 bits to match INT(10) mysql id
 
 }
-func UniqueID32() -> UInt {
+func uniqueID32() -> UInt {
     return UInt(arc4random()) //    32 bits to match INT(10) mysql id
 
 }
@@ -51,6 +50,6 @@ func languageDetect(_ request: Request) -> String {
     }
     return "eng"
 }
-func addAdminUser (){
+func addAdminUser () {
     
 }

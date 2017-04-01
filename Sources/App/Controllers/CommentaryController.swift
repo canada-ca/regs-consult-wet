@@ -9,7 +9,7 @@ import Cookies
 import FluentMySQL
 import Hedwig
 
-enum mailStyle {
+enum MailStyle {
     case json
     case jsonbackup
     case html
@@ -26,7 +26,7 @@ final class CommentaryController{
         case fullText
         case onlyComments
     }
-    
+
     init(to drop: Droplet) {
         hedwig = Hedwig(
             hostName: drop.config["mail", "smtp", "hostName"]?.string ?? "example.com",
@@ -38,14 +38,14 @@ final class CommentaryController{
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
         submitRender = LeafRenderer(viewsDir: drop.viewsDir)
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
-        let previewer = drop.grouped("documents",":id","commentaries")
+        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary", "secret"]?.string ?? "secret").bytes)
+        let previewer = drop.grouped("documents",":id", "commentaries")
         previewer.get("summary", handler: commentarySummary)
 //        previewer.get("submit",":command", handler: commentarySubmit)
-        previewer.post("submit",":command", handler: commentarySubmit)
+        previewer.post("submit", ":command", handler: commentarySubmit)
 
         previewer.get( handler: commentaryLoad)
-        
+
     }
     func commentaryLoad(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
@@ -53,7 +53,7 @@ final class CommentaryController{
         }
         var commid: UInt?
         guard documentId != "undefined" else {throw Abort.custom(status: .badRequest, message: "document not specified")}
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.custom(status: .notFound, message: "document unknown")}
         var commentary: Commentary?
@@ -71,11 +71,11 @@ final class CommentaryController{
                             }
         }
         if  commid != nil {
-            do{
+            do {
                 pubDrop.console.info("looking for \(commid!)")
 
                 commentary = try Commentary.find(Node(commid!))
-            } catch{
+            } catch {
                 throw Abort.custom(status: .internalServerError, message: "commentary lookup failure")
             }
 
@@ -84,7 +84,7 @@ final class CommentaryController{
         if commentary != nil {
             if documentdata?.id == commentary!.document {  //could have switched documents
                 var results: [Node] = []
-                if let cid = commentary?.id{
+                if let cid = commentary?.id {
                     let comments = try Comment.query().filter("commentary_id", cid).all()
                     //make Json array of comments with Node bits
                     for comment in comments {
@@ -108,23 +108,23 @@ final class CommentaryController{
         if  let domname = pubDrop.config["app", "appdomain"]?.string {
             if commentary != nil {
                 if commentJWT == nil {
-                    commentJWT = try JWT(payload: Node.object(["commid":Node(commid!)]),
+                    commentJWT = try JWT(payload: Node.object(["commid": Node(commid!)]),
                                          signer: jwtSigner)
                 }
                 if let token = try commentJWT?.createToken() {
-                    let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
+                    let myCookie = Cookie(name: ConsultConstants.cookieComment, value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
                     resp.cookies.insert(myCookie)
                 }
             } else {
                 //need to kill the cookie for various reasons above
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }
         return resp
     }
 
-    func emailCommentary(_ request: Request, document: Document, commentary: Commentary, type: mailStyle) -> () {
+    func emailCommentary(_ request: Request, document: Document, commentary: Commentary, type: MailStyle) -> () {
         // You can also create attachment from raw data.
         guard let recipient = drop.config["mail", "mailto", "to"]?.string, !recipient.isEmpty else {return}
         var response: [String: Node] = [:]
@@ -132,7 +132,7 @@ final class CommentaryController{
         switch type {
         case .jsonbackup:  //send a raw json of the commentary as a disaster backup.
             var results: [Node] = []
-            if let cid = commentary.id{
+            if let cid = commentary.id {
                 if let comments = try? Comment.query().filter("commentary_id", cid).all() {
                     //make Json array of comments with Node bits
                     for comment in comments {
@@ -145,7 +145,6 @@ final class CommentaryController{
             response["comments"] = Node(results)
             response["commentary"] = commentary.nodeForJSON()
             let json = JSON(Node(response))
-
 
             let data = Data(bytes: try! json.serialize(prettyPrint: true))
             let mailjson = Attachment(
@@ -172,7 +171,6 @@ final class CommentaryController{
             return  //not implemented
         }
 
-
     }
 
     func commentarySubmit(_ request: Request)throws -> ResponseRepresentable {
@@ -184,7 +182,7 @@ final class CommentaryController{
         }
         var commid: UInt?
         guard documentId != "undefined" else {throw Abort.custom(status: .badRequest, message: "document not specified")}
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.custom(status: .notFound, message: "document unknown")}
         var commentary: Commentary?
@@ -201,7 +199,7 @@ final class CommentaryController{
 
             //need to kill the cookie to do the clear
             if  let domname = pubDrop.config["app", "appdomain"]?.string {
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
             return resp
@@ -212,16 +210,16 @@ final class CommentaryController{
                 commid = commentJWT!.payload["commid"]?.uint
             } catch {
                             }
-        } 
+        }
 
-        if  commid != nil {
-            do{
+        if commid != nil {
+            do {
                 pubDrop.console.info("looking for \(commid!)")
 
                 commentary = try Commentary.find(Node(commid!))
 //                pubDrop.console.info("found \(commentary!)")
 
-            } catch{
+            } catch {
                 throw Abort.custom(status: .internalServerError, message: "commentary lookup failure")
             }
 
@@ -239,7 +237,7 @@ final class CommentaryController{
                 stateOfCommentary["emailoption"] = true
             }
             switch command {
-                case "verify","verifyemail":
+                case "verify", "verifyemail":
                     if !(commentary!.submitted) { //prevent reversion from submit
                         commentary!.verification = command == "verify" ? false : true //true if email confirmations selected
                         commentary!.status = CommentaryStatus.attemptedsubmit //a special status to capture attempts that may not make it to full submit
@@ -264,7 +262,7 @@ final class CommentaryController{
                             responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                         }
                 }
-                case "new","clear":
+                case "new", "clear":
                     commentary = nil
                 case "request":
                     fallthrough
@@ -300,16 +298,16 @@ final class CommentaryController{
         if  let domname = pubDrop.config["app", "appdomain"]?.string {
             if commentary != nil {
                 if commentJWT == nil {
-                    commentJWT = try JWT(payload: Node.object(["commid":Node(commid!)]),
+                    commentJWT = try JWT(payload: Node.object(["commid": Node(commid!)]),
                                          signer: jwtSigner)
                 }
                 if let token = try commentJWT?.createToken() {
-                    let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
+                    let myCookie = Cookie(name: ConsultConstants.cookieComment, value: token, expires: Date() + 7 * 24 * 3600, domain: domname, httpOnly: true)
                     resp.cookies.insert(myCookie)
                 }
             } else {
                 //need to kill the cookie for various reasons above
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }
@@ -321,7 +319,7 @@ final class CommentaryController{
             throw Abort.badRequest
         }
         var commid: UInt?
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         //TODO: document not found errors
         guard documentdata != nil else {return Response(redirect: "/")}
@@ -341,14 +339,13 @@ final class CommentaryController{
         }
 
         if  commid != nil {
-            do{
+            do {
                 pubDrop.console.info("looking for \(commid!)")
                 commentary = try Commentary.find(Node(commid!))
-            } catch{
+            } catch {
                 pubDrop.console.info("Did not find \(String(describing: commid))")
             }
         }
-
 
         guard commentary != nil else {return Response(redirect: documentdata?.publishedURL(languageStr: detectedLanguage)?.absoluteString ?? "/")}
 
@@ -358,7 +355,7 @@ final class CommentaryController{
 
             //need to kill the cookie to do the clear
             if  let domname = pubDrop.config["app", "appdomain"]?.string {
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
             return resp
@@ -418,7 +415,7 @@ final class CommentaryController{
 
         let comments = try Comment.query().filter("commentary_id", commentary.id!).all()
 
-        let lang = languageDetect(request) == "fra" ? ("fra","line-fra","line-eng","fr-CA","prompt-fra") : ("eng","line-eng","line-fra","en-CA","prompt-eng")
+        let lang = languageDetect(request) == "fra" ? ("fra", "line-fra", "line-eng", "fr-CA", "prompt-fra") : ("eng", "line-eng", "line-fra", "en-CA", "prompt-eng")
 
         var tempNode: [String: Node] = fileJson.node.nodeObject ?? [:]
         tempNode[lang.1] = Node(true) //use in template to select language
@@ -432,7 +429,7 @@ final class CommentaryController{
             }
         }
         tempNode["noformend"] = Node("noformend")
-        
+
         let fnode = Node(tempNode)
         var outDocument = Data()
 
@@ -457,7 +454,7 @@ final class CommentaryController{
 
                     for comment in comments {
                         if let thisRef = comment.reference, let thisTag = tagsDict[thisRef] {
-                            if let linenum = thisTag[lang.1] as? Int{
+                            if let linenum = thisTag[lang.1] as? Int {
                                 guard linenum <= dataString.count else {continue}
                                 substitutions["ref"] = Node(thisTag["ref"] as! String) //tag["ref"] as? String
                                 if let pmt = thisTag[lang.4] as? String {
@@ -495,7 +492,7 @@ final class CommentaryController{
 
                     substitutions["reftype"] = Node(String(describing: "ris"))
                     for tag in tagsA {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
                             substitutions["ref"] = Node(tag["ref"] as! String)
                             if let pmt = tag[lang.4] as? String {
@@ -528,8 +525,6 @@ final class CommentaryController{
                     substitutions["prompt"] = nil
                     substitutions["commenttext"] = nil
                     outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
-                    
-                    
                 }
             }
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
@@ -538,7 +533,7 @@ final class CommentaryController{
 
                     substitutions["reftype"] = Node(String(describing: "reg"))
                     for tag in tags {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
                             substitutions["ref"] = Node(tag["ref"] as! String) 
                             if let pmt = tag[lang.4] as? String {
@@ -571,8 +566,6 @@ final class CommentaryController{
                     substitutions["prompt"] = nil
                     substitutions["commenttext"] = nil
                     outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
-
-
                 }
             }
 
@@ -583,8 +576,6 @@ final class CommentaryController{
         if let meta = try? tempRenderer.make("commentpreviewfoot-" + lang.0, fnode) {
             outDocument.append(Data(meta.data))
         }
-
-
         return View(data: [UInt8](outDocument))
     }
 

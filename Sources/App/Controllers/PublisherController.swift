@@ -5,7 +5,6 @@ import Vapor
 import Auth
 import Foundation
 
-
 final class PublisherController {
     let pubDrop: Droplet
     let jwtSigner: Signer
@@ -28,8 +27,8 @@ final class PublisherController {
             //TODO: list of docs
             return "document info"
         }
-        prepare.post("publish",":id", handler: publishDocument)
-        prepare.post("load",":filename", handler: loadDocument)
+        prepare.post("publish", ":id", handler: publishDocument)
+        prepare.post("load", ":filename", handler: loadDocument)
     }
 
     func getUserFromCookie(_ request: Request)throws -> User {
@@ -46,7 +45,7 @@ final class PublisherController {
                     }
                 }
             }
-        }catch {
+        } catch {
 
         }
         throw Abort.custom(status: .forbidden, message:  "Not authorized.")
@@ -64,10 +63,10 @@ final class PublisherController {
             throw Abort.custom(status: .notFound, message: "filepack.json not found.")
 
         }
-        do  {
+        do {
             let fj = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
 //            let fileJson = try JSON(serialized: data.makeBytes())
-            var adict: [String: Node] = [Document.Constants.id: Base62ToNode(string: fj["document-id"] as? String)]
+            var adict: [String: Node] = [Document.Constants.id: base62ToNode(string: fj["document-id"] as? String)]
             if let check = fj["known-as"] as? String { adict[Document.Constants.knownas] = Node(check)}
             adict[Document.Constants.filepack] = Node(documentId)
             if let check = fj["publishing-ref"] as? String { adict[Document.Constants.publishingref] = Node(check)}
@@ -80,7 +79,7 @@ final class PublisherController {
             var newDoc = try Document(node: adict, in: [])
             try newDoc.save()
 
-            return JSON(["prepare":"regulation","status":"published"])
+            return JSON(["prepare":"regulation", "status":"published"])
         } catch {
             throw Abort.custom(status: .notAcceptable, message: "filepack.json faulty.")
         }
@@ -96,13 +95,13 @@ final class PublisherController {
         }
 
         //locate document
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard let document = documentdata else {throw Abort.custom(status: .notFound, message: "document unknown")}
         
         let filePackBaseDir = filePackDir + document.filepack!
         let filePack = filePackBaseDir + "/elements/"
-        //TODO: need new document types in future
+        // TODO: need new document types in future
         let templatePack = templateDir + "proposedregulation/elements/"
 
         var filejson: [String: Any] = [:]
@@ -130,12 +129,10 @@ final class PublisherController {
         }
         guard let pagePrefix = document.publishingpageprefix  else {throw Abort.custom(status: .expectationFailed, message: "document publishing name missing")}
         var substitutions: [String:Node] = [:]
-        
-
 
         //cycle over 2 languages for now; handy tuples for loop language variation
-        for lang in [("eng","line-eng","line-fra","en-CA","prompt-eng"),
-        ("fra","line-fra","line-eng","fr-CA","prompt-fra")] {
+        for lang in [("eng", "line-eng", "line-fra", "en-CA", "prompt-eng"),
+        ("fra", "line-fra", "line-eng", "fr-CA", "prompt-fra")] {
 
             var tempNode: [String: Node] = fileJson.node.nodeObject ?? [:]
             tempNode[lang.0] = Node(true) //use in template to select language
@@ -171,7 +168,7 @@ final class PublisherController {
                 if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "ris"))
                     for tag in tagsA {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
                             substitutions["ref"] = Node(tag["ref"] as! String) //tag["ref"] as? String
                             if let pmt = tag[lang.4] as? String {
@@ -201,7 +198,7 @@ final class PublisherController {
                 if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "reg"))
                     for tag in tags {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
                             substitutions["ref"] = Node(tag["ref"] as! String) //tag["ref"] as? String
                             if let pmt = tag[lang.4] as? String {
@@ -231,21 +228,20 @@ final class PublisherController {
             do {
                 guard let docpath = document.publishingpath  else {throw Abort.custom(status: .expectationFailed, message: "document publishing path missing")}
                 let  dirPath = pubDrop.workDir + "Public/" + docpath
-                try fm.createDirectory(atPath: dirPath , withIntermediateDirectories: true, attributes: nil)
+                try fm.createDirectory(atPath: dirPath, withIntermediateDirectories: true, attributes: nil)
                 let filePath = dirPath + pagePrefix + "-" + lang.0 + ".html"
-                do{
+                do {
                     try fm.removeItem(atPath: filePath)
                 } catch {
-                    
+
                 }
                 fm.createFile(atPath: filePath, contents: outDocument, attributes: nil)
-                
-            } catch{
+
+            } catch {
                 throw Abort.custom(status: .methodNotAllowed, message: "failure saving published documants")
             }
         }
-        return JSON(["prepare":"regulation","status":"published"])
+        return JSON(["prepare":"regulation", "status":"published"])
     }
 
-    
 }

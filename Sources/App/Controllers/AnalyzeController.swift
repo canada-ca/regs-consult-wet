@@ -8,7 +8,7 @@ import Node
 import Cookies
 import FluentMySQL
 
-final class AnalyzeController{
+final class AnalyzeController {
     let pubDrop: Droplet
     let jwtSigner: Signer
     let templateDir: String
@@ -24,12 +24,11 @@ final class AnalyzeController{
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
 
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
+        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary", "secret"]?.string ?? "secret").bytes)
         let previewer = drop.grouped("analyze")
-        previewer.get("documents",":id","commentaries", handler: commentarySummary)
-        previewer.get("documents",":id","comments", handler: commentSummary)
+        previewer.get("documents", ":id", "commentaries", handler: commentarySummary)
+        previewer.get("documents", ":id", "comments", handler: commentSummary)
 
-        
     }
 
     func commentarySummary(_ request: Request)throws -> ResponseRepresentable {
@@ -37,7 +36,7 @@ final class AnalyzeController{
             throw Abort.badRequest
         }
         var commid: UInt?
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/documents/")}  //go to list of all documents if not found
 
@@ -54,7 +53,7 @@ final class AnalyzeController{
             throw Abort.badRequest
         }
         var commid: UInt?
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/documents/")}  //go to list of all documents if not found
         var contextNode = Node([
@@ -65,9 +64,7 @@ final class AnalyzeController{
 
             ])
         contextNode["document"] = documentdata?.nodeForJSON()
-        return try    pubDrop.view.make("analyzecomments",contextNode )
+        return try    pubDrop.view.make("analyzecomments", contextNode )
     }
-
-
 
 }

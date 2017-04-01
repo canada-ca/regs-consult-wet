@@ -23,7 +23,6 @@ final class LoginController {
                 throw Abort.badRequest
         }
 
-
         let creds = UsernamePassword(username: username, password: password)
         var user = try User.register(credentials: creds) as? User
         if user != nil {

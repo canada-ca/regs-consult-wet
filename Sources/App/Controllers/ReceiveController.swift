@@ -35,7 +35,7 @@ final class ReceiveController{
             throw Abort.badRequest
         }
         var commid: UInt?
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/receive/documents/")}  //go to list of all documents if not found
 
@@ -47,7 +47,4 @@ final class ReceiveController{
 
             ])
     }
-
-  
-
 }

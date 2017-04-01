@@ -28,7 +28,7 @@ final class CommentsController{
         }
 
         //locate document
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.custom(status: .notFound, message: "document unknown")}
 
@@ -50,29 +50,29 @@ final class CommentsController{
         }
         // find the commentary in the token
         if  commid != nil {
-            do{
+            do {
                 commentary = try Commentary.find(Node(commid!))
-            } catch{
+            } catch {
                 pubDrop.console.info("Did not find \(String(describing: commid))")
             }
         }
         // If we did not find it then we need to make one
         if  commentary == nil {
 
-            var newDbId:Node = Node(UniqueID32())
+            var newDbId: Node = Node(uniqueID32())
             for i in 1...5 {
                 if (try Commentary.find(newDbId)) != nil {
                     if i == 5 {
                        throw Abort.custom(status: .conflict, message: "cannot start a new commentary") // too hard to find a new random id!
                     } else {
-                        newDbId = Node(UniqueID32())
+                        newDbId = Node(uniqueID32())
                         continue
                     }
                 }
             }
 
-            commentary = try Commentary(node: [CommentaryConstants.id:newDbId,
-                                               CommentaryConstants.documentId:documentdata?.id], in: [])
+            commentary = try Commentary(node: [CommentaryConstants.id: newDbId,
+                                               CommentaryConstants.documentId: documentdata?.id], in: [])
             try commentary!.save()
             commid = commentary?.id?.uint
             commentJWT = nil //need to force a new jwt cookie as old commentary not valid
@@ -82,7 +82,7 @@ final class CommentsController{
 
         guard commentary != nil else {throw Abort.custom(status: .conflict, message: "cannot locate commentary")}
 
-        var responseDict = ["updatestatus":Node(documentId)]
+        var responseDict = ["updatestatus": Node(documentId)]
         if commentary!.submitted {
             let detectedLanguage = languageDetect(request)
             var stateOfCommentary: [String : NodeConvertible] = [ "document-id": documentId,
@@ -101,17 +101,16 @@ final class CommentsController{
                 responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
             }
 
-
             responseDict["commentary"] = commentary!.nodeForJSON()
 
         } else {
             //process update from tne commentator identity
             if let commentator = request.data["commentary"]?.object {
-                if let item = commentator["email"]?.string  {
+                if let item = commentator["email"]?.string {
                     let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                     if !(newitem == commentary?.email?.value) {
-                        do{
+                        do {
                             let updateem =  Email(value: newitem)
                             if !newitem.isEmpty {
                                 try Email.validate(input: updateem)
@@ -123,27 +122,25 @@ final class CommentsController{
                         }
                     }
                 }
-                if let item = commentator["name"]?.string  {
+                if let item = commentator["name"]?.string {
                     let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                     if !(newitem == commentary?.name) {
-
 
                             commentary?.name = newitem
                         
                     }
                 }
-                if let item = commentator["organization"]?.string  {
+                if let item = commentator["organization"]?.string {
                     let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                     if !(newitem == commentary?.organization) {
-
 
                             commentary?.organization = newitem
 
                     }
                 }
-                if let item = commentator["represents"]?.string  {
+                if let item = commentator["represents"]?.string {
                     let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
 
                     if !(newitem == commentary?.represents) {
@@ -160,7 +157,7 @@ final class CommentsController{
             if let commarray = request.json?["comments"]?.array {
                 for ind in 0..<commarray.count {
                     if let update = commarray[ind].object {
-                        if let ref = update["ref"]?.string, let reftext = update["reftext"]?.string{
+                        if let ref = update["ref"]?.string, let reftext = update["reftext"]?.string {
                             var comment = try Comment.query().filter("commentary_id", commentary!.id!).filter("reference", ref as NodeRepresentable).first()
                             if comment == nil {
                                 let index4 = ref.index(ref.startIndex, offsetBy: 4)
@@ -191,7 +188,7 @@ final class CommentsController{
         let json = JSON(Node(responseDict))
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
          if commentJWT == nil {
-            commentJWT = try JWT(payload: Node.object(["commid":Node(commid!)]),
+            commentJWT = try JWT(payload: Node.object(["commid": Node(commid!)]),
                                  signer: jwtSigner)
             if let token = try commentJWT?.createToken() {
                 let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: pubDrop.config["app", "appdomain"]?.string ?? "example.com", httpOnly: true)

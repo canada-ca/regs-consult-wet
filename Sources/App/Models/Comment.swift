@@ -18,11 +18,8 @@ struct Comment: Model {
     }
     struct Status {
         static let new = "new"
-
-
     }
     var id: Node?
-
     var commentary: Node?
     var document: Node?
     var linenumber: Int
@@ -37,10 +34,8 @@ struct Comment: Model {
         case dateNotSupported
         case idTooLarge
     }
-    
 
 }
-
 
 // MARK: NodeConvertible
 
@@ -77,8 +72,6 @@ extension Comment: NodeConvertible {
                 Constants.reference: reference,
                 Constants.text: text,
                 Constants.status: status
-
-
             ]
         )
     }
@@ -96,8 +89,6 @@ extension Comment: Preparation {
             comment.string(Constants.reference, optional: true)
             comment.data(Constants.text, optional: true)
             comment.string(Constants.status, optional: true)
-
-
         }
     }
 
@@ -120,38 +111,37 @@ extension Comment {
 
     }
 
-    func nodeForJSON()  -> Node? {
+    func nodeForJSON() -> Node? {
         guard let ref = self.reference else { return nil}
         let tagType = String(ref.characters.prefix(4))
         return Node(["reftext": Node(ref),
                      "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
-            "text":Node(self.text ?? ""),
-            "status":Node(self.status ?? "")
+            "text": Node(self.text ?? ""),
+            "status": Node(self.status ?? "")
             ])
     }
-    func nodeForReviewJSON()  -> Node? {
+    func nodeForReviewJSON() -> Node? {
         guard let ref = self.reference else { return nil}
         let tagType = String(ref.characters.prefix(4))
 
         var commnode = Node(["reftext": Node(ref),
                              "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
-                             "text":Node(self.text ?? ""),
-                             "status":Node(self.status ?? "")
+                             "text": Node(self.text ?? ""),
+                             "status" :Node(self.status ?? "")
             ])
         do {
             let cmty =  try self.commenter().get
             commnode["commentary"] = try cmty()?.nodeForJSON()
 
-        }catch {
+        } catch {
 
             }
         return  commnode
     }
 
-
 }
 extension Comment {
     func commenter() throws -> Parent<Commentary> {
-        return try parent(commentary,Constants.commentaryId)
+        return try parent(commentary, Constants.commentaryId)
     }
 }

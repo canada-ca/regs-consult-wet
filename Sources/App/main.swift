@@ -3,14 +3,12 @@ import VaporMySQL
 import Auth
 import Sessions
 
-
 let drop = Droplet()
 drop.middleware.append(CorsMiddleware())
 
 try drop.addProvider(VaporMySQL.Provider.self)
 let auth = AuthMiddleware(user: User.self)
 drop.middleware.append(auth)
-
 
 drop.preparations.append(User.self)
 drop.preparations.append(Document.self)
@@ -33,6 +31,5 @@ let commentaryController = CommentaryController(to: drop)
 drop.get { req in
     return try drop.view.make("splashpage.html")
 }
-
 
 drop.run()

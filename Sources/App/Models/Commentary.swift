@@ -43,9 +43,8 @@ struct CommentarySubmitStatus {
 
 }
 
-
 struct Commentary: Model {
-       var id: Node?
+    var id: Node?
     var document: Node?
     var name: String?
     var email: Email?
@@ -69,13 +68,13 @@ struct Commentary: Model {
 
            init(node: Node, in context: Context) throws {
             if let suggestedId = node[CommentaryConstants.id]?.uint {
-                if suggestedId < UInt(UInt32.max) &&  suggestedId != 0{
+                if suggestedId < UInt(UInt32.max) &&  suggestedId != 0 {
                     id = Node(suggestedId)
                 } else {
                     throw Error.idTooLarge
                 }
             } else {
-                id = Node(UniqueID32()) //conflict overwrite currently on caller
+                id = Node(uniqueID32()) //conflict overwrite currently on caller
             }
             document = try node.extract(CommentaryConstants.documentId)
             name = node[CommentaryConstants.name]?.string
@@ -109,7 +108,6 @@ struct Commentary: Model {
                 guard let date = dateFormatter.date(from: raw) else {
                     throw Error.dateNotSupported
                 }
-                
                 self.submitteddate = date
             } else {
                 // leave as is
@@ -134,7 +132,6 @@ struct Commentary: Model {
         }
     // MARK: Merge
 
-
         mutating func merge(updates: Commentary) {
             id = updates.id ?? id
             document = updates.document ?? document 
@@ -148,7 +145,6 @@ struct Commentary: Model {
             submitted = updates.submitted
             acknowledgeddate = updates.acknowledgeddate ?? acknowledgeddate
             status = updates.status ?? status
-            
         }
 
     func submitReadiness() -> String? {
@@ -161,8 +157,8 @@ struct Commentary: Model {
         }
         return nil
     }
-    func nodeForJSON()  -> Node? {
-        var result:[String: Node] = [:]
+    func nodeForJSON() -> Node? {
+        var result: [String: Node] = [:]
         if let nm = name {result["name"] = Node(nm)}
         if let em = email?.value {result["email"] = Node(em)}
         if let rp = represents {result["represents"] = Node(rp)}
