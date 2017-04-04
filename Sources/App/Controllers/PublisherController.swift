@@ -20,7 +20,7 @@ final class PublisherController {
         let protect = ProtectMiddleware(error:
             Abort.custom(status: .forbidden, message: "Not authorized.")
         )
-        let prepare = drop.grouped("prepare").grouped(protect)
+        let prepare = drop.grouped("prepare") //.grouped(protect)
 
 
         prepare.get { request in
