@@ -24,15 +24,15 @@ public class AuthMiddlewareJWT: Middleware {
 
         let response = try next.respond(to: request)
         if request.storage["resetcookie"] != nil {
-                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: "", maxAge: 0, domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieUser, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 response.cookies.insert(myCookie)
         }
         if let usr = request.storage["setcookie"] as? User {
             if let commentJWT = try? JWT(payload: Node.object(["userid": usr.id!,
-                                                               "domain": Node(domname)]),
+                                                               "domain": Node(authDomainName)]),
                                          signer: jwtSigner) {
                 let token = try commentJWT.createToken()
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date().addingTimeInterval(cookieTime), domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieUser,value: token, expires: Date().addingTimeInterval(cookieTime), domain: domname, httpOnly: true)
                 response.cookies.insert(myCookie)
             }
         }

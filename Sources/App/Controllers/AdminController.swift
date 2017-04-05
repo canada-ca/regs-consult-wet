@@ -18,10 +18,10 @@ struct AdminController {
         self.drop = drop
         jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
 
-        let router = drop.grouped("admin")
-        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
-        let routerLogin = router.grouped(cookieSetter)
 
+        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
+//        let routerLogin = router.grouped(cookieSetter)
+        let routerLogin = drop.grouped("admin").grouped(cookieSetter)
         routerLogin.get("login", handler: loginHandler)
         routerLogin.post("login", handler: loginPostHandler)
         routerLogin.get("logout", handler: logoutHandler)
