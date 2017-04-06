@@ -123,6 +123,10 @@ struct AdminController {
         guard let userId = user.id, var userToUpdate = try User.query().filter("id", userId).first() else {
             throw Abort.badRequest
         }
+        // check that username does not already exsit on another user
+        if let usernameexists = try User.query().filter("username", username).first(), usernameexists.id != userToUpdate.id {
+            throw Abort.badRequest
+        }
         userToUpdate.name = name
         userToUpdate.username = username
 
@@ -538,8 +542,7 @@ parameters["users"] = try users.makeNode(context: EmptyNode)
         // Check username unique
         do {
             if username != previousUsername {
-                let usernames = try User.all().map { $0.username.lowercased() }
-                if usernames.contains(username.lowercased()) {
+                if let _ = try User.query().filter("username", username.lowercased()).first() {
                     userSaveErrors.append("Sorry that username has already been taken")
                 }
             }

@@ -16,16 +16,18 @@
         <h2>Login</h2>
 
         #if(errors) {
+<div class="alert alert-danger" role="alert">
         #loop(errors, "error") {
         <div class="alert alert-danger" role="alert">
-            <strong>Error: </strong>#(error)
-        </div>
+            <p><strong>Error: </strong>#(error)</p>
+
         }
+</div>
         }
 
         #if(loginWarning) {
         <div class="alert alert-warning" role="alert">
-            <strong>Warning: </strong>You must be logged in to view this page
+            <p><strong>Warning: </strong>You must be logged in to view this page</p>
         </div>
         }
 </div>

@@ -19,11 +19,13 @@
         <h1>#if(editing) {Edit} ##else() {Create A New} User</h1>
 
         #if(errors) {
+<div class="alert alert-danger" role="alert">
             #loop(errors, "error") {
-            <div class="alert alert-danger" role="alert">
-                <strong>Warning: </strong>#(error)
-            </div>
+
+                <p><strong>Warning: </strong>#(error)</p>
+
             }
+</div>
         }
 
         <form action="#if(editing) {/admin/users/#(user_id)/edit/} ##else() {/admin/createUser/}" id="create-user-form" method="post">
