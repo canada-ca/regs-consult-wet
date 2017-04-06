@@ -83,7 +83,7 @@ struct AdminController {
                 user.resetPasswordRequired = true
             }
             try user.save()
-            return Response(redirect: "admin")
+            return Response(redirect: "/admin")
         }
         else {
             return try createUserView(editing: false, errors: ["There was an error creating the user. Please try again"], name: name, username: username, passwordError: passwordError, confirmPasswordError: confirmPasswordError, resetPasswordRequired: resetPasswordRequired, userId: nil)
@@ -137,18 +137,16 @@ struct AdminController {
         }
 
         try userToUpdate.save()
-        return Response(redirect: "admin")
+        return Response(redirect: "/admin")
     }
 
     func deleteUserPostHandler(request: Request, user: User) throws -> ResponseRepresentable {
-        guard let currentUser = try request.auth.user() as? User else {
+        guard let currentUser = request.storage["userid"] as? User else {
             throw Abort.badRequest
         }
 
-        // Check we have at least one user left
-        let users = try User.all()
-        if users.count <= 1 {
-            return try createAdminView(errors: ["You cannot delete the last user"])
+        if user.admin  {
+            return try createAdminView(errors: ["You cannot delete admin users"])
         }
             // Make sure we aren't deleting ourselves!
         else if currentUser.id == user.id {
@@ -164,10 +162,14 @@ struct AdminController {
 //        let draftBlogPosts = try BlogPost.query().filter("published", false).sort("created", .descending).all()
         let users = try User.all()
 
+//        var parameters = try Node(node: [
+//            "users": users.makeNode()
+//            ])
         var parameters = try Node(node: [
-            "users": users.makeNode()
+            "adminPage": Node(true)
             ])
-
+//        parameters["users"] =  Node(users.map{try! $0.makeNode()})
+parameters["users"] = try users.makeNode(context: EmptyNode)
 //        if publishedBlogPosts.count > 0 {
 //            parameters["published_posts"] = try publishedBlogPosts.makeNode(context: BlogPostContext.all)
 //        }
@@ -180,9 +182,9 @@ struct AdminController {
             parameters["errors"] = try errors.makeNode()
         }
 
-        parameters["adminPage"] = true
+//        parameters["adminPage"] = true
 
-        return try drop.view.make("role/admin/index", nil)
+        return try drop.view.make("role/admin/index", parameters)
     }
 
     func createUserView(editing: Bool = false, errors: [String]? = nil, name: String? = nil, username: String? = nil, passwordError: Bool? = nil, confirmPasswordError: Bool? = nil, resetPasswordRequired: Bool? = nil, userId: Vapor.Node? = nil) throws -> View {
@@ -190,8 +192,8 @@ struct AdminController {
         let usernameError = username == nil && errors != nil
 
         var parameters = [
-            "nameError": nameError.makeNode(),
-            "usernameError": usernameError.makeNode(),
+            "name_error": nameError.makeNode(),
+            "username_error": usernameError.makeNode(),
             ]
 
         if let createUserErrors = errors {
@@ -199,23 +201,23 @@ struct AdminController {
         }
 
         if let nameSupplied = name {
-            parameters["nameSupplied"] = nameSupplied.makeNode()
+            parameters["name_supplied"] = nameSupplied.makeNode()
         }
 
         if let usernameSupplied = username {
-            parameters["usernameSupplied"] = usernameSupplied.makeNode()
+            parameters["username_supplied"] = usernameSupplied.makeNode()
         }
 
         if let passwordError = passwordError {
-            parameters["passwordError"] = passwordError.makeNode()
+            parameters["password_error"] = passwordError.makeNode()
         }
 
         if let confirmPasswordError = confirmPasswordError {
-            parameters["confirmPasswordError"] = confirmPasswordError.makeNode()
+            parameters["confirm_password_error"] = confirmPasswordError.makeNode()
         }
 
         if let _ = resetPasswordRequired {
-            parameters["resetPasswordOnLoginSupplied"] = true
+            parameters["reset_password_on_login_supplied"] = true
         }
 
         if editing {
@@ -223,7 +225,7 @@ struct AdminController {
             guard let userId = userId else {
                 throw Abort.badRequest
             }
-            parameters["userId"] = userId
+            parameters["user_id"] = userId
         }
 
         return try drop.view.make("role/admin/createUser", parameters)
@@ -414,7 +416,7 @@ struct AdminController {
             return try createResetPasswordView(errors: resetPasswordErrors, passwordError: passwordError, confirmPasswordError: confirmPasswordError)
         }
 
-        guard var user = try request.auth.user() as? User else {
+        guard var user = request.storage["userid"] as? User else {
             throw Abort.badRequest
         }
 
@@ -425,7 +427,7 @@ struct AdminController {
         user.resetPasswordRequired = false
         try user.save()
 
-        return Response(redirect: "admin")
+        return Response(redirect: "/admin")
     }
     func createResetPasswordView(errors: [String]? = nil, passwordError: Bool? = nil, confirmPasswordError: Bool? = nil) throws -> View {
 

@@ -23,7 +23,7 @@ public class RedirectAuthMiddlewareJWT: Middleware {
                     }
                     if let userID = inboundJWT.payload["userid"]?.uint {
                         if let userincookie = try User.find(Node(userID)) {
-                            if userincookie.resetPasswordRequired && request.uri.path != "/admin/resetPassword" {
+                            if userincookie.resetPasswordRequired && !request.uri.path.hasPrefix("/admin/resetPassword") {
                                 return Response(redirect: "/admin/resetPassword")
                             }
                             request.storage["userid"] = userincookie

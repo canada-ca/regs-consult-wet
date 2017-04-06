@@ -105,7 +105,7 @@
                 </thead>
                 <tbody>
 
-                    #loop(users, "user") {
+#loop(users, "user") {
                     <tr>
                         <td><a href="/authors/#(user.username)/">#(user.id)</a></td>
                         <td>#(user.name)</td>
