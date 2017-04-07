@@ -158,7 +158,7 @@ struct AdminController {
         }
         else {
             try user.delete()
-            return Response(redirect: "admin")
+            return Response(redirect: "/admin")
         }
     }
     func createAdminView(_ request: Request, errors: [String]? = nil) throws -> View {
@@ -227,7 +227,11 @@ struct AdminController {
         if let _ = resetPasswordRequired {
             parameters["reset_password_on_login_supplied"] = true
         }
-
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
         if editing {
             parameters["editing"] = true
             guard let userId = userId else {

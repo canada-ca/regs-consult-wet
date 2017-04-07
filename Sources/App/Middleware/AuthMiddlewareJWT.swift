@@ -23,7 +23,7 @@ public class AuthMiddlewareJWT: Middleware {
     public func respond(to request: Request, chainingTo next: Responder) throws -> Response {
 
         let response = try next.respond(to: request)
-        if request.storage["resetcookie"] != nil {
+        if let flag = request.storage["resetcookie"] as? Bool, flag {
                 let myCookie = Cookie(name: ConsultConstants.cookieUser, value: "", maxAge: 0, domain: domname, httpOnly: true)
                 response.cookies.insert(myCookie)
         }
