@@ -1,9 +1,9 @@
-#extend("role/admin/toolkit")
+#extend("role/toolkit")
 
 #export("head") {
-<title>Login | Admin | SteamPress</title>
+<title>Login | Admin</title>
 }
-
+#export("role") {– Login}
 #export("scripts") {
     <script src="/extras/js/admin/login.js"></script>
 }

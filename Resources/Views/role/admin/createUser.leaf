@@ -1,9 +1,9 @@
-#extend("role/admin/toolkit")
+#extend("role/toolkit")
 
 #export("head") {
     <title>#if(editing) {Edit} ##else() {Create New} User |  Admin</title>
 }
-
+#export("role") {– #if(editing) {Edit} ##else() {Create A New} User}
 #export("scripts") {
   <script src="/extras/js/admin/createUser.js"></script>
 }
