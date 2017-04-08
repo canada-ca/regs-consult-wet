@@ -10,24 +10,36 @@ import FluentMySQL
 
 final class ReceiveController{
     let pubDrop: Droplet
-    let jwtSigner: Signer
-    let templateDir: String
-    let filePackDir: String
-    let fm = FileManager()
-    enum PreviewView {
-        case fullText
-        case onlyComments
+//    let jwtSigner: Signer
+//    let templateDir: String
+//    let filePackDir: String
+//    let fm = FileManager()
+//    enum PreviewView {
+//        case fullText
+//        case onlyComments
+//    }
+
+    init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
+        pubDrop = drop
+//        templateDir = drop.workDir + "TemplatePacks/"
+//        filePackDir = drop.workDir + "FilePacks/"
+
+//        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
+        let receiver = drop.grouped("receive").grouped(cookieSetter).grouped(protect)
+        receiver.get("documents",":id","commentaries", handler: commentarySummary)
+        receiver.get(handler: receiverSummary)
     }
     
-    init(to drop: Droplet) {
-        pubDrop = drop
-        templateDir = drop.workDir + "TemplatePacks/"
-        filePackDir = drop.workDir + "FilePacks/"
-
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
-        let previewer = drop.grouped("receive")
-        previewer.get("documents",":id","commentaries", handler: commentarySummary)
-
+    func receiverSummary(_ request: Request)throws -> ResponseRepresentable {
+        var parameters = try Node(node: [
+            "receive_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
+        return try   pubDrop.view.make("role/receive/index", parameters)
     }
 
     func commentarySummary(_ request: Request)throws -> ResponseRepresentable {

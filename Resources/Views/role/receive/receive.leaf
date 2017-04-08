@@ -1,8 +1,0 @@
-#extend("toolkit")
-
-#export("body") {
-<h1 id="wb-cont" property="name">#if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}</h1>
-
-#embed("documenttable")
-#embed("commentariestable")
-}

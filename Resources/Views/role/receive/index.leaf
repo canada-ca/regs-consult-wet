@@ -1,0 +1,13 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}</title>
+}
+#export("body") {
+<h1 id="wb-cont" property="name">Tables</h1>
+#embed("documenttable")
+
+}
+#export("scripts") {
+
+}

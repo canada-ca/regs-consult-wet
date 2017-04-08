@@ -21,22 +21,32 @@ table class="wb-tables table table-striped table-hover comment-document" data-wb
 
 } ##else() {
 <h3>Documents</h3>
-<table class="wb-tables table table-striped table-hover comment-document" data-wb-tables='{ "ordering": false }'>
+<table class="wb-tables table table-striped table-hover" id="dataset-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": true,
+"ajaxSource": "ajax/datasource.json",
+"order": [5, "desc"],
+"columns": [
+{ "data": "TITLE", "className": "nws-tbl-ttl h4" },
+{ "data": "PUBDATE", "className": "nws-tbl-date" },
+{ "data": "DEPT", "className": "nws-tbl-dept" },
+{ "data": "TYPE", "className": "nws-tbl-type" },
+{ "data": "TEASER",  "className": "nws-tbl-desc" },
+{ "data": "LOCATION",  "visible": false },
+{ "data": "AUDIENCE",  "visible": false },
+{ "data": "SUBJECT", "visible": false },
+{ "data": "MINISTER", "visible": false }
+]}'>
 <thead>
 <tr>
-<th>Known as</th>
-<th>New submissions</th>
-<th>In progress</th>
-<th>In review</th>
-<th>Not acknowledged</th>
+<th>Title</th>
+<th>Publication date</th>
+<th>Department</th>
+<th>News Type</th>
+<th>Summary</th>
+<th>Location</th>
+<th>For</th>
+<th>Subject</th>
+<th>Minister</th>
 </tr>
 </thead>
-<tr class="gradeC">
-<td>Radio Pharma</td>
-<td>2</td>
-<td>20</td>
-<td class="center">1</td>
-<td class="center">4</td>
-</tr>
-</table>
-}
+</table>}

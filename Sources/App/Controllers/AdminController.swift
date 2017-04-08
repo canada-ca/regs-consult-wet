@@ -14,19 +14,19 @@ struct AdminController {
     let jwtSigner: Signer
 
     // MARK: - Initialiser
-    init(to drop: Droplet) {
+    init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         self.drop = drop
         jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
 
 
-        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
+//        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
 //        let routerLogin = router.grouped(cookieSetter)
         let routerLogin = drop.grouped("admin").grouped(cookieSetter)
         routerLogin.get("login", handler: loginHandler)
         routerLogin.post("login", handler: loginPostHandler)
         routerLogin.get("logout", handler: logoutHandler)
 
-        let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
+//        let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
         let routerSecure = routerLogin.grouped(protect)
         routerSecure.get(handler: adminHandler)
         //        routerSecure.get("createPost", handler: createPostHandler)

@@ -2,8 +2,12 @@ import Vapor
 import VaporMySQL
 //import Auth
 import Sessions
+import JWT
 
 let drop = Droplet()
+
+let jwtUserSigner: Signer = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
+
 drop.middleware.append(CorsMiddleware())
 
 try drop.addProvider(VaporMySQL.Provider.self)
@@ -14,8 +18,12 @@ drop.preparations.append(User.self)
 drop.preparations.append(Document.self)
 drop.preparations.append(Commentary.self)
 drop.preparations.append(Comment.self)
+let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
+let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
 
-let adminController = AdminController(to: drop)
+let adminController = AdminController(to: drop, cookieSetter: cookieSetter, protect: protect)
+let receiveController = ReceiveController(to: drop, cookieSetter: cookieSetter, protect: protect)
+
 
 //let loginController = LoginController(to: drop)
 
