@@ -11,12 +11,12 @@ struct AdminController {
 
     // MARK: - Properties
     fileprivate let drop: Droplet
-    let jwtSigner: Signer
+//    let jwtSigner: Signer
 
     // MARK: - Initialiser
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         self.drop = drop
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
+//        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
 
 
 //        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)

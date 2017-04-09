@@ -22,12 +22,13 @@ let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
 let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
 
 let adminController = AdminController(to: drop, cookieSetter: cookieSetter, protect: protect)
+let pubController = PublisherController(to: drop, cookieSetter: cookieSetter, protect: protect)
+
 let receiveController = ReceiveController(to: drop, cookieSetter: cookieSetter, protect: protect)
 
 
 //let loginController = LoginController(to: drop)
 
-let pubController = PublisherController(to: drop)
 
 let commentController = CommentsController(to: drop)
 
