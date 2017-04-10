@@ -10,6 +10,7 @@ struct Email: ValidationSuite, Validatable {
         try Vapor.Email.validate(input: value.value)
     }
 }
+// for Model
 struct CommentaryConstants {
     static let id = "id"
     static let documentId = "document_id"
@@ -26,23 +27,30 @@ struct CommentaryConstants {
     static let status = "status"
 }
 
+// to store in database
 struct CommentaryStatus {
     static let new = "new"
     static let attemptedsubmit = "attemptedsubmit"
     static let submitted = "submitted"
     static let notuseful = "notuseful"
     static let abuse = "abuse"
-
 }
 
+// to report status
 struct CommentarySubmitStatus {
     static let submitted = "submitted"
-
     static let missinginfo = "missing"
     static let ready = "ready"
-
 }
-
+// to report status
+struct CommentaryJSONKeys {
+    static let name = "name"
+    static let email = "email"
+    static let represents = "represents"
+    static let organization = "organization"
+    static let submitstatus = "submitstatus"
+    static let status = "status"
+}
 struct Commentary: Model {
     var id: Node?
     var document: Node?
@@ -157,13 +165,24 @@ struct Commentary: Model {
         }
         return nil
     }
+
+    func forJSON() -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
+        if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
+        if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
+        if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
+        if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
+        return result
+    }
+    
     func nodeForJSON() -> Node? {
         var result: [String: Node] = [:]
-        if let nm = name {result["name"] = Node(nm)}
-        if let em = email?.value {result["email"] = Node(em)}
-        if let rp = represents {result["represents"] = Node(rp)}
-        if let or = organization {result["organization"] = Node(or)}
-        if let sr = submitReadiness() {result["submitstatus"] = Node(sr)}
+        if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
+        if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
+        if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
+        if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
+        if let sr = submitReadiness() {result[CommentaryJSONKeys.submitstatus] = Node(sr)}
         return Node(result)
         }
 }

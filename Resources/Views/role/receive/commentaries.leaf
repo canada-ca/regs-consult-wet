@@ -4,7 +4,8 @@
 <title>#if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}</title>
 }
 #export("body") {
-#embed("documenttable")
+#embed("documentsummary")
+#embed("commentarytable")
 }
 #export("scripts") {
 

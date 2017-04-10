@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import Foundation
+import Base62
 // MARK: Model
 
 struct Document: Model {
@@ -13,11 +14,16 @@ struct Document: Model {
         static let publishingpath = "publishingpath"
         static let publishingpageprefix = "publishingpageprefix"
         static let archived = "archived"
-
+    }
+    // to report status
+    struct JSONKeys {
+        static let id = "id"
+        static let idbase62 = "idbase62"
+        static let knownas = "knownas"
     }
 
-    var id: Node?
 
+    var id: Node?
     var knownas: String?
     var filepack: String?
     var publishingref: String?
@@ -38,11 +44,19 @@ struct Document: Model {
     
     func nodeForJSON() -> Node? {
         var result: [String: Node] = [:]
-        if let nm = knownas {result["knownas"] = Node(nm)}
-        if let em = id {result["id"] = Node(em)}
-
-
+        if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
+        if let em = id {result[JSONKeys.id] = Node(em)}
         return Node(result)
+    }
+    
+    func forJSON() -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
+        if let em = id , let emu = em.uint {
+            result[JSONKeys.id] = Node(emu)
+            result[JSONKeys.idbase62] = Node(Base62.encode(integer: UInt64(emu)))
+        }
+        return result
     }
 }
 
@@ -51,7 +65,7 @@ struct Document: Model {
 
 extension Document: NodeConvertible {
     init(node: Node, in context: Context) throws {
-        if let suggestedId = node["id"]?.uint, suggestedId != 0 {
+        if let suggestedId = node[Constants.id]?.uint, suggestedId != 0 {
             if suggestedId < UInt(UInt32.max) {
                 id = Node(suggestedId)
             } else {

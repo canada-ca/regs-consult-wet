@@ -1,0 +1,44 @@
+
+#if(langfra) {
+<h2>Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/receive/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+]}'>
+<thead>
+<tr>
+<th>Known As</th>
+<th>Commentaries</th>
+</tr>
+</thead>
+</table>
+
+} ##else() {
+<h2>Commentaries</h2>
+<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/receive/documents/#(document.idbase62)/commentaries/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "status", "defaultContent": ""},
+{ "data": "name", "defaultContent": "" },
+{ "data": "represents", "defaultContent": "" },
+{ "data": "organization", "defaultContent": "" }
+]}'>
+<thead>
+<tr>
+<th>status</th>
+<th>name</th>
+<th>represents</th>
+<th>organization</th>
+</tr>
+</thead>
+</table>
+}
