@@ -29,15 +29,13 @@
 
 { "data": "linenumber", "type": "num"},
 { "data": "reference", "defaultContent": "" },
-{ "data": "status", "defaultContent": "" },
 { "data": "text", "defaultContent": "" }
 ]}'>
 <thead>
 <tr>
-<th>linenumber</th>
-<th>reference</th>
-<th>status</th>
-<th>text</th>
+<th>Line</th>
+<th>Reference</th>
+<th>Comment</th>
 </tr>
 </thead>
 </table>

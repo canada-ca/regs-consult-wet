@@ -3,6 +3,30 @@
 <h2>Commentary – #(document.knownas)</h2>
 <
 } ##else() {
-<h2><a href="#(commentarieshref)"  >Commentaries</a> > #(document.knownas)</h2>
-
+<h2><a href="#(commentarieshref)">Commentaries</a></h2>
+<div class="row">
+<div class="panel panel-default col-md-6">
+<table class="table">
+<caption class="wb-inv">Commenter info</caption>
+<tbody>
+<tr>
+<td class="text-right">Name</td>
+<td><strong>#(commentary.name)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Organization</td>
+<td><strong>#(commentary.organization)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Represents</td>
+<td><strong>#(commentary.represents)</strong></td>
+</tr>
+<tr>
+<td class="text-right">email</td>
+<td><strong>#(commentary.email)</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 }

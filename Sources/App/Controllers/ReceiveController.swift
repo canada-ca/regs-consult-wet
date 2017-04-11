@@ -11,27 +11,16 @@ import FluentMySQL
 
 final class ReceiveController{
     let pubDrop: Droplet
-//    let jwtSigner: Signer
-//    let templateDir: String
-//    let filePackDir: String
-//    let fm = FileManager()
-//    enum PreviewView {
-//        case fullText
-//        case onlyComments
-//    }
 
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
-//        templateDir = drop.workDir + "TemplatePacks/"
-//        filePackDir = drop.workDir + "FilePacks/"
 
-//        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
         let receiver = drop.grouped("receive").grouped(cookieSetter).grouped(protect)
         receiver.get(handler: receiverSummary)
         receiver.get("documents", handler: documentIndex)
-//        receiver.get("documents",":id", handler: commentariesSummary)
+
         let documentreceiver = receiver.grouped("documents")
-//        documentreceiver.get(handler: documentIndex)
+
         documentreceiver.get(":id", handler: commentariesSummary)
         documentreceiver.get(":id","commentaries", handler: commentaryIndex)
         documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
