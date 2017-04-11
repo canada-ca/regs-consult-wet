@@ -20,26 +20,24 @@
 </table>
 
 } ##else() {
-<h2>Commentaries</h2>
-<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+<h2>Comments</h2>
+<table class="wb-tables table table-striped table-hover" id="comments-filter" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
-"ajaxSource": "/receive/documents/#(document.idbase62)/commentaries/",
-"order": [2, "desc"],
+"ajaxSource": "/receive/commentaries/#(commentary.id)/comments/",
+"order": [1, "asc"],
 "columns": [
 
-{ "data": "status", "defaultContent": ""},
-{ "data": "link", "type": "html" },
-{ "data": "name", "defaultContent": "" },
-{ "data": "represents", "defaultContent": "" },
-{ "data": "organization", "defaultContent": "" }
+{ "data": "linenumber", "type": "num"},
+{ "data": "reference", "defaultContent": "" },
+{ "data": "status", "defaultContent": "" },
+{ "data": "text", "defaultContent": "" }
 ]}'>
 <thead>
 <tr>
+<th>linenumber</th>
+<th>reference</th>
 <th>status</th>
-<th>link</th>
-<th>name</th>
-<th>represents</th>
-<th>organization</th>
+<th>text</th>
 </tr>
 </thead>
 </table>

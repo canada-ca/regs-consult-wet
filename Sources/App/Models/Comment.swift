@@ -16,6 +16,18 @@ struct Comment: Model {
         static let status = "status"
 
     }
+    struct JSONKeys {
+        static let id = "id"
+        static let commentary = "commentary"
+        static let documentId = "document_id"
+        static let commentaryId = "commentary_id"
+        static let document = "document"
+        static let linenumber = "linenumber"
+        static let reference = "reference"
+        static let text = "text"
+        static let status = "status"
+
+    }
     struct Status {
         static let new = "new"
     }
@@ -109,6 +121,18 @@ extension Comment {
         text = updates.text ?? text
         status = updates.status ?? status
 
+    }
+    func forJSON() -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let em = id , let emu = em.uint {
+            result[Comment.JSONKeys.id] = Node(emu)
+        }
+        result[Comment.JSONKeys.linenumber] = Node(linenumber)
+        if let rf = reference {result[Comment.JSONKeys.reference] = Node(rf)}
+        if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
+        if let tx = text {result[Comment.JSONKeys.text] = Node(tx)}
+
+        return result
     }
 
     func nodeForJSON() -> Node? {

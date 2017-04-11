@@ -44,6 +44,7 @@ struct CommentarySubmitStatus {
 }
 // to report status
 struct CommentaryJSONKeys {
+    static let id = "id"
     static let name = "name"
     static let email = "email"
     static let represents = "represents"
@@ -51,7 +52,7 @@ struct CommentaryJSONKeys {
     static let submitstatus = "submitstatus"
     static let status = "status"
 }
-struct Commentary: Model {
+final class Commentary: Model {
     var id: Node?
     var document: Node?
     var name: String?
@@ -140,7 +141,7 @@ struct Commentary: Model {
         }
     // MARK: Merge
 
-        mutating func merge(updates: Commentary) {
+        func merge(updates: Commentary) {
             id = updates.id ?? id
             document = updates.document ?? document 
             name = updates.name ?? name
@@ -168,6 +169,9 @@ struct Commentary: Model {
 
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
+        if let em = id , let emu = em.uint {
+            result[CommentaryJSONKeys.id] = Node(emu)
+        }
         if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
         if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
         if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
