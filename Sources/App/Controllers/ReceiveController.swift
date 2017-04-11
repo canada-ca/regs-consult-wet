@@ -88,7 +88,9 @@ final class ReceiveController{
             parameters["signedon"] = Node(true)
             parameters["activeuser"] = try usr.makeNode()
         }
-        parameters["document"] = Node(documentdata!.forJSON())
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/receive/") 
         return try   pubDrop.view.make("role/receive/commentaries", parameters)
     }
     func commentaryIndex(_ request: Request)throws -> ResponseRepresentable {
@@ -139,7 +141,10 @@ final class ReceiveController{
             parameters["signedon"] = Node(true)
             parameters["activeuser"] = try usr.makeNode()
         }
-        parameters["document"] = Node(documentdata!.forJSON())
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/receive/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+        parameters["commentarieshref"] = Node("/receive/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/")
         parameters["commentary"] = Node(commentary.forJSON())
         return try   pubDrop.view.make("role/receive/commentary", parameters)
     }

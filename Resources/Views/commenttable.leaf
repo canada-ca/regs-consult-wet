@@ -24,7 +24,7 @@
 <table class="wb-tables table table-striped table-hover" id="comments-filter" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
 "ajaxSource": "/receive/commentaries/#(commentary.id)/comments/",
-"order": [1, "asc"],
+"order": [0, "asc"],
 "columns": [
 
 { "data": "linenumber", "type": "num"},
