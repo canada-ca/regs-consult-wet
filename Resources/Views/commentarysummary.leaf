@@ -3,7 +3,6 @@
 <h2>Commentary – #(document.knownas)</h2>
 <
 } ##else() {
-<h2><a href="#(commentarieshref)">Commentaries</a></h2>
 <div class="row">
 <div class="panel panel-default col-md-6">
 <table class="table">
