@@ -29,14 +29,32 @@ final class ReceiveController{
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
        
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
+        let commentaryStatusCounts = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted]).all().reduce([:]) {
+            ( accu, element) in
+            var accu2: [String: Int] = accu as! [String : Int]
+            if let stat = element.status , let docid = element.document?.uint {
+                let counthash = stat + String(docid)
+                accu2[counthash] = (accu2[counthash] ?? 0) + 1
+            }
+            return accu2
+        }
+
 
         var response: [String: Node] = [:]
         var results: [Node] = []
 
         for document in documentsArray {
             var result: [String: Node] = document.forJSON()
-
-            result["newsubmit"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(String((result[Document.JSONKeys.idbase62]?.string!)!)!)/\">New <span class=\"badge\">42<span class=\"wb-inv\"> unread emails</span></span></a></p>")
+//            if let mysql = pubDrop.database?.driver as? MySQLDriver {
+//                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
+//                let aa = version.array
+//            }
+            let docid = String(describing: document.id!.uint!)
+            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] as? Int ?? 0
+            let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
+            let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
+            let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
+            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">In-Progress <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
             results.append(Node(result))
             
         }
@@ -50,6 +68,7 @@ final class ReceiveController{
     }
 
     func receiverSummary(_ request: Request)throws -> ResponseRepresentable {
+        
         var parameters = try Node(node: [
             "receive_page": Node(true)
             ])
