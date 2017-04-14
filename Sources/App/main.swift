@@ -25,7 +25,7 @@ let adminController = AdminController(to: drop, cookieSetter: cookieSetter, prot
 let pubController = PublisherController(to: drop, cookieSetter: cookieSetter, protect: protect)
 
 let receiveController = ReceiveController(to: drop, cookieSetter: cookieSetter, protect: protect)
-
+let analyzeController = AnalyzeController(to: drop, cookieSetter: cookieSetter, protect: protect)
 
 //let loginController = LoginController(to: drop)
 
@@ -33,9 +33,6 @@ let receiveController = ReceiveController(to: drop, cookieSetter: cookieSetter, 
 let commentController = CommentsController(to: drop)
 
 let commentaryController = CommentaryController(to: drop)
-
-//let receiveController = ReceiveController(to: drop)
-//let analyzeController = AnalyzeController(to: drop)
 
 //TODO: show last edited document?
 drop.get { req in

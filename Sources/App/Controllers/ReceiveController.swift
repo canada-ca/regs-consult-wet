@@ -55,7 +55,7 @@ final class ReceiveController{
             let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
             let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">In-Progress <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
+            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
             results.append(Node(result))
             
         }

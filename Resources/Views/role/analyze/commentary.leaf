@@ -1,0 +1,15 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}</title>
+}
+#export("body") {
+#embed("receivebreadcrumbs")
+<h1 class="wb-inv" id="commentarysummary" data-commentaryid="#(commentary.id)">#(title)</h1>
+#embed("commentarysummary")
+#embed("commentarystatusform")
+#embed("commenttable")
+}
+#export("scripts") {
+<script src="/extras/js/receive/receive.js"></script>
+}
