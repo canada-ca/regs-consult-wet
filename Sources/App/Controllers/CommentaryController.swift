@@ -244,7 +244,7 @@ final class CommentaryController{
                         if commentary!.submitReadiness() == CommentarySubmitStatus.ready {
                             commentary!.submitted = true
                             commentary!.submitteddate = Date()
-                            commentary!.status = CommentaryStatus.submitted
+                            commentary!.updateStatus(to: CommentaryStatus.submitted)
                             if let submittedalready = try? submitRender.make("submitconfirmation", stateOfCommentary) {
                                 responseDict["overlayhtml"] = try? Node(submittedalready.data.string())
                             }

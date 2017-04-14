@@ -27,5 +27,28 @@
 </tbody>
 </table>
 </div>
+<div class="panel panel-default col-md-6">
+<table class="table">
+<caption class="wb-inv">Commenter info</caption>
+<tbody>
+<tr>
+<td class="text-right">Created</td>
+<td><strong>#(commentary.createddate)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Submitted</td>
+<td><strong>#(commentary.submitteddate)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Status</td>
+<td id="cty-status"><strong>#(commentary.status)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Acknowledged</td>
+<td>#if(commentary.acknowledgeddate) {<strong>#(commentary.acknowledgeddate)</strong>} ##if(commentary.email) {<a class="btn btn-default" href="#(commentarieshref)">Send Acknowledgement Email</a>} ##else() {no email supplied}</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 }

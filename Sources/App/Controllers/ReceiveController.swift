@@ -25,6 +25,7 @@ final class ReceiveController{
         documentreceiver.get(":id","commentaries", handler: commentaryIndex)
         documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
         receiver.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        receiver.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
        
@@ -189,5 +190,34 @@ final class ReceiveController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
+    func commentaryUpdate(_ request: Request)throws -> ResponseRepresentable {
+        guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
+            throw Abort.badRequest
+        }
+        guard let documentdata = try Document.find(commentary.document!) else {
+            throw Abort.badRequest
+        }
+        if let commentator = request.data["commentary"]?.object {
+            if let item = commentator["status"]?.string {
+                let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                if !(newitem == commentary.status) {
+                    commentary.updateStatus(to: newitem)
+                    try commentary.save()
+                }
+            }
+        }
+
+        var response: [String: Node] = [:]
+
+        response["commentary"] = Node(commentary.forJSON())
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
+    }
+    
 
 }

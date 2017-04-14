@@ -34,6 +34,7 @@ struct CommentaryStatus {
     static let submitted = "submitted"
     static let notuseful = "notuseful"
     static let abuse = "abuse"
+    static let analysis = "analysis"
 }
 
 // to report status
@@ -49,7 +50,10 @@ struct CommentaryJSONKeys {
     static let email = "email"
     static let represents = "represents"
     static let organization = "organization"
+    static let createddate = "createddate"
+    static let submitteddate = "submitteddate"
     static let submitstatus = "submitstatus"
+    static let acknowledgeddate = "acknowledgeddate"
     static let status = "status"
 }
 final class Commentary: Model {
@@ -166,6 +170,18 @@ final class Commentary: Model {
         }
         return nil
     }
+    func updateStatus(to newStatus: String) {
+        switch newStatus {
+        case CommentaryStatus.new where status == nil:
+            status = newStatus
+        case CommentaryStatus.attemptedsubmit where status == CommentaryStatus.new:
+            status = newStatus
+        case CommentaryStatus.submitted, CommentaryStatus.notuseful, CommentaryStatus.abuse, CommentaryStatus.analysis:
+            status = newStatus
+        default:
+            break  // not a recognized state string should log error.
+        }
+    }
 
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
@@ -177,6 +193,9 @@ final class Commentary: Model {
         if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
         if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
         if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
+        if let cd = createddate {result[CommentaryJSONKeys.createddate] = Node(dateFormatter.string(from: cd))}
+        if let sd = submitteddate {result[CommentaryJSONKeys.submitteddate] = Node(dateFormatter.string(from: sd))}
+        if let ad = acknowledgeddate {result[CommentaryJSONKeys.acknowledgeddate] = Node(dateFormatter.string(from: ad))}
         return result
     }
     
