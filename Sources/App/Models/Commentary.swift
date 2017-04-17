@@ -190,6 +190,14 @@ final class Commentary: Model {
          CommentaryStatus.analysis: 4,
          CommentaryStatus.notuseful: 5,
          CommentaryStatus.abuse: 6]
+    static let analyzeSortOrder: [String: Int] =
+        [CommentaryStatus.submitted: 2,
+         CommentaryStatus.attemptedsubmit: 3,
+         CommentaryStatus.new: 4,
+         CommentaryStatus.analysis: 1,
+         CommentaryStatus.notuseful: 5,
+         CommentaryStatus.abuse: 6]
+    
 
     static func statusSort (_ a: Commentary,_ b: Commentary, _ sortOrder: [String: Int]) -> Bool {
         let aOrder = sortOrder[a.status ?? "none"] ?? 0
@@ -214,6 +222,10 @@ final class Commentary: Model {
 
     static func receiveSort (_ a: Commentary,_ b: Commentary) -> Bool {
         return statusSort(a,b,Commentary.receiveSortOrder)
+
+    }
+    static func analyzeSort (_ a: Commentary,_ b: Commentary) -> Bool {
+        return statusSort(a,b,Commentary.analyzeSortOrder)
 
     }
     func forJSON() -> [String: Node] {
