@@ -113,14 +113,16 @@ final class ReceiveController{
         guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
 
 
-        let commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
+        var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
+        commentaryArray.sort(by: Commentary.receiveSort)
 
         var response: [String: Node] = [:]
         var results: [Node] = []
 
-        for commentary in commentaryArray {
+        for (index, commentary) in commentaryArray.enumerated() {
             var result: [String: Node] = commentary.forJSON()
             let commentstr = String(describing: commentary.id!.int!)
+            result["order"] = Node(index)
             result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 

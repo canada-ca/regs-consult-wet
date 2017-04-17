@@ -37,6 +37,7 @@ struct CommentaryStatus {
     static let analysis = "analysis"
 }
 
+
 // to report status
 struct CommentarySubmitStatus {
     static let submitted = "submitted"
@@ -182,7 +183,39 @@ final class Commentary: Model {
             break  // not a recognized state string should log error.
         }
     }
+    static let receiveSortOrder: [String: Int] =
+        [CommentaryStatus.submitted: 1,
+         CommentaryStatus.attemptedsubmit: 2,
+         CommentaryStatus.new: 3,
+         CommentaryStatus.analysis: 4,
+         CommentaryStatus.notuseful: 5,
+         CommentaryStatus.abuse: 6]
 
+    static func statusSort (_ a: Commentary,_ b: Commentary, _ sortOrder: [String: Int]) -> Bool {
+        let aOrder = sortOrder[a.status ?? "none"] ?? 0
+        let bOrder = sortOrder[b.status ?? "none"] ?? 0
+
+        if bOrder > aOrder {
+            return true
+        } else if bOrder < aOrder {
+            return false
+        }
+        if let adate = a.submitteddate {
+            if let bdate = b.submitteddate , adate > bdate {
+                return true
+            }
+            return false
+        }
+        if let _ = b.submitteddate {
+            return true
+        }
+        return false
+    }
+
+    static func receiveSort (_ a: Commentary,_ b: Commentary) -> Bool {
+        return statusSort(a,b,Commentary.receiveSortOrder)
+
+    }
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {
