@@ -91,7 +91,8 @@ final class AnalyzeController{
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "commentary_page": Node(true)
+            "commentary_page": Node(true),
+            "role": Node("analyze")
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {

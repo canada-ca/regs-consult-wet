@@ -1,20 +1,25 @@
 
 #if(langfra) {
-<h2>Documents</h2>
+<h2>Commentaries</h2>
 <table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
-"ajaxSource": "/receive/documents/",
-"order": [1, "desc"],
+"ajaxSource": "/#(role)/documents/#(document.idbase62)/commentaries/",
+"order": [2, "desc"],
 "columns": [
 
-{ "data": "knownas" },
-{ "data": "newsubmit","type": "html" },
-{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+{ "data": "status", "defaultContent": ""},
+{ "data": "link", "type": "html" },
+{ "data": "name", "defaultContent": "" },
+{ "data": "represents", "defaultContent": "" },
+{ "data": "organization", "defaultContent": "" }
 ]}'>
 <thead>
 <tr>
-<th>Known As</th>
-<th>Commentaries</th>
+<th>status</th>
+<th>link</th>
+<th>name</th>
+<th>represents</th>
+<th>organization</th>
 </tr>
 </thead>
 </table>
@@ -23,7 +28,7 @@
 <h2>Commentaries</h2>
 <table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
-"ajaxSource": "/receive/documents/#(document.idbase62)/commentaries/",
+"ajaxSource": "/#(role)/documents/#(document.idbase62)/commentaries/",
 "order": [2, "desc"],
 "columns": [
 

@@ -26,6 +26,7 @@ let pubController = PublisherController(to: drop, cookieSetter: cookieSetter, pr
 
 let receiveController = ReceiveController(to: drop, cookieSetter: cookieSetter, protect: protect)
 let analyzeController = AnalyzeController(to: drop, cookieSetter: cookieSetter, protect: protect)
+let reviewController = ReviewController(to: drop, cookieSetter: cookieSetter, protect: protect)
 
 //let loginController = LoginController(to: drop)
 

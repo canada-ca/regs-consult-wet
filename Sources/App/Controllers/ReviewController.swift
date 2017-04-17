@@ -9,13 +9,13 @@ import Cookies
 import Fluent
 import FluentMySQL
 
-final class ReceiveController{
+final class ReviewController{
     let pubDrop: Droplet
 
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
 
-        let receiver = drop.grouped("receive").grouped(cookieSetter).grouped(protect)
+        let receiver = drop.grouped("review").grouped(cookieSetter).grouped(protect)
         receiver.get(handler: receiverSummary)
         receiver.get("documents", handler: documentIndex)
 
@@ -28,9 +28,9 @@ final class ReceiveController{
         receiver.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
-       
+
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
-        let commentaryStatusCounts = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted]).all().reduce([:]) {
+        let commentaryStatusCounts = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted, CommentaryStatus.analysis]).all().reduce([:]) {
             ( accu, element) in
             var accu2: [String: Int] = accu as! [String : Int]
             if let stat = element.status , let docid = element.document?.uint {
@@ -46,18 +46,19 @@ final class ReceiveController{
 
         for document in documentsArray {
             var result: [String: Node] = document.forJSON()
-//            if let mysql = pubDrop.database?.driver as? MySQLDriver {
-//                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
-//                let aa = version.array
-//            }
+            //            if let mysql = pubDrop.database?.driver as? MySQLDriver {
+            //                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
+            //                let aa = version.array
+            //            }
             let docid = String(describing: document.id!.uint!)
             let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] as? Int ?? 0
-            let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
-            let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
+            let countNew: Int = commentaryStatusCounts[CommentaryStatus.new + docid]  as? Int ?? 0
+            let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] as? Int ?? 0
+            let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
+            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/analyze/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default\" href=\"/analyze/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default\" href=\"/analyze/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
             results.append(Node(result))
-            
+
         }
         response["data"] = Node(results)
         let headers: [HeaderKey: String] = [
@@ -69,7 +70,7 @@ final class ReceiveController{
     }
 
     func receiverSummary(_ request: Request)throws -> ResponseRepresentable {
-        
+
         var parameters = try Node(node: [
             "receive_page": Node(true)
             ])
@@ -78,7 +79,7 @@ final class ReceiveController{
             parameters["signedon"] = Node(true)
             parameters["activeuser"] = try usr.makeNode()
         }
-        return try   pubDrop.view.make("role/receive/index", parameters)
+        return try   pubDrop.view.make("role/analyze/index", parameters)
     }
 
     func commentariesSummary(_ request: Request)throws -> ResponseRepresentable {
@@ -87,12 +88,11 @@ final class ReceiveController{
         }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
-        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
             "commentary_page": Node(true),
-            "role": Node("receive")
-
+            "role": Node("analyze")
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -101,8 +101,8 @@ final class ReceiveController{
         }
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
-        parameters["documentshref"] = Node("/receive/") 
-        return try   pubDrop.view.make("role/receive/commentaries", parameters)
+        parameters["documentshref"] = Node("/analyze/")
+        return try   pubDrop.view.make("role/analyze/commentaries", parameters)
     }
     func commentaryIndex(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
@@ -110,7 +110,7 @@ final class ReceiveController{
         }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
-        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
 
         let commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
@@ -121,7 +121,7 @@ final class ReceiveController{
         for commentary in commentaryArray {
             var result: [String: Node] = commentary.forJSON()
             let commentstr = String(describing: commentary.id!.int!)
-            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
+            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/analyze/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
         }
@@ -142,7 +142,7 @@ final class ReceiveController{
         }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
-        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
             "commentary_page": Node(true)
@@ -154,10 +154,10 @@ final class ReceiveController{
         }
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
-        parameters["documentshref"] = Node("/receive/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
-        parameters["commentarieshref"] = Node("/receive/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/")
+        parameters["documentshref"] = Node("/analyze/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+        parameters["commentarieshref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/")
         parameters["commentary"] = Node(commentary.forJSON())
-        return try   pubDrop.view.make("role/receive/commentary", parameters)
+        return try   pubDrop.view.make("role/analyze/commentary", parameters)
     }
     func commentIndex(_ request: Request)throws -> ResponseRepresentable {
         guard let commentaryId = request.parameters["commentaryId"]?.int, let commentary = try Commentary.find(commentaryId) else {
@@ -167,9 +167,9 @@ final class ReceiveController{
             throw Abort.badRequest
         }
 
-//        let idInt = base62ToID(string: documentId)
-//        let documentdata = try Document.find(Node(idInt))
-//        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+        //        let idInt = base62ToID(string: documentId)
+        //        let documentdata = try Document.find(Node(idInt))
+        //        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
 
 
         let commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
@@ -179,8 +179,8 @@ final class ReceiveController{
 
         for comment in commentArray {
             var result: [String: Node] = comment.forJSON()
-//            let commentstr = String(describing: commentary.id!.int!)
-//            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
+            //            let commentstr = String(describing: commentary.id!.int!)
+            //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
         }
@@ -221,5 +221,5 @@ final class ReceiveController{
         return resp
     }
     
-
+    
 }
