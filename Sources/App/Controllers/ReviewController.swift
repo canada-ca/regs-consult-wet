@@ -11,9 +11,14 @@ import FluentMySQL
 
 final class ReviewController{
     let pubDrop: Droplet
+    let templateDir: String
+    let filePackDir: String
+    let fm = FileManager()
 
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
+        templateDir = drop.workDir + "TemplatePacks/"
+        filePackDir = drop.workDir + "FilePacks/"
 
         let receiver = drop.grouped("review").grouped(cookieSetter).grouped(protect)
         receiver.get(handler: receiverSummary)
@@ -22,6 +27,7 @@ final class ReviewController{
         let documentreceiver = receiver.grouped("documents")
 
         documentreceiver.get(":id", handler: commentariesSummary)
+        documentreceiver.get(":id","load", handler: documentLoader)
         documentreceiver.get(":id","commentaries", handler: commentaryIndex)
         documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
         receiver.get("commentaries", ":commentaryId","comments", handler: commentIndex)
@@ -80,6 +86,112 @@ final class ReviewController{
             parameters["activeuser"] = try usr.makeNode()
         }
         return try   pubDrop.view.make("role/analyze/index", parameters)
+    }
+    func documentLoader(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        //TODO: document not found errors
+        guard documentdata != nil else {throw Abort.badRequest}
+
+
+    
+        return try buildDocumentLoad(request, document: documentdata!, docId: documentId)
+    }
+
+    func buildDocumentLoad(_ request: Request, document: Document, docId: String)throws -> ResponseRepresentable {
+        let filePackBaseDir = filePackDir + document.filepack!
+        let filePack = filePackBaseDir + "/elements/"
+        //TODO: need new document types in future
+//        let templatePack = templateDir + "proposedregulation/elements/"
+        var filejson: [String: Any] = [:]
+        var sectionTags: [[[String: Any]]] = []
+
+        //        let docRenderer = LeafRenderer(viewsDir: filePack)
+//        let tempRenderer = LeafRenderer(viewsDir: templatePack)
+        //find page language from referrer
+//        var tagsDict: [String:[String: Any]] = [:]
+//        var fileJson: JSON = JSON(.null)
+        //get data from disk/network
+        let sections = [("rias", "ris") , ("reg",  "reg")]
+        if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
+//            fileJson = try! JSON(serialized: data.makeBytes())
+            if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                filejson = fj!
+                for sectionType in sections {
+                    if let thetags = filejson[sectionType.0 + "-tags"] as? [[String: Any]] {
+                        // Finally we got the tags
+                        sectionTags.append(thetags)
+                    } else {
+                        sectionTags.append([[:]])
+                    }
+                }
+            }
+        }
+
+        var results: [Node] = []
+// obviously with different languages this all need a refactor, brute force for Pilot trial - should use filepack data to drive.
+        //could also cache this work.
+        let languages =  [("eng", "-eng.html", "line-eng", "en-CA", "prompt-eng"), ("fra", "-fra.html", "line-fra", "fr-CA", "prompt-fra")]
+        var sequencePosition: Int = 0
+        var keyArray:[Node] = []
+        for (sectionIndex, sectionType) in sections.enumerated() {
+            var dataStrings: [[String]] = []
+            var lastline: [Int] = []
+            for lang in languages {
+                if let section = fm.contents(atPath: filePack + sectionType.0 + lang.1),
+                     let lines = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines)
+                {
+                    dataStrings.append(lines)
+                } else {
+                    dataStrings.append([])
+                }
+                lastline.append(0)
+            }
+            let storageKeyPrefix = docId + "-" + sectionType.1 + "-"
+//                substitutions["reftype"] = Node(String(describing: "ris"))
+            for tag in sectionTags[sectionIndex] {
+                var storageItem: [String:Node] = [:]
+                if let keyLinenum = tag[languages[0].2] as? Int {
+                    let storageKey = storageKeyPrefix + String(keyLinenum)
+//                    guard linenum <= dataString.count else {continue}
+                    storageItem["ref"] = Node(tag["ref"] as? String ?? "")
+                    storageItem["seq"] = Node(sequencePosition)
+                    sequencePosition += 1
+                    storageItem["lineid"] = Node(keyLinenum)
+                    keyArray.append(Node(storageKey))
+                    for (langIndex,lang) in languages.enumerated() {
+                        var endlinenum: Int = 0
+                        if var linenum = tag[lang.2] as? Int {
+                            if linenum > dataStrings[langIndex].count {
+                                linenum = dataStrings[langIndex].count
+                            }
+                            endlinenum = linenum - 1
+                        }
+                        let datatext = dataStrings[langIndex][lastline[langIndex] ..< endlinenum].joined(separator: "\n")
+                        storageItem[lang.3] = Node(datatext) //escape ??
+                        lastline[langIndex] = endlinenum
+                    }
+                    results.append(Node([storageKey: Node(storageItem)]))
+                }
+
+            }
+            // need to add left over text
+        } //for (sectionIndex, sectionType) in sections.enumerated()
+        results.append(Node([docId + "-" + "keys": Node(keyArray)]))
+        var response: [String: Node] = [:]
+        response["data"] = Node(results)
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
+
+
+//        return View(data: [UInt8](outDocument))
     }
 
     func commentariesSummary(_ request: Request)throws -> ResponseRepresentable {
