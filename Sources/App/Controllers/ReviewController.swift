@@ -174,15 +174,18 @@ final class ReviewController{
                         storageItem[lang.3] = Node(datatext) //escape ??
                         lastline[langIndex] = endlinenum
                     }
-                    results.append(Node([storageKey: Node(storageItem)]))
+                    storageItem["key"] = Node(storageKey)
+                    results.append(Node(storageItem))
                 }
 
             }
             // need to add left over text
         } //for (sectionIndex, sectionType) in sections.enumerated()
-        results.append(Node([docId + "-" + "keys": Node(keyArray)]))
+        let keyForKeys = docId + "-" + "keys"
+        results.append(Node(["key": Node(keyForKeys),
+            keyForKeys: Node(keyArray)]))
         var response: [String: Node] = [:]
-        response["data"] = Node(results)
+        response["document"] = Node(results)
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
         ]

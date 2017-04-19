@@ -9,8 +9,8 @@
       
         function init_multifield(butt, butttwo) {
 
-
-            $(document).ready(function () {
+           
+//            $(document).ready(function () {
                 $(document).on('click', '#setStatus', function (e) {
                     e.preventDefault();
                     // Get some values from elements on the comment:
@@ -51,7 +51,7 @@
 
                     return false;
                 });
-            });
+//            });
 
         }
 
