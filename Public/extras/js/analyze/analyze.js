@@ -20,7 +20,7 @@
                 if (typeof docid == "undefined") {
                     return;
                 }
-                console.log("keys", localStorage.getObject(docid + "-keys"))
+//                console.log("keys", localStorage.getObject(docid + "-keys"))
                 if (localStorage.getObject(docid + "-keys") == null) {
                     var url = "/review/documents/" + docid + "/load/";
                     var jqxhr = $.ajax({
@@ -40,7 +40,33 @@
                 }
 
             }
+            var table = $('#comment-table');
+            var docid = $("#commentarysummary").attr("data-documentid");
+            $('#comment-table').on( 'click', 'tr', function (e) {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                    $( "#document-panel" ).trigger( "close.wb-overlay" );
+                }
+                else {
+                    $( "#document-panel" ).trigger( "close.wb-overlay" );
+                    $('#comment-table tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
 
+                    var lineno = $(this).children(':nth-child(1)').text();
+                    var sect = $(this).children(':nth-child(2)').text().substr(0,4);
+                    var refkey = docid + "-" + sect + lineno;
+                    var newpart = localStorage.getObject(refkey);
+                    if (newpart != null) {
+                        $("#docpanelang1").html(newpart["en-CA"]);
+                        $("#docpanelang2").html(newpart["fr-CA"]);
+                    }
+                    $( "#document-panel" ).trigger( "open.wb-overlay" );
+                }
+            } );
+
+            $('#button').click( function () {
+                table.row('.selected').remove().draw( false );
+            } );
             $(document).on("click", "#setStatus", function (e) {
                 e.preventDefault();
                 // Get some values from elements on the comment:

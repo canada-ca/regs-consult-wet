@@ -1,0 +1,23 @@
+
+#if(langfra) {
+<h2>Commentary – #(document.knownas)</h2>
+<
+} ##else() {
+<section id="document-panel" class="wb-overlay modal-content overlay-def wb-panel-l"  style="max-width:25%;">
+<header class="modal-header">
+<h2 class="modal-title">Document</h2>
+</header>
+<div class="modal-body">
+<div class="row">
+<div class="panel panel-default col-md-6">
+<div id="docpanelang1">
+</div>
+</div>
+<div class="panel panel-default col-md-6">
+<div id="docpanelang2">
+</div>
+</div>
+</div>
+</div>
+</section>
+}

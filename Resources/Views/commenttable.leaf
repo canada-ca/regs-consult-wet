@@ -21,7 +21,7 @@
 
 } ##else() {
 <h2>Comments</h2>
-<table class="wb-tables table table-striped table-hover" id="comments-filter" aria-live="polite" data-wb-tables='{
+<table  id="comment-table" class="wb-tables table table-striped table-hover" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
 "ajaxSource": "/receive/commentaries/#(commentary.id)/comments/",
 "order": [0, "asc"],
