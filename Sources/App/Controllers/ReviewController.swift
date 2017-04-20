@@ -168,11 +168,11 @@ final class ReviewController{
                             if linenum > dataStrings[langIndex].count {
                                 linenum = dataStrings[langIndex].count
                             }
-                            endlinenum = linenum - 1
+                            endlinenum = linenum
                         }
-                        let datatext = dataStrings[langIndex][lastline[langIndex] ..< endlinenum].joined(separator: "\n")
+                        let datatext = dataStrings[langIndex][lastline[langIndex] ..< endlinenum].joined(separator: "")
                         storageItem[lang.3] = Node(datatext) //escape ??
-                        lastline[langIndex] = endlinenum
+                        lastline[langIndex] = endlinenum 
                     }
                     storageItem["key"] = Node(storageKey)
                     results.append(Node(storageItem))
