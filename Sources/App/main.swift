@@ -11,8 +11,9 @@ let jwtUserSigner: Signer = HS256(key: (drop.config["crypto", "jwtuser","secret"
 drop.middleware.append(CorsMiddleware())
 
 try drop.addProvider(VaporMySQL.Provider.self)
-//let auth = AuthMiddleware(user: User.self)
-//drop.middleware.append(auth)
+//let uac = UACompatibleMiddleware()
+//drop.middleware.append(uac)  // added instead to nginx server config: add_header "X-UA-Compatible" "IE=Edge";
+
 
 drop.preparations.append(User.self)
 drop.preparations.append(Document.self)
