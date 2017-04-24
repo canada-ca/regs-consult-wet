@@ -172,7 +172,7 @@ final class ReviewController{
                         }
                         let datatext = dataStrings[langIndex][lastline[langIndex] ..< endlinenum].joined(separator: "")
                         storageItem[lang.3] = Node(datatext) //escape ??
-                        lastline[langIndex] = endlinenum 
+                        lastline[langIndex] = endlinenum
                     }
                     storageItem["key"] = Node(storageKey)
                     results.append(Node(storageItem))

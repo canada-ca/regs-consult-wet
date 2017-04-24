@@ -15,7 +15,7 @@
 <option value="notuseful">Not Useful</option>
 <option value="abuse">Abuse</option>
 </select>
-<span class="input-group-btn"><button id="setStatus" class="btn btn-lg btn-default" data-command="status" type="button" >Set status</button></span>
+<span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button></span>
 </div>
 </div>
 </div>

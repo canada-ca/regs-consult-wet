@@ -72,7 +72,7 @@ final class AnalyzeController{
     func receiverSummary(_ request: Request)throws -> ResponseRepresentable {
 
         var parameters = try Node(node: [
-            "receive_page": Node(true)
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
