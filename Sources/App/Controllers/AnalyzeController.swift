@@ -9,7 +9,7 @@ import Cookies
 import Fluent
 import FluentMySQL
 
-final class AnalyzeController{
+final class AnalyzeController {
     let pubDrop: Droplet
 
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
@@ -20,6 +20,8 @@ final class AnalyzeController{
         receiver.get("documents", handler: documentIndex)
 
         let documentreceiver = receiver.grouped("documents")
+        documentreceiver.get(":id", "comments", "summary", handler: allcommentsSummary)
+        documentreceiver.get(":id", "comments", handler: allcommentsIndex)
 
         documentreceiver.get(":id", handler: commentariesSummary)
         documentreceiver.get(":id","commentaries", handler: commentaryIndex)
@@ -56,7 +58,9 @@ final class AnalyzeController{
             let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] as? Int ?? 0
             let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/analyze/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default\" href=\"/analyze/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default\" href=\"/analyze/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
+            result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/analyze/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/analyze/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
+            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/comments/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
+            result["notelink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/notes/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
             results.append(Node(result))
 
         }
@@ -174,13 +178,67 @@ final class AnalyzeController{
         //        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
 
 
-        let commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
-
+        var commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
+        commentArray.sort(by: Comment.docOrderSort)
         var response: [String: Node] = [:]
         var results: [Node] = []
 
         for comment in commentArray {
             var result: [String: Node] = comment.forJSON()
+            //            let commentstr = String(describing: commentary.id!.int!)
+            //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
+            results.append(Node(result))
+
+        }
+        response["data"] = Node(results)
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
+    }
+    func allcommentsSummary(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+
+        var parameters = try Node(node: [
+            "comments_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/analyze/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+
+        return try   pubDrop.view.make("role/analyze/comments", parameters)
+    }
+
+    func allcommentsIndex(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
+
+
+        var commentArray = try Comment.query().filter(Comment.Constants.documentId, idInt).all()
+        commentArray.sort(by: Comment.docOrderSort)
+        var response: [String: Node] = [:]
+        var results: [Node] = []
+
+        for (index, comment) in commentArray.enumerated() {
+            var result: [String: Node] = comment.forJSON()
+            result["order"] = Node(index)
             //            let commentstr = String(describing: commentary.id!.int!)
             //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))

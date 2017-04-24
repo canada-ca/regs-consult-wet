@@ -28,12 +28,16 @@
 
 { "data": "knownas" },
 { "data": "newsubmit","type": "html" },
+{ "data": "commentlink","type": "html" },
+{ "data": "notelink","type": "html" },
 { "data": "id","type": "num", "className": "h4",  "visible": false  }
 ]}'>
 <thead>
 <tr>
 <th>Known As</th>
 <th>Commentaries</th>
+<th>Comments</th>
+<th>Notes</th>
 </tr>
 </thead>
 </table>

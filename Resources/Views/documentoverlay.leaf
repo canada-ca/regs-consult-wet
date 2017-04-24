@@ -3,7 +3,7 @@
 <h2>Commentary – #(document.knownas)</h2>
 <
 } ##else() {
-<section id="document-panel" class="wb-overlay modal-content overlay-def wb-bar-t" style="max-height:40%;">
+<section id="document-panel" class="wb-overlay modal-content overlay-def wb-bar-t" style="max-height:30%;">
 <header class="modal-header">
 <h2 class="modal-title">Document</h2>
 </header>
