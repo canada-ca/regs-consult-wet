@@ -14,6 +14,28 @@
                 var value = this.getItem(key);
                 return value && JSON.parse(value);
             };
+            var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
+            spellChecker: false,
+                forceSync: true,
+            autosave: {
+            enabled: true,
+            uniqueId: "Public-Note",
+            delay: 10000,
+                },
+                placeholder: "Type notes that will be seen by other users.",
+                });
+            
+            var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
+            spellChecker: false,
+                forceSync: true,
+            autosave: {
+            enabled: true,
+            uniqueId: "Private-Note",
+            delay: 10000,
+                },
+                placeholder: "Type notes that will only be seen by you.",
+                });
+
             var getdocument = function () {
 
                 var docid = $("#commentarysummary").attr("data-documentid");
@@ -106,7 +128,8 @@
                 });
             
             getdocument();
-        }
+            
+                   }
 
         init_multifield();
 

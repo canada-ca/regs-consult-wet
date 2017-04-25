@@ -1,0 +1,19 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+}
+#export("body") {
+<h2><a href="#(documentshref)">Documents</a> > <a href="#(commentshref)">Comments</a> > Comment</h2>
+<h3>#(document.knownas)</h3>
+<h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)">#(title)</h1>
+
+#embed("noteeditor")
+#embed("documentoverlay")
+}
+#export("scripts") {
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="/extras/js/analyze/analyze.js"></script>
+
+}

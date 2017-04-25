@@ -22,6 +22,7 @@
 <h2>Documents</h2>
 <table class="wb-tables table table-striped table-hover" id="document-filter" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
+"ordering": false,
 "ajaxSource": "/receive/documents/",
 "order": [1, "desc"],
 "columns": [

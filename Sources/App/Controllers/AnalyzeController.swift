@@ -22,7 +22,7 @@ final class AnalyzeController {
         let documentreceiver = receiver.grouped("documents")
         documentreceiver.get(":id", "comments", "summary", handler: allcommentsSummary)
         documentreceiver.get(":id", "comments", handler: allcommentsIndex)
-
+        documentreceiver.get(":id", "comments", ":commentId", handler: commentSummary)
         documentreceiver.get(":id", handler: commentariesSummary)
         documentreceiver.get(":id","commentaries", handler: commentaryIndex)
         documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
@@ -183,8 +183,9 @@ final class AnalyzeController {
         var response: [String: Node] = [:]
         var results: [Node] = []
 
-        for comment in commentArray {
+        for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
+            result["order"] = Node(index)
             //            let commentstr = String(describing: commentary.id!.int!)
             //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
@@ -239,8 +240,8 @@ final class AnalyzeController {
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index)
-            //            let commentstr = String(describing: commentary.id!.int!)
-            //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
+            let commentstr = String(describing: comment.id!.int!)
+            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">Note</a></p>")
             results.append(Node(result))
 
         }
@@ -280,6 +281,31 @@ final class AnalyzeController {
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
-    
+    func commentSummary(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+
+        var parameters = try Node(node: [
+            "comments_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/analyze/")
+        parameters["commentshref"] = Node("/analyze/documents/\(documentId)/comments/summary/")
+        //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+
+        return try   pubDrop.view.make("role/analyze/noteedit", parameters)
+    }
+
     
 }

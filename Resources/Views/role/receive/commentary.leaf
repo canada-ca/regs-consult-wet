@@ -9,6 +9,7 @@
 #embed("commentarysummary")
 #embed("commentarystatusform")
 #embed("commenttable")
+#embed("documentoverlay")
 }
 #export("scripts") {
 <script src="/extras/js/receive/receive.js"></script>
