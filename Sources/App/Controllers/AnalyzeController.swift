@@ -230,9 +230,13 @@ final class AnalyzeController {
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
+        let validStatus: Set = [CommentaryStatus.submitted, CommentaryStatus.analysis]
 
-
-        var commentArray = try Comment.query().filter(Comment.Constants.documentId, idInt).all()
+        let rawCommentArray = try Comment.query().filter(Comment.Constants.documentId, idInt).all()
+        var commentArray = try rawCommentArray.filter {
+            let commentary = try Commentary.find($0.commentary!)
+            return validStatus.contains(commentary?.status ?? "none")
+        }
         commentArray.sort(by: Comment.docOrderSort)
         var response: [String: Node] = [:]
         var results: [Node] = []

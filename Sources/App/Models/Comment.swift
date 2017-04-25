@@ -202,4 +202,15 @@ extension Comment {
     func commenter() throws -> Parent<Commentary> {
         return try parent(commentary, Constants.commentaryId)
     }
+    func commenterStatus() -> String {
+        do {
+            var comm: Parent<Commentary> = try parent(self.commentary, Constants.commentaryId)
+            var commreal = try comm.get()
+            return commreal?.status ?? "none"
+
+        } catch {
+            return "none"
+        }
+        return "none"
+    }
 }
