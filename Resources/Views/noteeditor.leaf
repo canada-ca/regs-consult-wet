@@ -10,10 +10,10 @@
 </label>
 <div class="input-group">
 <select id="commentary-status" class="form-control">
-<option value="submitted">Submitted</option>
+<option value="submitted">Final Disposition</option>
 <option value="analysis" selected>Analysis</option>
-<option value="notuseful">Not Useful</option>
-<option value="abuse">Abuse</option>
+<option value="notuseful">Duplicate</option>
+<option value="abuse">Review</option>
 </select>
 <span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button></span>
 </div>
@@ -25,6 +25,5 @@
 <h3>Private Note</h3>
 <textarea name="privatenote" id="privatenote"
 ></textarea>
-<button type="Submit" class="btn btn-info" name="save-draft" value="save-draft">Save Draft</button>
 </form>
 }
