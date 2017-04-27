@@ -7,4 +7,5 @@ Link to gh-pages demo
 
 Live consultation closes on May 18th 2017 - 
 https://regconsultation.ca:990/rp-pr/p1/2017/2017-03-04/html/reg2-eng.html
+
 Link is posted on this Gazette page: http://www.gazette.gc.ca/rp-pr/p1/2017/2017-03-04/html/reg2-eng.php#rias
