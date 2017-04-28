@@ -27,19 +27,19 @@
 "ajaxSource": "/analyze/documents/#(document.idbase62)/comments/",
 "order": [0, "asc"],
 "columns": [
-{ "data": "order","type": "num", "visible": false},
-{ "data": "linenumber", "type": "num"},
+{ "data": "order","type": "num", "visible": false, "searchable": false},
 { "data": "reference", "defaultContent": "" },
-{ "data": "link", "type": "html" },
-{ "data": "text", "defaultContent": "" }
+{ "data": "text", "defaultContent": "" },
+{ "data": "linenumber", "type": "num"},
+{ "data": "link", "type": "html" }
 ]}'>
 <thead>
 <tr>
 <th>order</th>
-<th>Line</th>
-<th>Reference</th>
-<th>Note</th>
+<th>Section</th>
 <th>Comment</th>
+<th>Line</th>
+<th>Note</th>
 </tr>
 </thead>
 </table>

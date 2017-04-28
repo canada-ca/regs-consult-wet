@@ -1,0 +1,133 @@
+@charset "utf-8";
+/*!
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ * v4.0.23-development - 2016-10-18
+ *
+ */
+details.addcomment summary{
+  background-color: lightblue;
+  text-decoration: underline
+}
+
+.commentpresent {
+  background-color: lightyellow  !important;
+}
+details.commentpresent summary {
+    color: #0535d2;
+    background-color: lightyellow  !important;
+    text-decoration: underline
+}
+details.commentpresent a {
+    margin-left: 3em
+}
+details.commentpresent button {
+    margin-top: 8px;
+    margin-right: 20px
+    }
+details.commentpresent div.savestatus  {
+    margin-top: 0px;
+    margin-left: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#bottom-bar header {
+  background-color: lightyellow;
+}
+#bottom-bar  button.mfp-close {
+	color: red;
+}
+ .wb-panel-r {
+    height: auto;
+    max-width: 90%;
+    top: 0
+}
+
+#commentpreview .wb-eqht section {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 49%;
+}
+#commentpreview.hideempty .emptycomment {
+    display: none;
+    
+}
+#commentpreview.hideorigtext .origtext {
+   display: none;
+
+}
+.checkboxcomment label:after {
+    padding-left: 4px;
+    padding-top: 2px;
+    font-size: 1.2em;
+}
+input.commentator  {
+    width: 50%;
+   }
+@media only screen {
+h5.comment-edit {
+    color: #0535d2;
+    background-color: lightyellow  !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+h5.comment-empty  {
+    background-color: lightblue !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+#comment-table tbody td:nth-child(1) {
+    color: #0535d2;
+
+}
+/*#comment-table.limit-comment tbody tr td:nth-child(2){*/
+/*    max-height:250px;*/
+/*     max-width: 0;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/**/
+/*}*/
+/* styles for '...' */
+table.limit-comment div.lc  {
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 12em;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
+/* create the ... */
+table.limit-comment div.lc:before {
+    /* points in the end */
+    content: '...';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of block */
+    right: 0;
+    bottom: 0;
+}
+/* hide ... if we have text, which is less than or equal to max lines */
+table.limit-comment div.lc:after {
+    /* points in the end */
+    content: '';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of text */
+    right: 0;
+    /* set width and height */
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    /* bg color = bg color under block */
+    background: white;
+}
+}

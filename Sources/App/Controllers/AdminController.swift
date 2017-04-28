@@ -170,7 +170,7 @@ struct AdminController {
 //            "users": users.makeNode()
 //            ])
         var parameters = try Node(node: [
-            "adminPage": Node(true)
+            "prepare_page": Node(true)
             ])
 //        parameters["users"] =  Node(users.map{try! $0.makeNode()})
         parameters["users"] = try users.makeNode(context: EmptyNode)

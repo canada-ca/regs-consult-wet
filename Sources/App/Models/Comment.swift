@@ -164,7 +164,7 @@ extension Comment {
         result[Comment.JSONKeys.linenumber] = Node(linenumber)
         if let rf = reference {result[Comment.JSONKeys.reference] = Node(rf)}
         if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
-        if let tx = text {result[Comment.JSONKeys.text] = Node(tx)}
+        if let tx = text {result[Comment.JSONKeys.text] = Node(String("<div class=\"lc\">\(tx)</div>"))}
 
         return result
     }

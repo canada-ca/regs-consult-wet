@@ -52,8 +52,8 @@
                     $('#comment-table tr.selected').removeClass('selected');
                     $(this).addClass('selected');
 
-                    var lineno = $(this).children(':nth-child(1)').text();
-                    var sect = $(this).children(':nth-child(2)').text().substr(0,4);
+                    var lineno = $(this).children(':nth-child(3)').text();
+                    var sect = $(this).children(':nth-child(1)').text().substr(0,4);
                     var refkey = docid + "-" + sect + lineno;
                     var newpart = localStorage.getObject(refkey);
                     if (newpart != null) {
@@ -106,28 +106,60 @@
                 });
             
             getdocument();
-            var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
-            spellChecker: false,
-            forceSync: true,
-            autosave: {
-            enabled: true,
-            uniqueId: "Public-Note",
-            delay: 10000,
-                },
-            placeholder: "Type notes that will be seen by other users.",
+            if ($("#publicnote").length>0) {
+                var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
+                spellChecker: false,
+                forceSync: true,
+                autosave: {
+                enabled: true,
+                uniqueId: "Public-Note",
+                delay: 10000,
+                    },
+                placeholder: "Type notes that will be seen by other users.",
+                    });
+                simplemdepub.render();
+                var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
+                spellChecker: false,
+                forceSync: true,
+                autosave: {
+                enabled: true,
+                uniqueId: "Private-Note",
+                delay: 10000,
+                    },
+                placeholder: "Type notes that will only be seen by you.",
+                    });
+                simplemdepriv.render();
+                
+                $(window).unload(function(){
+                    console.log(simplemdepub.value());
+                    $.ajax({
+                    type: "POST",
+                    url: "/receive/commentaries/",
+                    xhrFields: {
+                    withCredentials: true
+                        },
+                        // The key needs to match your method's input parameter (case-sensitive).
+                    data: JSON.stringify({"commentary":{
+                        "status": ""
+                        }}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        //                        interfaceUpdate(data);
+                        var overlay = data.commentary;
+                        if (typeof  overlay != "undefined") {
+                            $("#cty-status").find("strong").text(overlay["status"]);
+                            //                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
+                        }
+
+                    },
+                    error: function (errMsg) {
+                    }
+                        });
+
                 });
 
-            var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
-            spellChecker: false,
-            forceSync: true,
-            autosave: {
-            enabled: true,
-            uniqueId: "Private-Note",
-            delay: 10000,
-                },
-            placeholder: "Type notes that will only be seen by you.",
-                });
-
+            }
 
                 }
 
