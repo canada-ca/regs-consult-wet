@@ -42,25 +42,31 @@
             }
             var table = $('#comment-table');
             var docid = $("#commentarysummary").attr("data-documentid");
-            $('#comment-table').on( 'click', 'tr', function (e) {
-                if ( $(this).hasClass('selected') ) {
-                    $(this).removeClass('selected');
+            $('#comment-table').on( 'click', 'tr td', function (e) {
+                var row = $(this).parent();
+                if ( row.hasClass('selected') ) {
+                    row.removeClass('selected');
                     $( "#document-panel" ).trigger( "close.wb-overlay" );
                 }
                 else {
-                    $( "#document-panel" ).trigger( "close.wb-overlay" );
-                    $('#comment-table tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
+                    var idex = row.children().index($(this))
+                    if (0 == $(this).index()) {
+                        console.log($(this).text());
 
-                    var lineno = $(this).children(':nth-child(3)').text();
-                    var sect = $(this).children(':nth-child(1)').text().substr(0,4);
-                    var refkey = docid + "-" + sect + lineno;
-                    var newpart = localStorage.getObject(refkey);
-                    if (newpart != null) {
-                        $("#docpanelang1").html(newpart["en-CA"]);
-                        $("#docpanelang2").html(newpart["fr-CA"]);
+                        $( "#document-panel" ).trigger( "close.wb-overlay" );
+                        $('#comment-table tr.selected').removeClass('selected');
+                        row.addClass('selected');
+
+                        var lineno = row.children(':nth-child(3)').text();
+                        var sect = row.children(':nth-child(1)').text().substr(0,4);
+                        var refkey = docid + "-" + sect + lineno;
+                        var newpart = localStorage.getObject(refkey);
+                        if (newpart != null) {
+                            $("#docpanelang1").html(newpart["en-CA"]);
+                            $("#docpanelang2").html(newpart["fr-CA"]);
+                        }
+                        $( "#document-panel" ).trigger( "open.wb-overlay" );
                     }
-                    $( "#document-panel" ).trigger( "open.wb-overlay" );
                 }
             } );
 
@@ -110,26 +116,28 @@
                 var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
                 spellChecker: false,
                 forceSync: true,
-                autosave: {
-                enabled: true,
-                uniqueId: "Public-Note",
-                delay: 10000,
-                    },
+//                autosave: {
+//                enabled: true,
+//                uniqueId: "Public-Note",
+//                delay: 10000,
+//                    },
                 placeholder: "Type notes that will be seen by other users.",
                     });
                 simplemdepub.render();
                 var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
                 spellChecker: false,
                 forceSync: true,
-                autosave: {
-                enabled: true,
-                uniqueId: "Private-Note",
-                delay: 10000,
-                    },
+//                autosave: {
+//                enabled: true,
+//                uniqueId: "Private-Note",
+//                delay: 10000,
+//                    },
                 placeholder: "Type notes that will only be seen by you.",
                     });
                 simplemdepriv.render();
-                
+                simplemdepub.codemirror.on("blur", function(){
+                    console.log(simplemdepub.value());
+                });
                 $(window).unload(function(){
                     console.log(simplemdepub.value());
                     $.ajax({
