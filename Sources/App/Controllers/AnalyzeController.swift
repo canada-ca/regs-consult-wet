@@ -297,10 +297,15 @@ final class AnalyzeController {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
         }
-
+        guard let commentId = request.parameters["commentId"]?.string else {
+            throw Abort.badRequest
+        }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+        
+        let commentdata = try Comment.find(Node(commentId))
+        guard commentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
             "comments_page": Node(true)
@@ -310,12 +315,20 @@ final class AnalyzeController {
             parameters["signedon"] = Node(true)
             parameters["activeuser"] = try usr.makeNode()
         }
+
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
         parameters["documentshref"] = Node("/analyze/")
+        let commentjson = commentdata!.forJSON()
+        parameters["comment"] = Node(commentjson)
         parameters["commentshref"] = Node("/analyze/documents/\(documentId)/comments/summary/")
         //\(docjson[Document.JSONKeys.idbase62]!.string!)/
-
+        if let commentaryId = commentdata?.commentary, let commentary = try Commentary.find(commentaryId) {
+            let commentstr = String(describing: commentary.id!.int!)
+            parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
+            parameters["commentary"] = Node(commentary.forJSON())
+        }
+        
         return try   pubDrop.view.make("role/analyze/noteedit", parameters)
     }
 

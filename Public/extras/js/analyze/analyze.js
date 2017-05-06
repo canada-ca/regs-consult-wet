@@ -49,7 +49,7 @@
                     $( "#document-panel" ).trigger( "close.wb-overlay" );
                 }
                 else {
-                    var idex = row.children().index($(this))
+//                    var idex = row.children().index($(this))
                     if (0 == $(this).index()) {
                         console.log($(this).text());
 
