@@ -49,14 +49,12 @@
                     $( "#document-panel" ).trigger( "close.wb-overlay" );
                 }
                 else {
+                    $( "#document-panel" ).trigger( "close.wb-overlay" );
+                    $('#comment-table tr.selected').removeClass('selected');
 //                    var idex = row.children().index($(this))
-                    if (0 == $(this).index()) {
-                        console.log($(this).text());
-
-                        $( "#document-panel" ).trigger( "close.wb-overlay" );
-                        $('#comment-table tr.selected').removeClass('selected');
+                    if (0 == $(this).index()) { //restrict overlay to column
+//                        console.log($(this).text());
                         row.addClass('selected');
-
                         var lineno = row.children(':nth-child(3)').text();
                         var sect = row.children(':nth-child(1)').text().substr(0,4);
                         var refkey = docid + "-" + sect + lineno;
