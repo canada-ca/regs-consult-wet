@@ -375,7 +375,7 @@ final class AnalyzeController {
                         }
                         
                     }
-                    guard note != nil, note!.user != usr.id! else { continue }
+                    guard note != nil, note!.user == usr.id! else { continue }
                     
                     if let item = update[Note.JSONKeys.linenumber]?.int {
                             note?.linenumber = item
