@@ -20,15 +20,15 @@ final class PublisherController {
 //        let protect = ProtectMiddleware(error:
 //            Abort.custom(status: .forbidden, message: "Not authorized.")
 //        )
-        let prepare = drop.grouped("prepare").grouped(cookieSetter).grouped(protect) //.grouped(protect)
+        let role = drop.grouped("prepare").grouped(cookieSetter).grouped(protect) //.grouped(protect)
 
 
-        prepare.get { request in
+        role.get { request in
             //TODO: list of docs
             return "document info"
         }
-        prepare.post("publish", ":id", handler: publishDocument)
-        prepare.post("load", ":filename", handler: loadDocument)
+        role.post("publish", ":id", handler: publishDocument)
+        role.post("load", ":filename", handler: loadDocument)
     }
 
 //    func getUserFromCookie(_ request: Request)throws -> User {

@@ -15,17 +15,17 @@ final class ReceiveController{
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
 
-        let receiver = drop.grouped("receive").grouped(cookieSetter).grouped(protect)
-        receiver.get(handler: receiverSummary)
-        receiver.get("documents", handler: documentIndex)
+        let role = drop.grouped("receive").grouped(cookieSetter).grouped(protect)
+        role.get(handler: receiverSummary)
+        role.get("documents", handler: documentIndex)
 
-        let documentreceiver = receiver.grouped("documents")
+        let documentrole = role.grouped("documents")
 
-        documentreceiver.get(":id", handler: commentariesSummary)
-        documentreceiver.get(":id","commentaries", handler: commentaryIndex)
-        documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
-        receiver.get("commentaries", ":commentaryId","comments", handler: commentIndex)
-        receiver.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
+        documentrole.get(":id", handler: commentariesSummary)
+        documentrole.get(":id","commentaries", handler: commentaryIndex)
+        documentrole.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
+        role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
        

@@ -9,6 +9,7 @@ struct Note: Model {
         static let commentary = "commentary"
         static let documentId = "document_id"
         static let commentaryId = "commentary_id"
+        static let userId = "user_id"
         static let document = "document"
         static let linenumber = "linenumber"
         static let reference = "reference"
@@ -22,12 +23,15 @@ struct Note: Model {
     struct JSONKeys {
         static let id = "id"
         static let commentary = "commentary"
-        static let documentId = "document_id"
-        static let commentaryId = "commentary_id"
+        static let documentId = "documentid"
+        static let commentaryId = "commentaryid"
         static let document = "document"
         static let linenumber = "linenumber"
         static let reference = "reference"
-        static let text = "text"
+        static let textshared = "textshared"
+        static let statusshared = "statusshared"
+        static let textuser = "textuser"
+        static let statususer = "statususer"
         static let status = "status"
 
     }
@@ -52,7 +56,7 @@ struct Note: Model {
     var exists: Bool = false
     static var entity = "notes" //db table name
     enum Error: Swift.Error {
-        case dateNotSupported
+        case userNotSupplied
         case idTooLarge
     }
 
@@ -73,9 +77,28 @@ extension Note: NodeConvertible {
         }
         document = try node.extract(Constants.documentId)
         commentary = try node.extract(Constants.commentaryId)
-        linenumber = try node.extract(Constants.linenumber)
+        if let suggestedId = node[Constants.userId]?.uint {
+            if suggestedId < UInt(UInt32.max) {
+                id = Node(suggestedId)
+            } else {
+                throw Error.idTooLarge
+            }
+            user = Node(suggestedId)
+        } else {
+            throw Error.userNotSupplied
+        }
+        if let suggestedId = node[Constants.linenumber]?.int {
+             linenumber = suggestedId
+        } else {
+            linenumber = 0
+        }
+
         reference = try node.extract(Constants.reference)
-//        text = try node.extract(Constants.text)
+        textshared = try node.extract(Constants.textshared)
+        statusshared = try node.extract(Constants.statusshared)
+        textuser = try node.extract(Constants.textuser)
+        statususer = try node.extract(Constants.statususer)
+
         status = try node.extract(Constants.status)
     }
 
@@ -88,9 +111,13 @@ extension Note: NodeConvertible {
                 Constants.id: id,
                 Constants.commentaryId: commentary,
                 Constants.documentId: document,
+                Constants.userId: user,
                 Constants.linenumber: linenumber,
                 Constants.reference: reference,
-//                Constants.text: text,
+                Constants.textshared: textshared,
+                Constants.statusshared: statusshared,
+                Constants.textuser: textuser,
+                Constants.statususer: statususer,
                 Constants.status: status
             ]
         )
@@ -105,6 +132,7 @@ extension Note: Preparation {
             comment.id()
             comment.parent(Document.self, optional: false)
             comment.parent(Commentary.self, optional: true)
+            comment.parent(User.self, optional: false)
             comment.int(Constants.linenumber, optional: false)
             comment.string(Constants.reference, optional: true)
             comment.data(Constants.textshared, optional: true)
@@ -124,60 +152,70 @@ extension Note: Preparation {
 // MARK: Merge
 
 extension Note {
-    mutating func merge(updates: Comment) {
+    mutating func merge(updates: Note) {
         id = updates.id ?? id
         commentary = updates.commentary ?? commentary
         document = updates.document ?? document
-        linenumber = updates.linenumber
+        user = updates.user ?? user
+        linenumber = updates.linenumber  // more testing of 0 case needing
         reference = updates.reference ?? reference
-//        text = updates.text ?? text
+        textshared = updates.textshared ?? textshared
+        statusshared = updates.statusshared ?? statusshared
+        textuser = updates.textuser ?? textuser
+        statususer = updates.statususer ?? statususer
         status = updates.status ?? status
 
     }
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {
-            result[Comment.JSONKeys.id] = Node(emu)
+            result[JSONKeys.id] = Node(emu)
         }
-        result[Comment.JSONKeys.linenumber] = Node(linenumber)
-        if let rf = reference {result[Comment.JSONKeys.reference] = Node(rf)}
-        if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
-//        if let tx = text {result[Comment.JSONKeys.text] = Node(tx)}
+        result[JSONKeys.linenumber] = Node(linenumber)
+        if let rf = reference {result[JSONKeys.reference] = Node(rf)}
+        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)}
+        if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
+        if let tx = textuser {result[JSONKeys.textuser] = Node(tx)}
+        if let st = statususer {result[JSONKeys.statususer] = Node(st)}
+        if let st = status {result[JSONKeys.status] = Node(st)}
 
         return result
     }
 
     func nodeForJSON() -> Node? {
-        guard let ref = self.reference else { return nil}
-        let tagType = String(ref.characters.prefix(4))
-        return Node(["reftext": Node(ref),
-                     "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
-//            "text": Node(self.text ?? ""),
-            "status": Node(self.status ?? "")
+
+        return Node([
+            JSONKeys.linenumber: Node(linenumber),
+            JSONKeys.reference: Node(reference ?? ""),
+            JSONKeys.textshared: Node(textshared ?? ""),
+            JSONKeys.statusshared: Node(statusshared ?? ""),
+            JSONKeys.textuser: Node(textuser ?? ""),
+            JSONKeys.statususer: Node(statususer ?? ""),
+            JSONKeys.status: Node(status ?? "")
             ])
     }
-    func nodeForReviewJSON() -> Node? {
-        guard let ref = self.reference else { return nil}
-        let tagType = String(ref.characters.prefix(4))
-
-        var commnode = Node(["reftext": Node(ref),
-                             "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
-//                             "text": Node(self.text ?? ""),
-                             "status" :Node(self.status ?? "")
-            ])
-        do {
-            let cmty =  try self.commenter().get
-            commnode["commentary"] = try cmty()?.nodeForJSON()
-
-        } catch {
-
-            }
-        return  commnode
-    }
-
-}
-extension Note {
-    func commenter() throws -> Parent<Commentary> {
-        return try parent(commentary, Constants.commentaryId)
-    }
+//    func nodeForReviewJSON() -> Node? {
+//        guard let ref = self.reference else { return nil}
+//        let tagType = String(ref.characters.prefix(4))
+//
+//        var commnode = Node(["reftext": Node(ref),
+//                             "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
+////                             "text": Node(self.text ?? ""),
+//                             "status" :Node(self.status ?? "")
+//            ])
+//        do {
+//            let cmty =  try self.commenter().get
+//            commnode["commentary"] = try cmty()?.nodeForJSON()
+//
+//        } catch {
+//
+//            }
+//        return  commnode
+//    }
+//
+//}
+//extension Note {
+//    func commenter() throws -> Parent<Commentary> {
+//        return try parent(commentary, Constants.commentaryId)
+//    }
 }

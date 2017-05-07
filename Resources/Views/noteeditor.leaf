@@ -9,9 +9,9 @@
 <span class="field-name">Change note status to:</span>
 </label>
 <div class="input-group">
-<select id="commentary-status" class="form-control">
-<option value="submitted">Final Disposition</option>
-<option value="analysis" selected>Analysis</option>
+<select id="note-status" class="form-control">
+<option value="disposition" #equal(note.status,"disposition") {selected}>Final Disposition</option>
+<option value="analysis" #equal(note.status,"analysis") {selected}>Analysis</option>
 <option value="notuseful">Duplicate</option>
 <option value="abuse">Review</option>
 </select>
@@ -19,11 +19,20 @@
 </div>
 </div>
 </div>
+#if(note) {
 <h3>Public Note</h3>
-<textarea name="publicnote" id="publicnote"
+<textarea name="publicnote" id="publicnote" data-noteid="#(note.id)"  data-linenumber="#(note.linenumber)"
+>#(note.textshared)</textarea>
+<h3>Private Note</h3>
+<textarea name="privatenote" id="privatenote"
+>#(note.textuser)</textarea>
+} ##else() {
+<h3>Public Note</h3>
+<textarea name="publicnote" id="publicnote" data-linenumber="#(comment.linenumber)"
 ></textarea>
 <h3>Private Note</h3>
 <textarea name="privatenote" id="privatenote"
 ></textarea>
+}
 </form>
 }

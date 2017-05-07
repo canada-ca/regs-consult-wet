@@ -7,8 +7,7 @@
 #export("body") {
 <h2><a href="#(documentshref)">Documents</a> > <a href="#(commentshref)">Comments</a> > Comment</h2>
 <h3>#(document.knownas)</h3>
-<h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)">#(title)</h1>
-
+<h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)" data-commentaryid="#(commentary.id)">#(title)</h1>
 #embed("noteeditor")
 #embed("documentoverlay")
 }

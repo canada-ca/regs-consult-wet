@@ -39,12 +39,12 @@ final class CommentaryController{
         filePackDir = drop.workDir + "FilePacks/"
         submitRender = LeafRenderer(viewsDir: drop.viewsDir)
         jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary", "secret"]?.string ?? "secret").bytes)
-        let previewer = drop.grouped("documents",":id", "commentaries")
-        previewer.get("summary", handler: commentarySummary)
+        let role = drop.grouped("documents",":id", "commentaries")
+        role.get("summary", handler: commentarySummary)
 //        previewer.get("submit",":command", handler: commentarySubmit)
-        previewer.post("submit", ":command", handler: commentarySubmit)
+        role.post("submit", ":command", handler: commentarySubmit)
 
-        previewer.get( handler: commentaryLoad)
+        role.get( handler: commentaryLoad)
 
     }
     func commentaryLoad(_ request: Request)throws -> ResponseRepresentable {

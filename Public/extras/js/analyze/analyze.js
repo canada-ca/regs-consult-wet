@@ -111,6 +111,51 @@
             
             getdocument();
             if ($("#publicnote").length>0) {
+
+                var postupdatenote = function (){
+                    // Get some values from elements on the identity:
+
+                    var noteid = $("#publicnote").attr("data-noteid");
+
+                    var linenum = $("#publicnote").attr("data-linenumber");
+                    var notestatus = $("#note-status").val();
+                    var pubnotetext = simplemdepub.value();
+                    var privnotetext = simplemdepriv.value();
+                    var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
+                    var noteobj  = new Object();
+                    if (noteid !== undefined) { noteobj["id"] = noteid }
+                    if (notestatus !== undefined) { noteobj["status"] = notestatus }
+                    if (linenum !== undefined) { noteobj["linenumber"] = linenum }
+                    if (pubnotetext !== undefined) { noteobj["textshared"] = pubnotetext }
+                    if (privnotetext !== undefined) { noteobj["textuser"] = privnotetext }
+                    if (commentaryid !== undefined) { noteobj["commentaryid"] = commentaryid }
+
+                    var docid =  $("#commentarysummary").attr("data-documentid");
+                    var url = "/analyze/documents/" + docid + "/notes/";
+                    // Send the data using post
+                    var posting = $.ajax({
+                    type: "POST",
+                    url: url,
+                    xhrFields: {
+                    withCredentials: true
+                        },
+                        // The key needs to match your method's input parameter (case-sensitive).
+                    data: JSON.stringify({ "notes":[
+                        noteobj
+                        ]
+                        }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(data){
+                        console.log("update success" + JSON.stringify(data));
+
+                    },
+                    error: function(errMsg) {
+                        console.log("update fail" + errMsg);
+                    }
+                        });
+                    
+                }
                 var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
                 spellChecker: false,
                 forceSync: true,
@@ -122,6 +167,10 @@
                 placeholder: "Type notes that will be seen by other users.",
                     });
                 simplemdepub.render();
+                        simplemdepub.codemirror.on("blur", function(){
+                            console.log(simplemdepub.value());
+                            postupdatenote();
+                        });
                 var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
                 spellChecker: false,
                 forceSync: true,
@@ -133,36 +182,13 @@
                 placeholder: "Type notes that will only be seen by you.",
                     });
                 simplemdepriv.render();
-                simplemdepub.codemirror.on("blur", function(){
+                simplemdepriv.codemirror.on("blur", function(){
                     console.log(simplemdepub.value());
+                    postupdatenote();
                 });
                 $(window).unload(function(){
                     console.log(simplemdepub.value());
-                    $.ajax({
-                    type: "POST",
-                    url: "/receive/commentaries/",
-                    xhrFields: {
-                    withCredentials: true
-                        },
-                        // The key needs to match your method's input parameter (case-sensitive).
-                    data: JSON.stringify({"commentary":{
-                        "status": ""
-                        }}),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-                        //                        interfaceUpdate(data);
-                        var overlay = data.commentary;
-                        if (typeof  overlay != "undefined") {
-                            $("#cty-status").find("strong").text(overlay["status"]);
-                            //                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
-                        }
-
-                    },
-                    error: function (errMsg) {
-                    }
-                        });
-
+                    postupdatenote();
                 });
 
             }

@@ -15,19 +15,20 @@ final class AnalyzeController {
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
 
-        let receiver = drop.grouped("analyze").grouped(cookieSetter).grouped(protect)
-        receiver.get(handler: receiverSummary)
-        receiver.get("documents", handler: documentIndex)
+        let role = drop.grouped("analyze").grouped(cookieSetter).grouped(protect)
+        role.get(handler: receiverSummary)
+        role.get("documents", handler: documentIndex)
 
-        let documentreceiver = receiver.grouped("documents")
-        documentreceiver.get(":id", "comments", "summary", handler: allcommentsSummary)
-        documentreceiver.get(":id", "comments", handler: allcommentsIndex)
-        documentreceiver.get(":id", "comments", ":commentId", handler: commentSummary)
-        documentreceiver.get(":id", handler: commentariesSummary)
-        documentreceiver.get(":id","commentaries", handler: commentaryIndex)
-        documentreceiver.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
-        receiver.get("commentaries", ":commentaryId","comments", handler: commentIndex)
-        receiver.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
+        let documentrole = role.grouped("documents")
+        documentrole.get(":id", "comments", "summary", handler: allcommentsSummary)
+        documentrole.get(":id", "comments", handler: allcommentsIndex)
+        documentrole.get(":id", "comments", ":commentId", handler: commentSummary)
+        documentrole.get(":id", handler: commentariesSummary)
+        documentrole.get(":id","commentaries", handler: commentaryIndex)
+        documentrole.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
+        role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
+        documentrole.post(":id","notes", handler: notesUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
 
@@ -311,10 +312,10 @@ final class AnalyzeController {
             "comments_page": Node(true)
             ])
         parameters["signon"] = Node(true)
-        if let usr = request.storage["userid"] as? User {
-            parameters["signedon"] = Node(true)
-            parameters["activeuser"] = try usr.makeNode()
-        }
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+        parameters["signedon"] = Node(true)
+        parameters["activeuser"] = try usr.makeNode()
+
 
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
@@ -327,9 +328,91 @@ final class AnalyzeController {
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).all()
+            var otherNotes:[Node] = []
+            for note in notesarray {
+                if note.user == usr.id {
+                    parameters["note"] = Node(note.forJSON())
+                } else {
+                    otherNotes.append(Node(note.forJSON()))
+                }
+            }
+            parameters["notes"] = Node(otherNotes)
         }
-        
+
+
         return try   pubDrop.view.make("role/analyze/noteedit", parameters)
+    }
+
+    func notesUpdate(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {throw Abort.custom(status: .conflict, message: "cannot locate document")}
+        
+        guard let usr = request.storage["userid"] as? User else {throw Abort.custom(status: .conflict, message: "cannot locate user")}
+
+        if let notesarray = request.json?["notes"]?.array {
+            for ind in 0..<notesarray.count {
+                if let update = notesarray[ind].object {
+                    var note: Note?
+                    if let ref = update[Note.JSONKeys.id]?.int {
+                        note = try Note.find(ref)
+                    }
+                    let lnum = update[Note.JSONKeys.linenumber]?.int ?? 0
+                    if note == nil, let ref = update[Note.JSONKeys.commentaryId]?.int {
+                        note = try Note.query().filter(Note.Constants.commentaryId, ref).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).first()
+                        if note == nil {
+                            let initNode:[String:Node] = [
+                                Note.Constants.commentaryId: Node(ref),
+                                Note.Constants.documentId: documentdata!.id!,
+                                Note.Constants.userId: usr.id!,
+                                Note.Constants.linenumber: Node(lnum)
+                            ]
+                            note = try Note(node: Node(initNode), in: [])
+                        }
+                        
+                    }
+                    guard note != nil, note!.user != usr.id! else { continue }
+                    
+                    if let item = update[Note.JSONKeys.linenumber]?.int {
+                            note?.linenumber = item
+                    }
+                    if let item = update[Note.JSONKeys.status]?.string {
+                        let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+                        note?.status = newitem
+                    }
+                    if let item = update[Note.JSONKeys.statususer]?.string {
+                        let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+                        note?.statususer = newitem
+                    }
+                    if let item = update[Note.JSONKeys.statusshared]?.string {
+                        let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
+                        note?.statusshared = newitem
+                    }
+                    if let item = update[Note.JSONKeys.textshared]?.string {
+                        note?.textshared = item
+                    }
+                    if let item = update[Note.JSONKeys.textuser]?.string {
+                        note?.textuser = item
+                    }
+                    try note!.save()
+
+                }
+            }
+        }
+
+        var response:[String: Node] = [:]
+
+        response["note"] = Node(true)
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
     }
 
     

@@ -19,6 +19,8 @@ drop.preparations.append(User.self)
 drop.preparations.append(Document.self)
 drop.preparations.append(Commentary.self)
 drop.preparations.append(Comment.self)
+drop.preparations.append(Note.self)
+
 let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
 let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: jwtUserSigner)
 
