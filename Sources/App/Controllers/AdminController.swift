@@ -234,9 +234,7 @@ struct AdminController {
         }
         if editing {
             parameters["editing"] = true
-            guard let userId = userId else {
-                throw Abort.badRequest
-            }
+            
             if let usr = request.storage["userid"] as? User {
                 //only edit yourself
                 guard usr.admin || usr.id == userId else {

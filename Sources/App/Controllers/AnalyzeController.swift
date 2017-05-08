@@ -33,16 +33,14 @@ final class AnalyzeController {
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
 
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
-        let commentaryStatusCounts = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted, CommentaryStatus.analysis]).all().reduce([:]) {
-            ( accu, element) in
-            var accu2: [String: Int] = accu as! [String : Int]
-            if let stat = element.status , let docid = element.document?.uint {
-                let counthash = stat + String(docid)
-                accu2[counthash] = (accu2[counthash] ?? 0) + 1
+        var commentaryStatusCounts: [String:Int] = [:]
+        let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+            commentaryStatusArray.forEach { element in
+                if let stat = element.status , let docid = element.document?.uint {
+                    let counthash = stat + String(docid)
+                    commentaryStatusCounts[counthash] = (commentaryStatusCounts[counthash] ?? 0) + 1
+                }
             }
-            return accu2
-        }
-
 
         var response: [String: Node] = [:]
         var results: [Node] = []
@@ -258,9 +256,9 @@ final class AnalyzeController {
                     let keyidx = "\(String(describing: comm.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
                     if nte.user == usr.id! {
                         accu[keyidx] = (accu[keyidx] ?? 0) + 1
-                    } else {
+                    } //else {
                         accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
-                    }
+                    //}
                 }
             }
         }
@@ -273,7 +271,7 @@ final class AnalyzeController {
             result["order"] = Node(index)
             let commentstr = String(describing: comment.id!.int!)
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-            let buttonText = (accu[keyidx] == nil ? "Add Note" : "Edit Note")
+            let buttonText = (accu[keyidx] == nil ? "Note&nbsp;+" : "Note")
             if let countOtherNotes = accu2[keyidx] {
                 result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) <span class=\"badge\">\(countOtherNotes)<span class=\"wb-inv\"> comments</span></span></a></p>")
             } else {
