@@ -189,7 +189,7 @@
                     console.log(simplemdepub.value());
                     postupdatenote();
                 });
-                $(window).unload(function(){
+                $(window).on('beforeunload',function(){
                     console.log(simplemdepub.value());
                     postupdatenote();
                 });
