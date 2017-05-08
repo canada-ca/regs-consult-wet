@@ -247,6 +247,24 @@ final class AnalyzeController {
             return false
         }
         commentArray.sort(by: Comment.docOrderSort)
+
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+        let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
+        var accu: [String: Int] = [:]
+        var accu2: [String: Int] = [:]
+        rawNoteArray.forEach { nte in
+            if let comm = nte.commentary {
+                if commentarySet.contains(comm.uint ?? 0) {
+                    let keyidx = "\(String(describing: comm.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
+                    if nte.user == usr.id! {
+                        accu[keyidx] = (accu[keyidx] ?? 0) + 1
+                    } else {
+                        accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
+                    }
+                }
+            }
+        }
+
         var response: [String: Node] = [:]
         var results: [Node] = []
 
@@ -254,7 +272,13 @@ final class AnalyzeController {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index)
             let commentstr = String(describing: comment.id!.int!)
-            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">Note</a></p>")
+            let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
+            let buttonText = (accu[keyidx] == nil ? "Add Note" : "Edit Note")
+            if let countOtherNotes = accu2[keyidx] {
+                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) <span class=\"badge\">\(countOtherNotes)<span class=\"wb-inv\"> comments</span></span></a></p>")
+            } else {
+                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText)</a></p>")
+            }
             results.append(Node(result))
 
         }
@@ -328,7 +352,7 @@ final class AnalyzeController {
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).all()
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
             var otherNotes:[Node] = []
             for note in notesarray {
                 if note.user == usr.id {
@@ -358,17 +382,20 @@ final class AnalyzeController {
             for ind in 0..<notesarray.count {
                 if let update = notesarray[ind].object {
                     var note: Note?
-                    if let ref = update[Note.JSONKeys.id]?.int {
-                        note = try Note.find(ref)
+                    if let refID = update[Note.JSONKeys.id]?.int {
+                        note = try Note.find(refID)
                     }
                     let lnum = update[Note.JSONKeys.linenumber]?.int ?? 0
-                    if note == nil, let ref = update[Note.JSONKeys.commentaryId]?.int {
-                        note = try Note.query().filter(Note.Constants.commentaryId, ref).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).first()
+                    let ref = update[Note.JSONKeys.reference]?.string ?? ""
+                    if note == nil, let refID = update[Note.JSONKeys.commentaryId]?.int {
+//                        note = try Note.query().filter(Note.Constants.commentaryId, refID).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(Note.Constants.reference, ref).first()
+                         note = try Note.query().filter(Note.Constants.commentaryId, Node(refID)).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(Note.Constants.reference, ref).first()
                         if note == nil {
                             let initNode:[String:Node] = [
-                                Note.Constants.commentaryId: Node(ref),
+                                Note.Constants.commentaryId: Node(refID),
                                 Note.Constants.documentId: documentdata!.id!,
                                 Note.Constants.userId: usr.id!,
+                                Note.Constants.reference: Node(ref),
                                 Note.Constants.linenumber: Node(lnum)
                             ]
                             note = try Note(node: Node(initNode), in: [])
@@ -379,6 +406,9 @@ final class AnalyzeController {
                     
                     if let item = update[Note.JSONKeys.linenumber]?.int {
                             note?.linenumber = item
+                    }
+                    if let item = update[Note.JSONKeys.reference]?.string {
+                        note?.reference = item
                     }
                     if let item = update[Note.JSONKeys.status]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)

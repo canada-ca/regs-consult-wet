@@ -90,7 +90,7 @@ h5.comment-empty  {
 /**/
 /*}*/
 /* styles for '...' */
-table.limit-comment div.lc  {
+.limit-comment div.lc  {
     /* hide text if it more than N lines  */
     overflow: hidden;
     /* for set '...' in absolute position */
@@ -106,7 +106,7 @@ table.limit-comment div.lc  {
     padding-right: 1em;
 }
 /* create the ... */
-table.limit-comment div.lc:before {
+.limit-comment div.lc:before {
     /* points in the end */
     content: '...';
     /* absolute position */
@@ -116,7 +116,7 @@ table.limit-comment div.lc:before {
     bottom: 0;
 }
 /* hide ... if we have text, which is less than or equal to max lines */
-table.limit-comment div.lc:after {
+.limit-comment div.lc:after {
     /* points in the end */
     content: '';
     /* absolute position */
@@ -130,4 +130,20 @@ table.limit-comment div.lc:after {
     /* bg color = bg color under block */
     background: white;
 }
+.limit-comment .selected div.lc  {
+    /* hide text if it more than N lines  */
+    overflow: visible;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: fit-content;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
+
 }

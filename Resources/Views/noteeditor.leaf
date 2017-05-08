@@ -21,14 +21,14 @@
 </div>
 #if(note) {
 <h3>Public Note</h3>
-<textarea name="publicnote" id="publicnote" data-noteid="#(note.id)"  data-linenumber="#(note.linenumber)"
+<textarea name="publicnote" id="publicnote" data-noteid="#(note.id)" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
 >#(note.textshared)</textarea>
 <h3>Private Note</h3>
 <textarea name="privatenote" id="privatenote"
 >#(note.textuser)</textarea>
 } ##else() {
 <h3>Public Note</h3>
-<textarea name="publicnote" id="publicnote" data-linenumber="#(comment.linenumber)"
+<textarea name="publicnote" id="publicnote" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
 ></textarea>
 <h3>Private Note</h3>
 <textarea name="privatenote" id="privatenote"

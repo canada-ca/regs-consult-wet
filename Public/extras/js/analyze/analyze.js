@@ -51,10 +51,11 @@
                 else {
                     $( "#document-panel" ).trigger( "close.wb-overlay" );
                     $('#comment-table tr.selected').removeClass('selected');
+                    row.addClass('selected');
 //                    var idex = row.children().index($(this))
                     if (0 == $(this).index()) { //restrict overlay to column
 //                        console.log($(this).text());
-                        row.addClass('selected');
+
                         var lineno = row.children(':nth-child(3)').text();
                         var sect = row.children(':nth-child(1)').text().substr(0,4);
                         var refkey = docid + "-" + sect + lineno;
@@ -122,6 +123,7 @@
                     var pubnotetext = simplemdepub.value();
                     var privnotetext = simplemdepriv.value();
                     var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
+                    var reference = $("#publicnote").attr("data-reference");
                     var noteobj  = new Object();
                     if (noteid !== undefined) { noteobj["id"] = noteid }
                     if (notestatus !== undefined) { noteobj["status"] = notestatus }
@@ -129,6 +131,7 @@
                     if (pubnotetext !== undefined) { noteobj["textshared"] = pubnotetext }
                     if (privnotetext !== undefined) { noteobj["textuser"] = privnotetext }
                     if (commentaryid !== undefined) { noteobj["commentaryid"] = commentaryid }
+                    if (reference !== undefined) { noteobj["reference"] = reference }
 
                     var docid =  $("#commentarysummary").attr("data-documentid");
                     var url = "/analyze/documents/" + docid + "/notes/";
