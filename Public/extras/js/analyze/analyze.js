@@ -68,6 +68,15 @@
                     }
                 }
             } );
+            $('.lc').on('click', function (e) {
+                var item = $(this).parent('.comment-text');
+                if ( item.hasClass('selected') ) {
+                    item.removeClass('selected');
+                }
+                else {
+                    item.addClass('selected');
+                }
+            });
 
             $('#button').click( function () {
                 table.row('.selected').remove().draw( false );
@@ -111,6 +120,7 @@
                 });
             
             getdocument();
+
             if ($("#publicnote").length>0) {
 
                 var postupdatenote = function (){

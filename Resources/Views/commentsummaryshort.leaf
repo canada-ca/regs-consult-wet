@@ -27,7 +27,7 @@
 </tbody>
 </table>
 </div>
-<div class="panel panel-default col-md-8 limit-comment">
+<div class="panel panel-default col-md-8 comment-text limit-comment">
 #raw(comment.text)
 </div>
 </div>
