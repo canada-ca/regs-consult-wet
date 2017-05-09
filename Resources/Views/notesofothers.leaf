@@ -2,16 +2,20 @@
 #if(langfra) {
 
 } ##else() {
-
+#if(notes) {
+<h5>Notes by:</h5>
+<details>
+<summary>#loop(notesusers, "usrname") {#(usrname)  |}</summary>
 #loop(notes, "othernote") {
 <section class="panel panel-default">
 <header class="panel-heading">
-<h5 class="panel-title">Status: #(othernote.status)</h5>
+<h5 class="panel-title">#(othernote.username)  | Status: #(othernote.status)</h5>
 </header>
 <div class="panel-body">
 #markdown(othernote.textshared)
 </div>
 </section>
 }
-
+</details>
+}
 }

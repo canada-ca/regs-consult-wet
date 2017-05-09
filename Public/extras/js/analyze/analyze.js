@@ -43,29 +43,40 @@
             var table = $('#comment-table');
             var docid = $("#commentarysummary").attr("data-documentid");
             $('#comment-table').on( 'click', 'tr td', function (e) {
-                var row = $(this).parent();
-                if ( row.hasClass('selected') ) {
-                    row.removeClass('selected');
-                    $( "#document-panel" ).trigger( "close.wb-overlay" );
-                }
-                else {
-                    $( "#document-panel" ).trigger( "close.wb-overlay" );
-                    $('#comment-table tr.selected').removeClass('selected');
-                    row.addClass('selected');
-//                    var idex = row.children().index($(this))
-                    if (0 == $(this).index()) { //restrict overlay to column
-//                        console.log($(this).text());
-
-                        var lineno = row.children(':nth-child(3)').text();
-                        var sect = row.children(':nth-child(1)').text().substr(0,4);
-                        var refkey = docid + "-" + sect + lineno;
-                        var newpart = localStorage.getObject(refkey);
-                        if (newpart != null) {
-                            $("#docpanelang1").html(newpart["en-CA"]);
-                            $("#docpanelang2").html(newpart["fr-CA"]);
-                        }
-                        $( "#document-panel" ).trigger( "open.wb-overlay" );
+                if (0 == $(this).index()) { //restrict overlay to column
+                    var row = $(this).parent();
+                    if ( $(this).hasClass('selected') ) {
+                        $(this).removeClass('selected');
+                        $( "#document-panel" ).trigger( "close.wb-overlay" );
                     }
+                    else {
+                        $( "#document-panel" ).trigger( "close.wb-overlay" );
+                        $('#comment-table tr.selected').removeClass('selected');
+
+    //                    var idex = row.children().index($(this))
+                        if (0 == $(this).index()) { //restrict overlay to column
+    //                        console.log($(this).text());
+                            $(this).addClass('selected');
+                            var lineno = row.children(':nth-child(3)').text();
+                            var sect = row.children(':nth-child(1)').text().substr(0,4);
+                            var refkey = docid + "-" + sect + lineno;
+                            var newpart = localStorage.getObject(refkey);
+                            if (newpart != null) {
+                                $("#docpanelang1").html(newpart["en-CA"]);
+                                $("#docpanelang2").html(newpart["fr-CA"]);
+                            }
+                            $( "#document-panel" ).trigger( "open.wb-overlay" );
+                        }
+                    }
+                } else if (1 == $(this).index()) { //restrict overlay to column
+                    var item = $(this);
+                    if ( item.hasClass('selected') ) {
+                        item.removeClass('selected');
+                    }
+                    else {
+                        item.addClass('selected');
+                    }
+
                 }
             } );
             $('.lc').on('click', function (e) {

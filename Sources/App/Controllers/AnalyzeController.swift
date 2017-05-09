@@ -351,15 +351,39 @@ final class AnalyzeController {
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
             let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
-            var otherNotes:[Node] = []
-            for note in notesarray {
-                if note.user == usr.id {
-                    parameters["note"] = Node(note.forJSON())
-                } else {
-                    otherNotes.append(Node(note.forJSON()))
+            var userIDsWithNotes: Set<Int> = []
+            notesarray.forEach() {nte in
+                if let usrId = nte.user?.int {
+                    userIDsWithNotes.insert(usrId)
                 }
             }
-            parameters["notes"] = Node(otherNotes)
+            var usersWithNotes: [Int: User] = [:]
+            if userIDsWithNotes.count > 0 {
+                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()
+
+                usersFetched.forEach() {usr in
+                    if let usridx = usr.id?.int {
+                        usersWithNotes[usridx] = usr
+                    }
+                }
+            }
+            var otherNotes:[Node] = []
+            var usrlist:[Node] = []
+            for note in notesarray {
+                var thisNote = note.forJSON()
+                let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
+                thisNote["username"] = usrname
+                if note.user == usr.id {
+                    parameters["note"] = Node(thisNote)
+                } else {
+                    otherNotes.append(Node(thisNote))
+                    usrlist.append(usrname)
+                }
+            }
+
+            parameters["notescount"] = Node(otherNotes.count)
+            if usrlist.count > 0 {parameters["notesusers"] = Node(usrlist)}
+            if otherNotes.count > 0 {parameters["notes"] = Node(otherNotes)}
         }
 
 
