@@ -36,8 +36,11 @@ struct Note: Model {
 
     }
     struct Status {
-        static let new = "new"
-        static let status = "disposition"
+        static let analysis = "analysis"
+        static let duplicate = "duplicate"
+        static let notuseful = "notuseful"
+        static let review = "review"
+        static let disposition = "disposition"
     }
     var id: Node?
     var document: Node?
@@ -193,6 +196,15 @@ extension Note {
             JSONKeys.statususer: Node(statususer ?? ""),
             JSONKeys.status: Node(status ?? "")
             ])
+    }
+    mutating func updateStatus(of item: String, to newStatus: String) {
+        switch newStatus {
+        case Status.analysis, Status.duplicate, Status.notuseful, Status.review, Status.disposition:
+            status = newStatus
+        default:
+            break  // not a recognized state string should log error.
+        }
+
     }
 //    func nodeForReviewJSON() -> Node? {
 //        guard let ref = self.reference else { return nil}

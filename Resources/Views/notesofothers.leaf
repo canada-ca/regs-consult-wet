@@ -4,7 +4,7 @@
 } ##else() {
 #if(notes) {
 <h5>Notes by:</h5>
-<details>
+<details id="notesofothers">
 <summary>#loop(notesusers, "usrname") {#(usrname)  |}</summary>
 #loop(notes, "othernote") {
 <section class="panel panel-default">

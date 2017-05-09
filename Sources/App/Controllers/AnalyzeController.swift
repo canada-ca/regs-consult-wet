@@ -434,7 +434,7 @@ final class AnalyzeController {
                     }
                     if let item = update[Note.JSONKeys.status]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
-                        note?.status = newitem
+                        note?.updateStatus(of: Note.JSONKeys.status, to: newitem)
                     }
                     if let item = update[Note.JSONKeys.statususer]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)

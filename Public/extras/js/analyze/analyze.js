@@ -92,44 +92,7 @@
             $('#button').click( function () {
                 table.row('.selected').remove().draw( false );
             } );
-            $(document).on("click", "#setStatus", function (e) {
-                e.preventDefault();
-                // Get some values from elements on the comment:
-                var det = $(e.target).attr("data-command");
-                if (typeof  det == "undefined") {
-                    det = "request";
-                }
-                var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
-                var mySelection = $(e.target).closest("div").find("#commentary-status").find(":selected").val();
-                var url = "/receive/commentaries/" + commentaryid + "/" + det + "/";
-                // Send the data using post
-                var posting = $.ajax({
-                    type: "POST",
-                    url: url,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                        // The key needs to match your method's input parameter (case-sensitive).
-                    data: JSON.stringify({"commentary":{
-                        "status": mySelection
-                    }}),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data) {
-    //                        interfaceUpdate(data);
-                        var overlay = data.commentary;
-                        if (typeof  overlay != "undefined") {
-                            $("#cty-status").find("strong").text(overlay["status"]);
-    //                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
-                        }
-
-                    },
-                    error: function (errMsg) {
-                    }
-                });
-                return false;
-                });
-            
+                       
             getdocument();
 
             if ($("#publicnote").length>0) {
@@ -214,7 +177,10 @@
                     console.log(simplemdepub.value());
                     postupdatenote();
                 });
+                $("#setStatus").on("click",function(){
 
+                    postupdatenote();
+                    });
             }
 
                 }

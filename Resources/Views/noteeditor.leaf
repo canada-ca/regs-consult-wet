@@ -10,10 +10,11 @@
 </label>
 <div class="input-group">
 <select id="note-status" class="form-control">
-<option value="disposition" #equal(note.status,"disposition") {selected}>Final Disposition</option>
-<option value="analysis" #equal(note.status,"analysis") {selected}>Analysis</option>
-<option value="notuseful">Duplicate</option>
-<option value="abuse">Review</option>
+<option value="analysis" #equal(note.status, "analysis") {selected}>Analysis</option>
+<option value="disposition" #equal(note.status, "disposition") {selected}>Disposition</option>
+<option value="review" #equal(note.status, "review") {selected}>Review</option>
+<option value="duplicate" #equal(note.status, "duplicate") {selected}>Duplicate</option>
+<option value="notuseful" #equal(note.status, "notuseful") {selected}>Not Useful</option>
 </select>
 <span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button></span>
 </div>
