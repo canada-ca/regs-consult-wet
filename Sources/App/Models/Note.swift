@@ -79,11 +79,11 @@ extension Note: NodeConvertible {
         commentary = try node.extract(Constants.commentaryId)
         if let suggestedId = node[Constants.userId]?.uint {
             if suggestedId < UInt(UInt32.max) {
-                id = Node(suggestedId)
+                user = Node(suggestedId)
             } else {
                 throw Error.idTooLarge
             }
-            user = Node(suggestedId)
+            
         } else {
             throw Error.userNotSupplied
         }
