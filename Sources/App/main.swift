@@ -3,6 +3,7 @@ import VaporMySQL
 //import Auth
 import Sessions
 import JWT
+import LeafMarkdown
 
 let drop = Droplet()
 
@@ -13,7 +14,7 @@ drop.middleware.append(CorsMiddleware())
 try drop.addProvider(VaporMySQL.Provider.self)
 //let uac = UACompatibleMiddleware()
 //drop.middleware.append(uac)  // added instead to nginx server config: add_header "X-UA-Compatible" "IE=Edge";
-
+try drop.addProvider(LeafMarkdown.Provider.self)
 
 drop.preparations.append(User.self)
 drop.preparations.append(Document.self)

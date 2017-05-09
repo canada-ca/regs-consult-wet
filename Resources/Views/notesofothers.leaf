@@ -1,0 +1,17 @@
+
+#if(langfra) {
+
+} ##else() {
+
+#loop(notes, "othernote") {
+<section class="panel panel-default">
+<header class="panel-heading">
+<h5 class="panel-title">Status: #(othernote.status)</h5>
+</header>
+<div class="panel-body">
+#markdown(othernote.textshared)
+</div>
+</section>
+}
+
+}

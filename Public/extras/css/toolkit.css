@@ -116,7 +116,7 @@ h5.comment-empty  {
     bottom: 0;
 }
 /* hide ... if we have text, which is less than or equal to max lines */
-.limit-comment div.lc:after {
+.limit-comment  div.lc:after {
     /* points in the end */
     content: '';
     /* absolute position */
@@ -129,6 +129,10 @@ h5.comment-empty  {
     margin-top: 0.2em;
     /* bg color = bg color under block */
     background: white;
+}
+/* temp fix to avoid striped table appearance */
+.limit-comment tr:nth-child(odd) div.lc:after {
+    background: #f5f5f5;
 }
 .limit-comment .selected div.lc  {
     /* hide text if it more than N lines  */
