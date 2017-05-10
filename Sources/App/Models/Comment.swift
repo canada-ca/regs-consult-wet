@@ -24,6 +24,7 @@ struct Comment: Model {
         static let document = "document"
         static let linenumber = "linenumber"
         static let reference = "reference"
+        static let referenceCoded = "referencecoded"
         static let text = "text"
         static let status = "status"
 
@@ -162,7 +163,13 @@ extension Comment {
             result[Comment.JSONKeys.id] = Node(emu)
         }
         result[Comment.JSONKeys.linenumber] = Node(linenumber)
-        if let rf = reference {result[Comment.JSONKeys.reference] = Node(rf)}
+        if let rf = reference {
+            result[Comment.JSONKeys.reference] = Node(rf)
+            let index4 = rf.index(rf.startIndex, offsetBy: 4)
+            let from4 = String(rf.characters.suffix(from: index4))
+            let thru4 = String(rf.characters.prefix(4))
+            result[Comment.JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
+        }
         if let st = status {result[Comment.JSONKeys.status] = Node(st)}
         if let tx = text {result[Comment.JSONKeys.text] = Node(String("<div class=\"lc\">\(tx)</div>"))}
 

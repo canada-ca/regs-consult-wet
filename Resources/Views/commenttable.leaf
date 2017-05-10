@@ -28,16 +28,14 @@
 "order": [0, "asc"],
 "columns": [
 { "data": "order","type": "num", "visible": false, "searchable": false },
-{ "data": "reference", "defaultContent": "" },
-{ "data": "text", "defaultContent": "" },
-{ "data": "linenumber", "type": "num"}
+{ "data": "referencecoded", "defaultContent": "" },
+{ "data": "text", "defaultContent": "" }
 ]}'>
 <thead>
 <tr>
 <th>order</th>
 <th>Section</th>
 <th>Comment</th>
-<th>Line</th>
 </tr>
 </thead>
 </table>

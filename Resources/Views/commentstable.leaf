@@ -28,9 +28,8 @@
 "order": [0, "asc"],
 "columns": [
 { "data": "order","type": "num", "visible": false, "searchable": false},
-{ "data": "reference", "defaultContent": "" },
+{ "data": "referencecoded", "defaultContent": "" },
 { "data": "text", "defaultContent": "" },
-{ "data": "linenumber", "type": "num"},
 { "data": "link", "type": "html" }
 ]}'>
 <thead>
@@ -38,7 +37,6 @@
 <th>order</th>
 <th>Section</th>
 <th>Comment</th>
-<th>Line</th>
 <th>Note</th>
 </tr>
 </thead>

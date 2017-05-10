@@ -28,17 +28,19 @@
 "order": [0, "asc"],
 "columns": [
 { "data": "order","type": "num", "visible": false, "searchable": false},
-{ "data": "reference", "defaultContent": "" },
-{ "data": "text", "defaultContent": "" },
-{ "data": "linenumber", "type": "num"},
+{ "data": "referencecoded", "defaultContent": "" },
+{ "data": "status", "defaultContent": "" },
+{ "data": "represents", "defaultContent": "" },
+{ "data": "notehtml",  "type": "html", "defaultContent": "" },
 { "data": "link", "type": "html" }
 ]}'>
 <thead>
 <tr>
 <th>order</th>
 <th>Section</th>
-<th>Comment</th>
-<th>Line</th>
+<th>Status</th>
+<th>Represents</th>
+<th>Note</th>
 <th>Note</th>
 </tr>
 </thead>

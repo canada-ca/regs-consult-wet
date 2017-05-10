@@ -28,6 +28,7 @@ struct Note: Model {
         static let document = "document"
         static let linenumber = "linenumber"
         static let reference = "reference"
+        static let referenceCoded = "referencecoded"
         static let textshared = "textshared"
         static let statusshared = "statusshared"
         static let textuser = "textuser"
@@ -169,13 +170,55 @@ extension Note {
         status = updates.status ?? status
 
     }
+
+    static let docSegSortOrder: [String: Int] =
+        ["non": 1,
+         "ris": 2,
+         "reg": 3
+    ]
+
+    static func singleDocOrderSort (_ a: Note,_ b: Note) -> Bool {
+        // not needed as all from same document assumed to speed up sort.
+//        let aOrder = a.document?.int ?? 0
+//        let bOrder = b.document?.int ?? 0
+//        if bOrder > aOrder {
+//            return true
+//        } else if bOrder < aOrder {
+//            return false
+//        }
+
+        let aOrd = docSegSortOrder[String((a.reference ?? "none").characters.prefix(3))] ?? 0
+        let bOrd = docSegSortOrder[String((b.reference ?? "none").characters.prefix(3))] ?? 0
+
+        if bOrd > aOrd {
+            return true
+        } else if bOrd < aOrd {
+            return false
+        }
+        let aLine = a.linenumber
+        let bLine = b.linenumber
+        if bLine > aLine {
+            return true
+        } else {
+            return false
+        }
+        
+    }
+    
+
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {
             result[JSONKeys.id] = Node(emu)
         }
         result[JSONKeys.linenumber] = Node(linenumber)
-        if let rf = reference {result[JSONKeys.reference] = Node(rf)}
+        if let rf = reference {
+            result[JSONKeys.reference] = Node(rf)
+            let index4 = rf.index(rf.startIndex, offsetBy: 4)
+            let from4 = String(rf.characters.suffix(from: index4))
+            let thru4 = String(rf.characters.prefix(4))
+            result[JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
+        }
         if let tx = textshared {result[JSONKeys.textshared] = Node(tx)}
         if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
         if let tx = textuser {result[JSONKeys.textuser] = Node(tx)}

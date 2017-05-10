@@ -58,8 +58,8 @@
     //                        console.log($(this).text());
                             $(this).addClass('selected');
                             var lineno = row.children(':nth-child(3)').text();
-                            var sect = row.children(':nth-child(1)').text().substr(0,4);
-                            var refkey = docid + "-" + sect + lineno;
+                            var sect = row.children(':nth-child(1)').text().split(' ',1); //substr(0,4);
+                            var refkey = docid + "-" + sect; // + lineno;
                             var newpart = localStorage.getObject(refkey);
                             if (newpart != null) {
                                 $("#docpanelang1").html(newpart["en-CA"]);

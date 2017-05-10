@@ -8,6 +8,7 @@ import Node
 import Cookies
 import Fluent
 import FluentMySQL
+import SwiftMarkdown
 
 final class AnalyzeController {
     let pubDrop: Droplet
@@ -425,56 +426,41 @@ final class AnalyzeController {
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
         let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
-        var commentarySet: Set<UInt> = []
+        var commentaryDict: [UInt:Commentary] = [:]
         for  element in commentaryStatus {
             if let comm = element.id, let itemid = comm.uint {
-                commentarySet.insert(itemid)
+                commentaryDict[itemid] = element
             }
         }
-        let rawCommentArray = try Comment.query().filter(Comment.Constants.documentId, idInt).all()
-        var commentArray = rawCommentArray.filter {
-            if let comm = $0.commentary {
-                return commentarySet.contains(comm.uint ?? 0)
-            }
-            return false
-        }
-        commentArray.sort(by: Comment.docOrderSort)
+        var rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
+
+        rawNoteArray.sort(by: Note.singleDocOrderSort)
 
         guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
-        let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
-        var accu: [String: Int] = [:]
-        var accu2: [String: Int] = [:]
-        rawNoteArray.forEach { nte in
-            if let comm = nte.commentary {
-                if commentarySet.contains(comm.uint ?? 0) {
-                    let keyidx = "\(String(describing: comm.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
-                    if nte.user == usr.id! {
-                        accu[keyidx] = (accu[keyidx] ?? 0) + 1
-                    } //else {
-                    accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
-                    //}
-                }
-            }
-        }
+
 
         var response: [String: Node] = [:]
         var results: [Node] = []
-
-        for (index, comment) in commentArray.enumerated() {
-            var result: [String: Node] = comment.forJSON()
+        let notelead = "<section class=\"panel panel-default\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Public Note</h5></header><div class=\"panel-body\">"
+        let noteseparator = "</div></section><section class=\"panel panel-default\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
+        let notetail = "</div></section>"
+        for (index, note) in rawNoteArray.enumerated() {
+            var result: [String: Node] = note.forJSON()
             result["order"] = Node(index)
-            let commentstr = String(describing: comment.id!.int!)
-            let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-            let buttonText = (accu[keyidx] == nil ? "Note&nbsp;+" : "Note")
-            if let countOtherNotes = accu2[keyidx] {
-                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(commentstr)\">\(buttonText) <span class=\"badge\">\(countOtherNotes)<span class=\"wb-inv\"> comments</span></span></a></p>")
+            let sharedhtml = try? markdownToHTML(note.textshared ?? "")
+            let userhtml =  try? markdownToHTML(note.textuser ?? "")
+            result["notehtml"] = Node(notelead + (sharedhtml ?? "") + noteseparator + (userhtml ?? "") + notetail)
+            if let cmty = note.commentary, let itemid = cmty.uint, let comm = commentaryDict[itemid] {
+                result[CommentaryJSONKeys.represents] = Node(comm.represents ?? "")
             } else {
-                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(commentstr)\">\(buttonText)</a></p>")
+                result[CommentaryJSONKeys.represents] = Node("not valid")
             }
+            let notestr = String(describing: note.id!.int!)
+            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)\">Edit Note</a></p>")
             results.append(Node(result))
-
         }
         response["data"] = Node(results)
+        
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
         ]
