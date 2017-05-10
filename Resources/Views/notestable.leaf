@@ -21,7 +21,7 @@
 
 } ##else() {
 <h2>Notes</h2>
-<table  id="comment-table" class="wb-tables table table-striped table-hover limit-comment" aria-live="polite" data-wb-tables='{
+<table  id="comment-table" class="wb-tables table table-hover limit-comment" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
 "ordering": false,
 "ajaxSource": "/analyze/documents/#(document.idbase62)/notes/",

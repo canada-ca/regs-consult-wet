@@ -432,11 +432,12 @@ final class AnalyzeController {
                 commentaryDict[itemid] = element
             }
         }
-        var rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+        var rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).filter(Note.Constants.userId, usr.id!).all()
 
         rawNoteArray.sort(by: Note.singleDocOrderSort)
 
-        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+
 
 
         var response: [String: Node] = [:]

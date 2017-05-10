@@ -9,7 +9,7 @@
 }
 
 #export("body") {
-
+#embed("taskselect")
     #if(editing) {
         <div id="edit-user-data" data-editing-page="true"</div>
     }

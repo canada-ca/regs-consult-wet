@@ -202,6 +202,8 @@ struct AdminController {
         var parameters = [
             "name_error": nameError.makeNode(),
             "username_error": usernameError.makeNode(),
+            "prepare_page": Node(true)
+
             ]
 
         if let createUserErrors = errors {

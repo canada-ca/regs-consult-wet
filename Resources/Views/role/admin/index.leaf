@@ -21,7 +21,7 @@
         }
 
         <div id="blog-admin-posts">
-            <h2>Published Documents</h2>
+            
 #embed("documenttable")
 
             <a class="btn btn-default" href="/admin/">Create New Document</a>
