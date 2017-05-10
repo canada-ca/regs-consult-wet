@@ -79,7 +79,8 @@ final class AnalyzeController {
     func roleSummary(_ request: Request)throws -> ResponseRepresentable {
 
         var parameters = try Node(node: [
-            "analyze_page": Node(true)
+            "analyze_page": Node(true),
+            "role": Node("analyze")
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -99,7 +100,8 @@ final class AnalyzeController {
 
         var parameters = try Node(node: [
             "commentary_page": Node(true),
-            "role": Node("analyze")
+            "role": Node("analyze"),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -154,7 +156,8 @@ final class AnalyzeController {
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "commentary_page": Node(true)
+            "commentary_page": Node(true),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -212,7 +215,8 @@ final class AnalyzeController {
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "comments_page": Node(true)
+            "comments_page": Node(true),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -335,7 +339,8 @@ final class AnalyzeController {
         guard commentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "comments_page": Node(true)
+            "comments_page": Node(true),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
@@ -403,7 +408,8 @@ final class AnalyzeController {
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "notes_page": Node(true)
+            "notes_page": Node(true),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {
@@ -485,7 +491,8 @@ final class AnalyzeController {
         guard commentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "comments_page": Node(true)
+            "comments_page": Node(true),
+            "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}

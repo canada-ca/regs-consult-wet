@@ -293,7 +293,7 @@ final class ReviewController{
         var results: [Node] = []
 
         for comment in commentArray {
-            var result: [String: Node] = comment.forJSON()
+            let result: [String: Node] = comment.forJSON()
             //            let commentstr = String(describing: commentary.id!.int!)
             //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))

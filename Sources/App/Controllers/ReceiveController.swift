@@ -91,7 +91,8 @@ final class ReceiveController{
 
         var parameters = try Node(node: [
             "commentary_page": Node(true),
-            "role": Node("receive")
+            "role": Node("receive"),
+            "receive_page": Node(true)
 
             ])
         parameters["signon"] = Node(true)
@@ -147,7 +148,8 @@ final class ReceiveController{
         guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "commentary_page": Node(true)
+            "commentary_page": Node(true),
+            "receive_page": Node(true)
             ])
         parameters["signon"] = Node(true)
         if let usr = request.storage["userid"] as? User {

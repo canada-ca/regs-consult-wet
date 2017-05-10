@@ -4,6 +4,7 @@
 <title>#if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}</title>
 }
 #export("body") {
+#embed("taskselect")
 #embed("receivebreadcrumbs")
 #embed("commentarytable")
 }

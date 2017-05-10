@@ -211,13 +211,13 @@ extension Comment {
     }
     func commenterStatus() -> String {
         do {
-            var comm: Parent<Commentary> = try parent(self.commentary, Constants.commentaryId)
-            var commreal = try comm.get()
+            let comm: Parent<Commentary> = try parent(self.commentary, Constants.commentaryId)
+            let commreal = try comm.get()
             return commreal?.status ?? "none"
 
         } catch {
             return "none"
         }
-        return "none"
+
     }
 }
