@@ -145,8 +145,8 @@ extension Comment {
         } else if bOrd < aOrd {
             return false
         }
-        let aLine = a.linenumber ?? 0
-        let bLine = b.linenumber ?? 0
+        let aLine = a.linenumber 
+        let bLine = b.linenumber 
         if bLine > aLine {
             return true
         } else {
