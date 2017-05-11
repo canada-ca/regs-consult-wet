@@ -185,39 +185,39 @@ extension Comment {
             "status": Node(self.status ?? "")
             ])
     }
-    func nodeForReviewJSON() -> Node? {
-        guard let ref = self.reference else { return nil}
-        let tagType = String(ref.characters.prefix(4))
-
-        var commnode = Node(["reftext": Node(ref),
-                             "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
-                             "text": Node(self.text ?? ""),
-                             "status" :Node(self.status ?? "")
-            ])
-        do {
-            let cmty =  try self.commenter().get
-            commnode["commentary"] = try cmty()?.nodeForJSON()
-
-        } catch {
-
-            }
-        return  commnode
-    }
+//    func nodeForReviewJSON() -> Node? {
+//        guard let ref = self.reference else { return nil}
+//        let tagType = String(ref.characters.prefix(4))
+//
+//        var commnode = Node(["reftext": Node(ref),
+//                             "ref": Node(tagType + String(self.linenumber)),  //ex: reg-34
+//                             "text": Node(self.text ?? ""),
+//                             "status" :Node(self.status ?? "")
+//            ])
+//        do {
+//            let cmty =  try self.commenter().get
+//            commnode["commentary"] = try cmty()?.nodeForJSON()
+//
+//        } catch {
+//
+//            }
+//        return  commnode
+//    }
 
 }
-extension Comment {
-    func commenter() throws -> Parent<Commentary> {
-        return try parent(commentary, Constants.commentaryId)
-    }
-    func commenterStatus() -> String {
-        do {
-            let comm: Parent<Commentary> = try parent(self.commentary, Constants.commentaryId)
-            let commreal = try comm.get()
-            return commreal?.status ?? "none"
-
-        } catch {
-            return "none"
-        }
-
-    }
-}
+//extension Comment {
+//    func commenter() throws -> Parent<Commentary> {
+//        return try parent(commentary, Constants.commentaryId)
+//    }
+//    func commenterStatus() -> String {
+//        do {
+//            let comm: Parent<Commentary> = try parent(self.commentary, Constants.commentaryId)
+//            let commreal = try comm.get()
+//            return commreal?.status ?? "none"
+//
+//        } catch {
+//            return "none"
+//        }
+//
+//    }
+//}

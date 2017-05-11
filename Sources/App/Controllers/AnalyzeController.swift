@@ -449,14 +449,18 @@ final class AnalyzeController {
         var response: [String: Node] = [:]
         var results: [Node] = []
         let notelead = "<section class=\"panel panel-default\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Public Note</h5></header><div class=\"panel-body\">"
-        let noteseparator = "</div></section><section class=\"panel panel-default\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
+        let noteseparator = "</div></section><section class=\"panel panel-info\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
         let notetail = "</div></section>"
         for (index, note) in rawNoteArray.enumerated() {
             var result: [String: Node] = note.forJSON()
             result["order"] = Node(index)
             let sharedhtml = try? markdownToHTML(note.textshared ?? "")
             let userhtml =  try? markdownToHTML(note.textuser ?? "")
-            result["notehtml"] = Node(notelead + (sharedhtml ?? "") + noteseparator + (userhtml ?? "") + notetail)
+            if userhtml == "" {
+                result["notehtml"] = Node(notelead + (sharedhtml ?? "") + notetail)
+            } else {
+                result["notehtml"] = Node(notelead + (sharedhtml ?? "") + noteseparator + (userhtml ?? "") + notetail)
+            }
             if let cmty = note.commentary, let itemid = cmty.uint, let comm = commentaryDict[itemid] {
                 result[CommentaryJSONKeys.represents] = Node(comm.represents ?? "")
             } else {
@@ -480,22 +484,22 @@ final class AnalyzeController {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
         }
-        guard let commentId = request.parameters["noteId"]?.string else {
+        guard let noteId = request.parameters["noteId"]?.string else {
             throw Abort.badRequest
         }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
-        let commentdata = try Comment.find(Node(commentId))
-        guard commentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+        let notedata = try Note.find(Node(noteId))
+        guard notedata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
         var parameters = try Node(node: [
-            "comments_page": Node(true),
+            "notes_page": Node(true),
             "analyze_page": Node(true)
             ])
         parameters["signon"] = Node(true)
-        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+        guard let usr = request.storage["userid"] as? User, notedata?.user == usr.id else {return Response(redirect: "/analyze/")}
         parameters["signedon"] = Node(true)
         parameters["activeuser"] = try usr.makeNode()
 
@@ -503,15 +507,18 @@ final class AnalyzeController {
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
         parameters["documentshref"] = Node("/analyze/")
-        let commentjson = commentdata!.forJSON()
-        parameters["comment"] = Node(commentjson)
-        parameters["commentshref"] = Node("/analyze/documents/\(documentId)/comments/summary/")
+
+        parameters["commentshref"] = Node("/analyze/documents/\(documentId)/notes/summary/")
         //\(docjson[Document.JSONKeys.idbase62]!.string!)/
-        if let commentaryId = commentdata?.commentary, let commentary = try Commentary.find(commentaryId) {
+        if let commentaryId = notedata?.commentary, let commentary = try Commentary.find(commentaryId) {
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
+            if let commentdata = try Comment.query().filter(Comment.Constants.commentaryId, commentary.id!).filter(Comment.Constants.linenumber, notedata!.linenumber).filter(Comment.Constants.reference, notedata!.reference!).first() {
+                let commentjson = commentdata.forJSON()
+                parameters["comment"] = Node(commentjson)
+            }
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, notedata!.linenumber).filter(Note.Constants.reference, notedata!.reference!).all()
             var userIDsWithNotes: Set<Int> = []
             notesarray.forEach() {nte in
                 if let usrId = nte.user?.int {

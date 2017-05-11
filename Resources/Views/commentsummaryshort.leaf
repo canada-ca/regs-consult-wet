@@ -27,8 +27,10 @@
 </tbody>
 </table>
 </div>
+#if(comment) {
 <div class="panel panel-default col-md-8 comment-text limit-comment">
 #raw(comment.text)
 </div>
+}
 </div>
 }
