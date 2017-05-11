@@ -448,7 +448,7 @@ final class AnalyzeController {
 
         var response: [String: Node] = [:]
         var results: [Node] = []
-        let notelead = "<section class=\"panel panel-default\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Public Note</h5></header><div class=\"panel-body\">"
+        let notelead = "<div>"
         let noteseparator = "</div></section><section class=\"panel panel-info\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
         let notetail = "</div></section>"
         for (index, note) in rawNoteArray.enumerated() {
