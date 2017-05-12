@@ -1,0 +1,52 @@
+
+#if(langfra) {
+<h2>Commentaries</h2>
+<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/#(role)/documents/#(document.idbase62)/commentaries/",
+"order": [2, "desc"],
+"columns": [
+
+{ "data": "status", "defaultContent": ""},
+{ "data": "link", "type": "html" },
+{ "data": "name", "defaultContent": "" },
+{ "data": "represents", "defaultContent": "" },
+{ "data": "organization", "defaultContent": "" }
+]}'>
+<thead>
+<tr>
+<th>status</th>
+<th>link</th>
+<th>name</th>
+<th>represents</th>
+<th>organization</th>
+</tr>
+</thead>
+</table>
+
+} ##else() {
+<h2>Commentaries</h2>
+<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/#(role)/documents/#(document.idbase62)/commentaries/",
+"order": [0, "asc"],
+"columns": [
+{ "data": "order","type": "num", "visible": false},
+{ "data": "status", "defaultContent": ""},
+{ "data": "link", "type": "html" },
+{ "data": "name", "defaultContent": ""},
+{ "data": "represents", "defaultContent": "" },
+{ "data": "organization", "defaultContent": "" }
+]}'>
+<thead>
+<tr>
+<th>order</th>
+<th>status</th>
+<th>link</th>
+<th>name</th>
+<th>represents</th>
+<th>organization</th>
+</tr>
+</thead>
+</table>
+}

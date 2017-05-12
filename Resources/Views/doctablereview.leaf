@@ -1,0 +1,45 @@
+#if(langfra) {
+<h2>Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="document-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/review/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+]}'>
+<thead>
+<tr>
+<th>Known As</th>
+<th>Commentaries</th>
+</tr>
+</thead>
+</table>
+
+} ##else() {
+<h2>Published Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="document-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+ "ordering": false,
+"ajaxSource": "/review/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "commentlink","type": "html" },
+{ "data": "notelink","type": "html" },
+{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+]}'>
+<thead>
+<tr>
+<th>Known As</th>
+<th>Commentaries</th>
+<th>Comments</th>
+<th>Notes</th>
+</tr>
+</thead>
+</table>
+}

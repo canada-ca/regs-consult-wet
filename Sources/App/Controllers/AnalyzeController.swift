@@ -120,7 +120,7 @@ final class AnalyzeController {
         }
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
-        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+        guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
 
         var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
