@@ -1,7 +1,7 @@
 #extend("role/toolkit")
-#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}}
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Review Commentaries}}
 #export("head") {
-<title>#if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}</title>
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Review Commentaries}</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 }
 #export("body") {
