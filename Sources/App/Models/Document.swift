@@ -58,6 +58,12 @@ struct Document: Model {
         }
         return result
     }
+    func docID() -> String {
+        if let em = id , let emu = em.uint {
+            return Base62.encode(integer: UInt64(emu))
+        }
+        return ""
+    }
 }
 
 
