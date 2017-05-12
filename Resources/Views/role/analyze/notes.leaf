@@ -12,5 +12,5 @@
 #embed("documentoverlay")
 }
 #export("scripts") {
-<script src="/extras/js/analyze/analyze.js"></script>
+<script src="/extras/js/toolkit.js"></script>
 }

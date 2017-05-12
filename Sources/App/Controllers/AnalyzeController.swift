@@ -281,17 +281,22 @@ final class AnalyzeController {
 
         guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
         let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
-        var accu: [String: Int] = [:]
+        var usersOwnNote: [String: Note] = [:]
         var accu2: [String: Int] = [:]
+
         rawNoteArray.forEach { nte in
             if let comm = nte.commentary {
                 if commentarySet.contains(comm.uint ?? 0) {
                     let keyidx = "\(String(describing: comm.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
                     if nte.user == usr.id! {
-                        accu[keyidx] = (accu[keyidx] ?? 0) + 1
-                    } //else {
-                        accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
-                    //}
+                        usersOwnNote[keyidx] = nte
+
+                    }
+                    accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
+                    if let stat = nte.status, stat != "" { //subcount on status
+                        let key = keyidx + stat
+                        accu2[key] = (accu2[key] ?? 0) + 1
+                    }
                 }
             }
         }
@@ -303,13 +308,37 @@ final class AnalyzeController {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index)
             let commentstr = String(describing: comment.id!.int!)
+            var usersNoteStyle = "class=\"bg-default\""
+
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-            let buttonText = (accu[keyidx] == nil ? "Note&nbsp;+" : "Note")
-            if let countOtherNotes = accu2[keyidx] {
-                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) <span class=\"badge\">\(countOtherNotes)<span class=\"wb-inv\"> comments</span></span></a></p>")
-            } else {
-                result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText)</a></p>")
+            var buttonText = "Note&nbsp;+"
+            if let usrNote = usersOwnNote[keyidx], let noteStatus = usrNote.status {
+                switch noteStatus {
+                case Note.Status.review:
+                    buttonText = "<span class=\"bg-primary\">&nbsp;Note&nbsp;</span>"
+                case Note.Status.disposition:
+                    buttonText = "<span class=\"bg-success\">&nbsp;Note&nbsp;</span>"
+                default:
+                    break
+                }
             }
+          
+            var notesInAnalysisBadge:String = ""
+
+            if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
+                notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
+            }
+            var notesInReviewBadge:String = ""
+            if let notesInReview = accu2[keyidx + Note.Status.review] {
+                notesInReviewBadge = "<span class=\"badge badge-primary\">\(notesInReview)<span class=\"wb-inv\">notes in review</span></span>"
+            }
+            var notesInDispositionBadge:String = ""
+            if let notesInDisposition = accu2[keyidx + Note.Status.disposition] {
+                notesInDispositionBadge = "<span class=\"badge badge-success\">\(notesInDisposition)<span class=\"wb-inv\">notes in disposition</span></span>"
+            }
+
+            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) \(notesInAnalysisBadge)\(notesInReviewBadge)\(notesInDispositionBadge)</p>")
+
             results.append(Node(result))
 
         }

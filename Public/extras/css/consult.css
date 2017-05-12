@@ -65,6 +65,7 @@ details.commentpresent div.savestatus  {
 input.commentator  {
     width: 50%;
    }
+
 @media only screen {
 h5.comment-edit {
     color: #0535d2;

@@ -9,5 +9,5 @@
 #embed("commentarytable")
 }
 #export("scripts") {
-
+<script src="/extras/js/toolkit.js"></script>
 }

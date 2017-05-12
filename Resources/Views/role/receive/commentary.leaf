@@ -13,5 +13,5 @@
 #embed("documentoverlay")
 }
 #export("scripts") {
-<script src="/extras/js/receive/receive.js"></script>
+<script src="/extras/js/toolkit.js"></script>
 }
