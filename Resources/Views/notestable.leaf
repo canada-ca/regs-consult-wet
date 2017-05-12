@@ -32,7 +32,7 @@
 { "data": "status", "defaultContent": "" },
 { "data": "represents", "defaultContent": "" },
 { "data": "notehtml",  "type": "html", "defaultContent": "" },
-{ "data": "link", "type": "html" }
+{ "data": "link", "searchable": false, "type": "html" }
 ]}'>
 <thead>
 <tr>
@@ -41,7 +41,7 @@
 <th>Status</th>
 <th>Represents</th>
 <th>Note</th>
-<th>Note</th>
+<th>View</th>
 </tr>
 </thead>
 </table>

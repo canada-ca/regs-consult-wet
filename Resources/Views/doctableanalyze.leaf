@@ -31,7 +31,7 @@
 { "data": "newsubmit","type": "html" },
 { "data": "commentlink","type": "html" },
 { "data": "notelink","type": "html" },
-{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+{ "data": "id","type": "num", "className": "h4", "searchable": false,  "visible": false  }
 ]}'>
 <thead>
 <tr>
