@@ -31,21 +31,21 @@
 "ajaxSource": "/#(role)/documents/#(document.idbase62)/commentaries/",
 "order": [0, "asc"],
 "columns": [
-{ "data": "order","type": "num", "visible": false},
+{ "data": "order","type": "num"},
 { "data": "status", "defaultContent": ""},
-{ "data": "link", "type": "html" },
-{ "data": "name", "defaultContent": ""},
 { "data": "represents", "defaultContent": "" },
-{ "data": "organization", "defaultContent": "" }
+{ "data": "organization", "orderable": false, "defaultContent": "" },
+{ "data": "name", "orderable": false, "defaultContent": ""},
+{ "data": "link", "orderable": false, "searchable": false, "type": "html" }
 ]}'>
 <thead>
 <tr>
 <th>order</th>
 <th>status</th>
-<th>link</th>
-<th>name</th>
 <th>represents</th>
 <th>organization</th>
+<th>name</th>
+<th>view</th>
 </tr>
 </thead>
 </table>
