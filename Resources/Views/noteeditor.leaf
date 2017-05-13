@@ -16,9 +16,13 @@
 <option value="duplicate" #equal(note.status, "duplicate") {selected}>Duplicate</option>
 <option value="notuseful" #equal(note.status, "notuseful") {selected}>Not Useful</option>
 </select>
-<span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button></span>
+<span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button>
+</span>
+
 </div>
+
 </div>
+
 </div>
 #if(note) {
 <h3>Public Note</h3>

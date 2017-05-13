@@ -132,6 +132,10 @@
 
                 return false;
             });
+             $('#comment-table').on( 'click', 'a.delete-note', function (e) {
+
+                return confirm('Are you sure you want to delete this note?');
+            });
 
             getdocument();
 

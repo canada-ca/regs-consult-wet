@@ -21,19 +21,20 @@ final class AnalyzeController {
         role.get(handler: roleSummary)
         role.get("documents", handler: documentIndex)
 
-        let documentrole = role.grouped("documents")
-        documentrole.get(":id", "comments", "summary", handler: allCommentsSummary)
-        documentrole.get(":id", "comments", handler: allCommentsIndex)
-        documentrole.get(":id", "comments", ":commentId", handler: commentSummary)
-        documentrole.get(":id", "notes", "summary", handler: allNotesSummary)
-        documentrole.get(":id", "notes", handler: allNotesIndex)
-        documentrole.get(":id", "notes", ":noteId", handler: noteSummary)
-        documentrole.get(":id", handler: commentariesSummary)
-        documentrole.get(":id","commentaries", handler: commentaryIndex)
-        documentrole.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
+        let documentrole = role.grouped("documents", ":id")
+        documentrole.get("comments", "summary", handler: allCommentsSummary)
+        documentrole.get("comments", handler: allCommentsIndex)
+        documentrole.get("comments", ":commentId", handler: commentSummary)
+        documentrole.get("notes", "summary", handler: allNotesSummary)
+        documentrole.get("notes", handler: allNotesIndex)
+        documentrole.get("notes", ":noteId", handler: noteSummary)
+        documentrole.get("notes", ":noteId", ":command", handler: noteCommand)
+        documentrole.get(handler: commentariesSummary)
+        documentrole.get("commentaries", handler: commentaryIndex)
+        documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
         role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
-        documentrole.post(":id","notes", handler: notesUpdate)
+        documentrole.post("notes", handler: notesUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
 
@@ -308,7 +309,7 @@ final class AnalyzeController {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index)
             let commentstr = String(describing: comment.id!.int!)
-            var usersNoteStyle = "class=\"bg-default\""
+            
 
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             var buttonText = "Note&nbsp;+"
@@ -452,6 +453,46 @@ final class AnalyzeController {
 
         return try   pubDrop.view.make("role/analyze/noteedit", parameters)
     }
+    func noteCommand(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string, let command = request.parameters["command"]?.string else {
+            throw Abort.badRequest
+        }
+        guard let noteId = request.parameters["noteId"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
+        var parameters = try Node(node: [
+            "notes_page": Node(true),
+            "analyze_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/analyze/")}
+
+        parameters["signedon"] = Node(true)
+        parameters["activeuser"] = try usr.makeNode()
+
+        if let note = try Note.find(Node(noteId)) {
+            if note.user == usr.id, documentdata!.id == note.document {
+                switch command {
+                case "delete":
+                    try? note.delete()
+                default:
+                    break
+                }
+
+            }
+        }
+
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/analyze/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+
+        return try   pubDrop.view.make("role/analyze/notes", parameters)
+    }
+
+
     func allNotesSummary(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -518,10 +559,11 @@ final class AnalyzeController {
             if let cmty = note.commentary, let itemid = cmty.uint, let comm = commentaryDict[itemid] {
                 result[CommentaryJSONKeys.represents] = Node(comm.represents ?? "")
             } else {
-                result[CommentaryJSONKeys.represents] = Node("not valid")
+                result[CommentaryJSONKeys.represents] = Node("unknown")
             }
             let notestr = String(describing: note.id!.int!)
-            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)\">Edit Note</a></p>")
+            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)\"><i class=\"fa fa-edit\" aria-hidden=\"true\"></i> Edit Note</a></p><p><a class=\"btn btn-warning delete-note\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)/delete\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i></a></p>")
+
             results.append(Node(result))
         }
         response["data"] = Node(results)
@@ -626,6 +668,8 @@ final class AnalyzeController {
             for ind in 0..<notesarray.count {
                 if let update = notesarray[ind].object {
                     var note: Note?
+                    var noteExisted: Bool = true
+                    var noteHasContent: Bool = false
                     if let refID = update[Note.JSONKeys.id]?.int {
                         note = try Note.find(refID)
                     }
@@ -643,6 +687,7 @@ final class AnalyzeController {
                                 Note.Constants.linenumber: Node(lnum)
                             ]
                             note = try Note(node: Node(initNode), in: [])
+                            noteExisted = false
                         }
                         
                     }
@@ -657,22 +702,31 @@ final class AnalyzeController {
                     if let item = update[Note.JSONKeys.status]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
                         note?.updateStatus(of: Note.JSONKeys.status, to: newitem)
+                        if let content = note?.status, content != Note.Status.analysis { noteHasContent = true }
                     }
                     if let item = update[Note.JSONKeys.statususer]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
                         note?.statususer = newitem
+                        if let content = note?.statususer, !content.isEmpty { noteHasContent = true }
                     }
                     if let item = update[Note.JSONKeys.statusshared]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
                         note?.statusshared = newitem
+                        if let content = note?.statusshared, !content.isEmpty { noteHasContent = true }
                     }
                     if let item = update[Note.JSONKeys.textshared]?.string {
                         note?.textshared = item
+                        if let content = note?.textshared, !content.isEmpty { noteHasContent = true }
                     }
                     if let item = update[Note.JSONKeys.textuser]?.string {
                         note?.textuser = item
+                         if let content = note?.textuser, !content.isEmpty { noteHasContent = true }
                     }
-                    try note!.save()
+                    if noteHasContent {
+                        try note!.save()
+                    } else if noteExisted {
+                        try note!.delete()   //Used to clean empty notes
+                    }
 
                 }
             }
