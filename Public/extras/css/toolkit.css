@@ -147,6 +147,9 @@ h5.comment-empty  {
     color: #0535d2;
 
 }
+.document-ref {
+    color: #0535d2;
+}
 /*#comment-table.limit-comment tbody tr td:nth-child(2){*/
 /*    max-height:250px;*/
 /*     max-width: 0;*/

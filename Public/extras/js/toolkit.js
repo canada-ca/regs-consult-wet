@@ -57,7 +57,7 @@
                         if (0 == $(this).index()) { //restrict overlay to column
     //                        console.log($(this).text());
                             $(this).addClass('selected');
-                            var lineno = row.children(':nth-child(3)').text();
+//                            var lineno = row.children(':nth-child(3)').text();
                             var sect = row.children(':nth-child(1)').text().split(' ',1); //substr(0,4);
                             var refkey = docid + "-" + sect; // + lineno;
                             var newpart = localStorage.getObject(refkey);
@@ -77,6 +77,21 @@
                         item.addClass('selected');
                     }
 
+                }
+            } );
+            $('.document-ref').on( 'click', function (e) {
+                var ref = $(this).attr("data-document-ref")
+                if (typeof ref != "undefined") {
+                    $( "#document-panel" ).trigger( "close.wb-overlay" );
+                    var docid = $("#commentarysummary").attr("data-documentid");
+                    var sect = ref.split(' ',1);
+                    var refkey = docid + "-" + sect;
+                    var newpart = localStorage.getObject(refkey);
+                    if (newpart != null) {
+                        $("#docpanelang1").html(newpart["en-CA"]);
+                        $("#docpanelang2").html(newpart["fr-CA"]);
+                    }
+                    $( "#document-panel" ).trigger( "open.wb-overlay" );
                 }
             } );
             $('.lc').on('click', function (e) {
