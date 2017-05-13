@@ -205,6 +205,31 @@ extension Note {
         
     }
     
+    // shields user private component from leaking
+    func forJSON(_ usr: User) -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let em = id , let emu = em.uint {
+            result[JSONKeys.id] = Node(emu)
+        }
+        result[JSONKeys.linenumber] = Node(linenumber)
+        if let rf = reference {
+            result[JSONKeys.reference] = Node(rf)
+            let index4 = rf.index(rf.startIndex, offsetBy: 4)
+            let from4 = String(rf.characters.suffix(from: index4))
+            let thru4 = String(rf.characters.prefix(4))
+            result[JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
+        }
+        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)}
+        if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
+        if let u = user?.int , let uinput = usr.id?.int, u == uinput {
+            if let tx = textuser {result[JSONKeys.textuser] = Node(tx)}
+            if let st = statususer {result[JSONKeys.statususer] = Node(st)}
+        }
+        if let st = status {result[JSONKeys.status] = Node(st)}
+
+        return result
+
+    }
 
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
@@ -228,18 +253,18 @@ extension Note {
         return result
     }
 
-    func nodeForJSON() -> Node? {
-
-        return Node([
-            JSONKeys.linenumber: Node(linenumber),
-            JSONKeys.reference: Node(reference ?? ""),
-            JSONKeys.textshared: Node(textshared ?? ""),
-            JSONKeys.statusshared: Node(statusshared ?? ""),
-            JSONKeys.textuser: Node(textuser ?? ""),
-            JSONKeys.statususer: Node(statususer ?? ""),
-            JSONKeys.status: Node(status ?? "")
-            ])
-    }
+//    func nodeForJSON() -> Node? {
+//
+//        return Node([
+//            JSONKeys.linenumber: Node(linenumber),
+//            JSONKeys.reference: Node(reference ?? ""),
+//            JSONKeys.textshared: Node(textshared ?? ""),
+//            JSONKeys.statusshared: Node(statusshared ?? ""),
+//            JSONKeys.textuser: Node(textuser ?? ""),
+//            JSONKeys.statususer: Node(statususer ?? ""),
+//            JSONKeys.status: Node(status ?? "")
+//            ])
+//    }
     mutating func updateStatus(of item: String, to newStatus: String) {
         switch newStatus {
         case Status.analysis, Status.duplicate, Status.notuseful, Status.review, Status.disposition:

@@ -434,7 +434,7 @@ final class AnalyzeController {
             var otherNotes:[Node] = []
             var usrlist:[Node] = []
             for note in notesarray {
-                var thisNote = note.forJSON()
+                var thisNote = note.forJSON(usr)
                 let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
                 thisNote["username"] = usrname
                 if note.user == usr.id {
@@ -547,7 +547,7 @@ final class AnalyzeController {
         let noteseparator = "</div></section><section class=\"panel panel-info\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
         let notetail = "</div></section>"
         for (index, note) in rawNoteArray.enumerated() {
-            var result: [String: Node] = note.forJSON()
+            var result: [String: Node] = note.forJSON(usr)
             result["order"] = Node(index)
             let sharedhtml = try? markdownToHTML(note.textshared ?? "")
             let userhtml =  try? markdownToHTML(note.textuser ?? "")
@@ -634,7 +634,7 @@ final class AnalyzeController {
             var otherNotes:[Node] = []
             var usrlist:[Node] = []
             for note in notesarray {
-                var thisNote = note.forJSON()
+                var thisNote = note.forJSON(usr)
                 let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
                 thisNote["username"] = usrname
                 if note.user == usr.id {
