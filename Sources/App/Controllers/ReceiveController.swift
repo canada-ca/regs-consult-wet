@@ -19,11 +19,11 @@ final class ReceiveController{
         role.get(handler: receiverSummary)
         role.get("documents", handler: documentIndex)
 
-        let documentrole = role.grouped("documents")
+        let documentrole = role.grouped("documents", ":id")
 
-        documentrole.get(":id", handler: commentariesSummary)
-        documentrole.get(":id","commentaries", handler: commentaryIndex)
-        documentrole.get(":id","commentaries", ":commentaryId", handler: commentarySummary)
+        documentrole.get(handler: commentariesSummary)
+        documentrole.get("commentaries", handler: commentaryIndex)
+        documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
         role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
