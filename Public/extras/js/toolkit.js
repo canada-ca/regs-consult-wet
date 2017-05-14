@@ -212,6 +212,7 @@
 //                    },
                 placeholder: "Type notes that will be seen by other users.",
                     });
+
                 simplemdepub.render();
                         simplemdepub.codemirror.on("blur", function(){
                             console.log(simplemdepub.value());
@@ -227,6 +228,7 @@
 //                    },
                 placeholder: "Type notes that will only be seen by you.",
                     });
+                
                 simplemdepriv.render();
                 simplemdepriv.codemirror.on("blur", function(){
                     console.log(simplemdepub.value());

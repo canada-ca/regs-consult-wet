@@ -25,7 +25,9 @@ final class ReviewController{
         role.get("documents", handler: documentIndex)
 
         let documentrole = role.grouped("documents",":id")
-
+        documentrole.get("comments", "summary", handler: allCommentsSummary)
+        documentrole.get("comments", handler: allCommentsIndex)
+        documentrole.get("comments", ":commentId", handler: commentSummary)
         documentrole.get(handler: commentariesSummary)
         documentrole.get("load", handler: documentLoader)
         documentrole.get("commentaries", handler: commentaryIndex)
@@ -337,6 +339,209 @@ final class ReviewController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
-    
-    
+    func allCommentsSummary(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/review/")}  //go to list of all documents if not found
+
+        var parameters = try Node(node: [
+            "comments_page": Node(true),
+            "review_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/review/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+
+        return try   pubDrop.view.make("role/review/comments", parameters)
+    }
+
+    func allCommentsIndex(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
+
+        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+        var commentarySet: Set<UInt> = []
+        for  element in commentaryStatus {
+            if let comm = element.id, let itemid = comm.uint {
+                commentarySet.insert(itemid)
+            }
+        }
+        let rawCommentArray = try Comment.query().filter(Comment.Constants.documentId, idInt).all()
+        var commentArray = rawCommentArray.filter {
+            if let comm = $0.commentary {
+                return commentarySet.contains(comm.uint ?? 0)
+            }
+            return false
+        }
+        commentArray.sort(by: Comment.docOrderSort)
+
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/review/")}
+        let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
+        var usersOwnNote: [String: Note] = [:]
+        var accu2: [String: Int] = [:]
+
+        rawNoteArray.forEach { nte in
+            if let comm = nte.commentary {
+                if commentarySet.contains(comm.uint ?? 0) {
+                    let keyidx = "\(String(describing: comm.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
+                    if nte.user == usr.id! {
+                        usersOwnNote[keyidx] = nte
+
+                    }
+                    accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
+                    if let stat = nte.status, stat != "" { //subcount on status
+                        let key = keyidx + stat
+                        accu2[key] = (accu2[key] ?? 0) + 1
+                    }
+                }
+            }
+        }
+
+        var response: [String: Node] = [:]
+        var results: [Node] = []
+
+        for (index, comment) in commentArray.enumerated() {
+            var result: [String: Node] = comment.forJSON()
+            result["order"] = Node(index)
+            let commentstr = String(describing: comment.id!.int!)
+
+
+            let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
+            var buttonText = "Note&nbsp;+"
+            if let usrNote = usersOwnNote[keyidx], let noteStatus = usrNote.status {
+                switch noteStatus {
+                case Note.Status.analysis:
+                    buttonText = "<span class=\"badge badge-default\">&nbsp;Note&nbsp;</span>"
+                case Note.Status.review:
+                    buttonText = "<span class=\"badge badge-primary\">&nbsp;Note&nbsp;</span>"
+                case Note.Status.disposition:
+                    buttonText = "<span class=\"badge badge-success\">&nbsp;Note&nbsp;</span>"
+                default:
+                    buttonText = "Note"
+                }
+            }
+            var notesTagDuplicateBadge:String = ""
+            if let notesTagDuplicate = accu2[keyidx + Note.Status.duplicate] {
+                notesTagDuplicateBadge = "<span class=\"\"> Dup&nbsp;\(notesTagDuplicate) </span>"
+            }
+            var notesTagNotUsefulBadge:String = ""
+            if let notesTagNotUseful = accu2[keyidx + Note.Status.notuseful] {
+                notesTagNotUsefulBadge = "<span class=\"\"> Not&nbsp;U&nbsp;\(notesTagNotUseful) </span>"
+            }
+            result["tags"] = Node("<p>\(notesTagDuplicateBadge)\(notesTagNotUsefulBadge)</p>")
+
+            var notesInAnalysisBadge:String = ""
+            if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
+                notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
+            }
+            var notesInReviewBadge:String = ""
+            if let notesInReview = accu2[keyidx + Note.Status.review] {
+                notesInReviewBadge = "<span class=\"badge badge-primary\">\(notesInReview)<span class=\"wb-inv\">notes in review</span></span>"
+            }
+            var notesInDispositionBadge:String = ""
+            if let notesInDisposition = accu2[keyidx + Note.Status.disposition] {
+                notesInDispositionBadge = "<span class=\"badge badge-success\">\(notesInDisposition)<span class=\"wb-inv\">notes in disposition</span></span>"
+            }
+
+            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/review/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) \(notesInAnalysisBadge)\(notesInReviewBadge)\(notesInDispositionBadge)</p>")
+
+            results.append(Node(result))
+
+        }
+        response["data"] = Node(results)
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
+    }
+
+    func commentSummary(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        guard let commentId = request.parameters["commentId"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/review/")}  //go to list of all documents if not found
+
+        let commentdata = try Comment.find(Node(commentId))
+        guard commentdata != nil else {return Response(redirect: "/review/")}  //go to list of all documents if not found
+
+        var parameters = try Node(node: [
+            "comments_page": Node(true),
+            "review_page": Node(true)
+            ])
+        parameters["signon"] = Node(true)
+        guard let usr = request.storage["userid"] as? User else {return Response(redirect: "/review/")}
+        parameters["signedon"] = Node(true)
+        parameters["activeuser"] = try usr.makeNode()
+
+
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/review/")
+        let commentjson = commentdata!.forJSON()
+        parameters["comment"] = Node(commentjson)
+        parameters["commentshref"] = Node("/review/documents/\(documentId)/comments/summary/")
+        //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+        if let commentaryId = commentdata?.commentary, let commentary = try Commentary.find(commentaryId) {
+            let commentstr = String(describing: commentary.id!.int!)
+            parameters["commentaryhref"] = Node("/review/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
+            parameters["commentary"] = Node(commentary.forJSON())
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
+            var userIDsWithNotes: Set<Int> = []
+            notesarray.forEach() {nte in
+                if let usrId = nte.user?.int {
+                    userIDsWithNotes.insert(usrId)
+                }
+            }
+            var usersWithNotes: [Int: User] = [:]
+            if userIDsWithNotes.count > 0 {
+                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()
+
+                usersFetched.forEach() {usr in
+                    if let usridx = usr.id?.int {
+                        usersWithNotes[usridx] = usr
+                    }
+                }
+            }
+            var otherNotes:[Node] = []
+            var usrlist:[Node] = []
+            for note in notesarray {
+                var thisNote = note.forJSON(usr)
+                let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
+                thisNote["username"] = usrname
+                if note.user == usr.id {
+                    parameters["note"] = Node(thisNote)
+                } else {
+                    otherNotes.append(Node(thisNote))
+                    usrlist.append(usrname)
+                }
+            }
+
+            parameters["notescount"] = Node(otherNotes.count)
+            if usrlist.count > 0 {parameters["notesusers"] = Node(usrlist)}
+            if otherNotes.count > 0 {parameters["notes"] = Node(otherNotes)}
+        }
+
+
+        return try   pubDrop.view.make("role/review/noteedit", parameters)
+    }
 }

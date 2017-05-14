@@ -5,7 +5,7 @@
 } ##else() {
 <section id="document-panel" class="wb-overlay modal-content overlay-def wb-bar-t" style="max-height:30%;">
 <header class="modal-header">
-<h2 class="modal-title">Document</h2>
+<h2 class="modal-title">Document Section</h2>
 </header>
 <div class="modal-body">
 <div class="row">

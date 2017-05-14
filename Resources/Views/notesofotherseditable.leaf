@@ -1,0 +1,22 @@
+
+#if(langfra) {
+
+} ##else() {
+#if(notes) {
+<h5>Notes by:</h5>
+<details id="notesofotherseditable" open>
+<summary>#loop(notesusers, "usrname") {#(usrname)  |}</summary>
+#loop(notes, "othernote") {
+<section class="panel panel-default">
+<header class="panel-heading">
+<h5 class="panel-title">#(othernote.username)  | Status: #(othernote.status)</h5>
+</header>
+<div class="panel-body">
+<textarea name="note_#(note.id)" class="publicnote" data-noteid="#(note.id)" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
+>#(othernote.textshared)</textarea>
+</div>
+</section>
+}
+</details>
+}
+}

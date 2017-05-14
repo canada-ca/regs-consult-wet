@@ -10,8 +10,8 @@
 <h3>#(document.knownas)</h3>
 <h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)" data-commentaryid="#(commentary.id)">#(title)</h1>
 #embed("commentsummaryshort")
-#embed("notesofothers")
-#embed("noteeditor")
+#embed("notesofotherseditable")
+#embed("noteeditorpubiconly")
 #embed("documentoverlay")
 }
 #export("scripts") {

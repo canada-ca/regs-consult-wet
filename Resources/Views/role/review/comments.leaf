@@ -8,7 +8,7 @@
 <h2><a href="#(documentshref)">Documents</a> > Comments</h2>
 <h3>#(document.knownas)</h3>
 <h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)">#(title)</h1>
-#embed("commentstable")
+#embed("commentstablereview")
 #embed("documentoverlay")
 }
 #export("scripts") {
