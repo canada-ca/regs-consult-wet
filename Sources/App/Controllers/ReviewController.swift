@@ -61,8 +61,8 @@ final class ReviewController{
             let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
             result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/review/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
-            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
-            result["notelink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/notes/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
+            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">All </p>")
+            
             results.append(Node(result))
 
         }
@@ -229,7 +229,7 @@ final class ReviewController{
 
 
         var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).filter(CommentaryConstants.status, CommentaryStatus.analysis).all()
-        commentaryArray.sort(by: Commentary.analyzeSort)
+        commentaryArray.sort(by: Commentary.reviewSort)
 
         var response: [String: Node] = [:]
         var results: [Node] = []

@@ -64,8 +64,8 @@ final class AnalyzeController {
             let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
             result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/analyze/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/analyze/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
-            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/comments/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
-            result["notelink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/notes/summary/\">All <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> comments</span></span></a></p>")
+            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/comments/summary/\">All Comments</p>")
+            result["notelink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/notes/summary/\">All My Notes</a></p>")
             results.append(Node(result))
 
         }
@@ -225,12 +225,20 @@ final class AnalyzeController {
                 case Note.Status.disposition:
                     buttonText = "<span class=\"bg-success\">&nbsp;Note&nbsp;</span>"
                 default:
-                    break
+                    buttonText = "Note"
                 }
             }
 
+            var notesTagDuplicateBadge:String = ""
+            if let notesTagDuplicate = accu2[keyidx + Note.Status.duplicate] {
+                notesTagDuplicateBadge = "<span class=\"\"> Dup&nbsp;\(notesTagDuplicate) </span>"
+            }
+            var notesTagNotUsefulBadge:String = ""
+            if let notesTagNotUseful = accu2[keyidx + Note.Status.notuseful] {
+                notesTagNotUsefulBadge = "<span class=\"\"> Not&nbsp;U&nbsp;\(notesTagNotUseful) </span>"
+            }
+            result["tags"] = Node("<p>\(notesTagDuplicateBadge)\(notesTagNotUsefulBadge)</p>")
             var notesInAnalysisBadge:String = ""
-
             if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
                 notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
             }
@@ -341,17 +349,27 @@ final class AnalyzeController {
             var buttonText = "Note&nbsp;+"
             if let usrNote = usersOwnNote[keyidx], let noteStatus = usrNote.status {
                 switch noteStatus {
+                case Note.Status.analysis:
+                    buttonText = "<span class=\"badge badge-default\">&nbsp;Note&nbsp;</span>"
                 case Note.Status.review:
-                    buttonText = "<span class=\"bg-primary\">&nbsp;Note&nbsp;</span>"
+                    buttonText = "<span class=\"badge badge-primary\">&nbsp;Note&nbsp;</span>"
                 case Note.Status.disposition:
-                    buttonText = "<span class=\"bg-success\">&nbsp;Note&nbsp;</span>"
+                    buttonText = "<span class=\"badge badge-success\">&nbsp;Note&nbsp;</span>"
                 default:
-                    break
+                    buttonText = "Note"
                 }
             }
-          
-            var notesInAnalysisBadge:String = ""
+            var notesTagDuplicateBadge:String = ""
+            if let notesTagDuplicate = accu2[keyidx + Note.Status.duplicate] {
+                notesTagDuplicateBadge = "<span class=\"\"> Dup&nbsp;\(notesTagDuplicate) </span>"
+            }
+            var notesTagNotUsefulBadge:String = ""
+            if let notesTagNotUseful = accu2[keyidx + Note.Status.notuseful] {
+                notesTagNotUsefulBadge = "<span class=\"\"> Not&nbsp;U&nbsp;\(notesTagNotUseful) </span>"
+            }
+            result["tags"] = Node("<p>\(notesTagDuplicateBadge)\(notesTagNotUsefulBadge)</p>")
 
+            var notesInAnalysisBadge:String = ""
             if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
                 notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
             }

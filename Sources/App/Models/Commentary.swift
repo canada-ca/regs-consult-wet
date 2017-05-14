@@ -228,6 +228,27 @@ final class Commentary: Model {
         return statusSort(a,b,Commentary.analyzeSortOrder)
 
     }
+    static func reviewSort (_ a: Commentary,_ b: Commentary) -> Bool {
+        let aOrder = a.represents ?? ""
+        let bOrder = b.represents ?? ""
+
+        if aOrder < bOrder {
+            return true
+        } else if bOrder < aOrder {
+            return false
+        }
+        if let adate = a.submitteddate {
+            if let bdate = b.submitteddate , adate > bdate {
+                return true
+            }
+            return false
+        }
+        if let _ = b.submitteddate {
+            return true
+        }
+        return false
+
+    }
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {
