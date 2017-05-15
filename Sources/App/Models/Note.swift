@@ -176,6 +176,13 @@ extension Note {
          "ris": 2,
          "reg": 3
     ]
+    
+    static let reviewSortOrder: [String: Int] =
+        [Note.Status.disposition: 1,
+         Note.Status.review: 2,
+         Note.Status.analysis: 3,
+         Note.Status.duplicate: 4,
+         Note.Status.notuseful: 5]
 
     static func singleDocOrderSort (_ a: Note,_ b: Note) -> Bool {
         // not needed as all from same document assumed to speed up sort.
@@ -199,10 +206,18 @@ extension Note {
         let bLine = b.linenumber
         if bLine > aLine {
             return true
-        } else {
+        } else if bLine < aLine {
             return false
         }
-        
+        let aOrder = reviewSortOrder[a.status ?? "none"] ?? 0
+        let bOrder = reviewSortOrder[b.status ?? "none"] ?? 0
+
+        if bOrder > aOrder {
+            return true
+        } else if bOrder < aOrder {
+            return false
+        }
+        return false
     }
     
     // shields user private component from leaking

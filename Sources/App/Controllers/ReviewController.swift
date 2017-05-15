@@ -505,13 +505,15 @@ final class ReviewController{
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/review/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
+            var notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
             var userIDsWithNotes: Set<Int> = []
             notesarray.forEach() {nte in
                 if let usrId = nte.user?.int {
                     userIDsWithNotes.insert(usrId)
                 }
             }
+            notesarray.sort(by: Note.singleDocOrderSort)
+            
             var usersWithNotes: [Int: User] = [:]
             if userIDsWithNotes.count > 0 {
                 let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()

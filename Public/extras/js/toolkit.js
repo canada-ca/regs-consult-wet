@@ -153,7 +153,19 @@
             });
 
             getdocument();
+            if ($("#notesofotherseditable").length>0) {
+                $("#notesofotherseditable textarea.publicnote").each(function(i, el){
+                    var simplemdeitem = new SimpleMDE({ element: el,
+                    spellChecker: false,
+                    forceSync: true,
+                    status: false,
+                    placeholder: "",
+                    });
+                    if (!simplemdeitem.isPreviewActive()) {simplemdeitem.togglePreview()};
 
+                });
+
+            }
             if ($("#publicnote").length>0) {
 
                 var postupdatenote = function (){
@@ -164,7 +176,9 @@
                     var linenum = $("#publicnote").attr("data-linenumber");
                     var notestatus = $("#note-status").val();
                     var pubnotetext = simplemdepub.value();
-                    var privnotetext = simplemdepriv.value();
+                    if (simplemdepriv !== undefined) {
+                        var privnotetext = simplemdepriv.value();
+                    }
                     var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
                     var reference = $("#publicnote").attr("data-reference");
                     var noteobj  = new Object();
@@ -218,6 +232,7 @@
                             console.log(simplemdepub.value());
                             postupdatenote();
                         });
+                if ($("#privatenote").length>0) {
                 var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
                 spellChecker: false,
                 forceSync: true,
@@ -234,8 +249,9 @@
                     console.log(simplemdepub.value());
                     postupdatenote();
                 });
+                }
                 $(window).on('beforeunload',function(){
-                    console.log(simplemdepub.value());
+//                    console.log(simplemdepub.value());
                     postupdatenote();
                 });
                 $("#setStatus").on("click",function(){

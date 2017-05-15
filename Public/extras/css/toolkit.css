@@ -232,5 +232,10 @@ h5.comment-empty  {
     margin-right: -1em;
     padding-right: 1em;
 }
-
+.CodeMirror, .CodeMirror-scroll {
+    min-height: auto;
+}
+.CodeMirror {
+    height: auto;
+}
 }
