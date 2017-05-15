@@ -207,11 +207,11 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
-                        console.log("update success" + JSON.stringify(data));
+//                        console.log("update success" + JSON.stringify(data));
 
                     },
                     error: function(errMsg) {
-                        console.log("update fail" + errMsg);
+//                        console.log("update fail" + errMsg);
                     }
                         });
                     

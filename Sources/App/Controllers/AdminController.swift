@@ -16,17 +16,12 @@ struct AdminController {
     // MARK: - Initialiser
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         self.drop = drop
-//        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
 
-
-//        let cookieSetter = AuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
-//        let routerLogin = router.grouped(cookieSetter)
         let routerLogin = drop.grouped("admin").grouped(cookieSetter)
         routerLogin.get("login", handler: loginHandler)
         routerLogin.post("login", handler: loginPostHandler)
         routerLogin.get("logout", handler: logoutHandler)
 
-//        let protect = RedirectAuthMiddlewareJWT(for: drop, jwtSigner: self.jwtSigner)
         let routerSecure = routerLogin.grouped(protect)
         routerSecure.get(handler: adminHandler)
         //        routerSecure.get("createPost", handler: createPostHandler)
@@ -164,6 +159,7 @@ struct AdminController {
     func createAdminView(_ request: Request, errors: [String]? = nil) throws -> View {
 //        let publishedBlogPosts = try BlogPost.query().filter("published", true).sort("created", .descending).all()
 //        let draftBlogPosts = try BlogPost.query().filter("published", false).sort("created", .descending).all()
+         guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
         let users = try User.all()
 
 //        var parameters = try Node(node: [
@@ -182,10 +178,10 @@ struct AdminController {
 //            parameters["draft_posts"] = try draftBlogPosts.makeNode(context: BlogPostContext.all)
 //        }
         parameters["signon"] = Node(true)
-        if let usr = request.storage["userid"] as? User {
-            parameters["signedon"] = Node(true)
-            parameters["activeuser"] = try usr.makeNode()
-        }
+
+        parameters["signedon"] = Node(true)
+        parameters["activeuser"] = try usr.makeNode()
+
         if let errors = errors {
             parameters["errors"] = try errors.makeNode()
         }

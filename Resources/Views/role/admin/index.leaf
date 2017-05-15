@@ -43,6 +43,7 @@
                 <tbody>
 
 #loop(users, "user") {
+#if(activeuser.admin) {
                     <tr>
                         <td><a href="/authors/#(user.username)/">#(user.id)</a></td>
                         <td>#(user.name)</td>
@@ -50,8 +51,19 @@
                         <td><a class="btn btn-info" href="/admin/users/#(user.id)/edit/">Edit</a></td>
                         <td><a class="btn btn-danger delete-user-button" href="/admin/users/#(user.id)/delete/">Delete</a></td>
                     </tr>
-                    }
+} ##else() {
+#equal(activeuser.id, user.id) {
+<tr>
+<td><a href="/authors/#(user.username)/">#(user.id)</a></td>
+<td>#(user.name)</td>
+<td>#(user.username)</td>
+<td><a class="btn btn-info" href="/admin/users/#(user.id)/edit/">Edit</a></td>
+<td>Cannot delete self</td>
+</tr>
 
+}
+}
+}
                 </tbody>
             </table>
 
