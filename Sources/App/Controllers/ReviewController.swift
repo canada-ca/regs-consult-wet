@@ -293,21 +293,61 @@ final class ReviewController{
         guard let documentdata = try Document.find(commentary.document!) else {
             throw Abort.badRequest
         }
-
+        let documentId = documentdata.docID()
         //        let idInt = base62ToID(string: documentId)
         //        let documentdata = try Document.find(Node(idInt))
         //        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
 
 
-        let commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
+        var commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
+        commentArray.sort(by: Comment.docOrderSort)
+
+        guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
+
+        let rawNoteArray = try Note.query().filter(Note.Constants.commentaryId, commentaryId).all()
+        var usersOwnNote: [String: Note] = [:]
+        var accu2: [String: Int] = [:]
+        var dispositionNote: [String: [Note]?] = [:]
+        rawNoteArray.forEach { nte in
+
+            let keyidx = "\(String(describing: nte.commentary?.uint ?? 0))\(String(describing: nte.reference!))\(nte.linenumber)"
+            if nte.user == usr.id! {
+                usersOwnNote[keyidx] = nte
+            }
+            accu2[keyidx] = (accu2[keyidx] ?? 0) + 1
+            if let stat = nte.status, stat != "" { //subcount on status
+                let key = keyidx + stat
+                accu2[key] = (accu2[key] ?? 0) + 1
+                if stat == Note.Status.disposition {
+                    if var arry = dispositionNote[keyidx] as? [Note] {
+                        arry.append(nte)
+                        dispositionNote[keyidx] = arry
+                    } else {
+                        dispositionNote[keyidx] = [nte]
+                    }
+                }
+            }
+
+        }
 
         var response: [String: Node] = [:]
         var results: [Node] = []
 
-        for comment in commentArray {
-            let result: [String: Node] = comment.forJSON()
-            //            let commentstr = String(describing: commentary.id!.int!)
-            //            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
+        for (index, comment) in commentArray.enumerated() {
+            var result: [String: Node] = comment.forJSON()
+            result["order"] = Node(index)
+            let commentstr = String(describing: comment.id!.int!)
+            let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
+            result["disposition"] = Node( Note.format(notes: dispositionNote[keyidx] ?? []))
+            result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
+                userNoteStatus: usersOwnNote[keyidx]?.status,
+                noteCounts: [accu2[keyidx + Note.Status.disposition],
+                             accu2[keyidx + Note.Status.review],
+                             accu2[keyidx + Note.Status.analysis],
+                             accu2[keyidx + Note.Status.duplicate],
+                             accu2[keyidx + Note.Status.notuseful]    ]))
+
+
             results.append(Node(result))
 
         }
@@ -319,6 +359,7 @@ final class ReviewController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
+
     func commentaryUpdate(_ request: Request)throws -> ResponseRepresentable {
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
