@@ -30,14 +30,22 @@ final class ReceiveController{
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
        
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
-        let commentaryStatusCounts = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted]).all().reduce([:]) {
-            ( accu, element) in
-            var accu2: [String: Int] = accu as! [String : Int]
+//        let commentaryStatusCounts = try Commentary.query().all().reduce([:]) {
+//            ( accu, element) in
+//            var accu2: [String: Int] = accu as! [String : Int]
+//            if let stat = element.status , let docid = element.document?.uint {
+//                let counthash = stat + String(docid)
+//                accu2[counthash] = (accu2[counthash] ?? 0) + 1
+//            }
+//            return accu2
+//        }
+        var commentaryStatusCounts: [String:Int] = [:]
+        let commentaryStatusArray = try Commentary.query().all()
+        commentaryStatusArray.forEach { element in
             if let stat = element.status , let docid = element.document?.uint {
                 let counthash = stat + String(docid)
-                accu2[counthash] = (accu2[counthash] ?? 0) + 1
+                commentaryStatusCounts[counthash] = (commentaryStatusCounts[counthash] ?? 0) + 1
             }
-            return accu2
         }
 
 
@@ -51,11 +59,20 @@ final class ReceiveController{
 //                let aa = version.array
 //            }
             let docid = String(describing: document.id!.uint!)
-            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] as? Int ?? 0
-            let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
-            let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
+//            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] as? Int ?? 0
+//            let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
+//            let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
+            result["newsubmit"] = Node( Commentary.dashboard(link: "/receive/documents/\(doc)/",
+                commentaryCounts: [commentaryStatusCounts[CommentaryStatus.submitted + docid],
+                                   commentaryStatusCounts[CommentaryStatus.attemptedsubmit + docid],
+                                   commentaryStatusCounts[CommentaryStatus.analysis + docid],
+                                   commentaryStatusCounts[CommentaryStatus.new + docid],
+                                   commentaryStatusCounts[CommentaryStatus.notuseful + docid] ,
+                                   commentaryStatusCounts[CommentaryStatus.abuse + docid]
+                ]))
+
+//            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
             results.append(Node(result))
             
         }

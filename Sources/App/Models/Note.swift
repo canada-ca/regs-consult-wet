@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import Foundation
+import SwiftMarkdown
 // MARK: Model
 
 struct Note: Model {
@@ -37,11 +38,11 @@ struct Note: Model {
 
     }
     struct Status {
+        static let disposition = "disposition"
+        static let review = "review"
         static let analysis = "analysis"
         static let duplicate = "duplicate"
         static let notuseful = "notuseful"
-        static let review = "review"
-        static let disposition = "disposition"
     }
     var id: Node?
     var document: Node?
@@ -313,4 +314,53 @@ extension Note {
 //    func commenter() throws -> Parent<Commentary> {
 //        return try parent(commentary, Constants.commentaryId)
 //    }
+    static func dashboard(link: String, userNoteStatus: String?, noteCounts: [Int?]) -> String {
+        var buttonText = "Note&nbsp;+"
+        if let noteStatus = userNoteStatus {
+            switch noteStatus {
+            case Note.Status.review:
+                buttonText = "<span class=\"bg-default\">&nbsp;Note&nbsp;</span>"
+            case Note.Status.disposition:
+                buttonText = "<span class=\"bg-default\">&nbsp;Note&nbsp;</span>"
+            default:
+                buttonText = "Note"
+            }
+        }
+        var nCounts:[Int?] = noteCounts
+        for _ in 1..<(6 - noteCounts.count) {
+            nCounts.append(nil)  //pad a short array in case states are added later
+        }
+        var statusList: String = "<p><ul class=\"list-unstyled\">"
+        if let itemCount = nCounts[0] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Disposition</span></li>"
+        }
+        if let itemCount = nCounts[1] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Review</span></li>"
+        }
+        if let itemCount = nCounts[2] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Analysis</span></li>"
+        }
+        if let itemCount = nCounts[3] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Duplicate</span></li>"
+        }
+        if let itemCount = nCounts[4] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Not&nbsp;useful</span></li>"
+        }
+        statusList += "</ul></p>"
+
+        let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
+        return output
+    }
+    static func format(notes: [Note]?) -> String {
+        guard (notes?.count)! > 0 else {return ""}
+        var noteList: String = "<div>"
+        notes!.forEach { note in
+            if let txt = note.textshared {
+                let out = try? markdownToHTML(txt) 
+                noteList += "<div class=\"well well-sm\">\(String(describing: out ?? ""))</div>"
+                }
+            }
+        noteList += "</div>"
+        return noteList
+    }
 }

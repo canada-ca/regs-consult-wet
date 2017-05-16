@@ -30,15 +30,13 @@
 { "data": "order","type": "num", "visible": false, "searchable": false},
 { "data": "referencecoded", "defaultContent": "" },
 { "data": "text", "defaultContent": "" },
-{ "data": "tags", "type": "html", "defaultContent": ""},
-{ "data": "link", "searchable": false, "type": "html" }
+{ "data": "link", "type": "html" }
 ]}'>
 <thead>
 <tr>
 <th>order</th>
 <th>Section</th>
 <th>Comment</th>
-<th>Tags</th>
 <th>Notes</th>
 </tr>
 </thead>

@@ -45,7 +45,7 @@
 </tr>
 <tr>
 <td class="text-right">Acknowledged</td>
-<td>#if(commentary.acknowledgeddate) {<strong>#(commentary.acknowledgeddate)</strong>} ##if(commentary.email) {<a class="btn btn-default" href="#(commentarieshref)">Send Acknowledgement Email</a>} ##else() {no email supplied}</td>
+<td>#if(commentary.acknowledgeddate) {<strong>#(commentary.acknowledgeddate)</strong>} ##if(commentary.email) {<a class="btn btn-default" href="#(commentarieshref)">Send Acknowledgement Email  (not implemented)</a>} ##else() {no email supplied}</td>
 </tr>
 </tbody>
 </table>

@@ -24,7 +24,7 @@
             
 #embed("documenttable")
 
-            <a class="btn btn-default" href="/admin/">Create New Document</a>
+            <a class="btn btn-default" href="/admin/">Create New Document (not implemented)</a>
         </div>
 
         <div id="admin-users" class="mt-4">
@@ -67,7 +67,7 @@
                 </tbody>
             </table>
 
-            <a class="btn btn-primary" href="/admin/createUser/">Create New User</a>
+            <a class="btn btn-primary" href="/admin/createUser/">Create New User (not fully implemented)</a>
 
         </div>
 

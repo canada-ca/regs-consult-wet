@@ -249,6 +249,44 @@ final class Commentary: Model {
         return false
 
     }
+//    dashboardOrder
+//        CommentaryStatus.submitted
+//         CommentaryStatus.attemptedsubmit
+//         CommentaryStatus.analysis
+//         CommentaryStatus.new
+//         CommentaryStatus.notuseful
+//         CommentaryStatus.abuse: 6
+    static func dashboard(link: String, commentaryCounts: [Int?]) -> String {
+        let buttonText = "View&nbsp;Commentaries"
+        var nCounts:[Int?] = commentaryCounts
+        for _ in 0..<(6 - commentaryCounts.count) {
+            nCounts.append(nil)  //pad a short array in case states are added later
+        }
+        var statusList: String = "<p><ul class=\"list-unstyled\">"
+        if let itemCount = nCounts[0] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Submitted</span></li>"
+        }
+        if let itemCount = nCounts[1] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Attempted&nbsp;submit</span></li>"
+        }
+        if let itemCount = nCounts[2] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Analysis</span></li>"
+        }
+        if let itemCount = nCounts[3] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">New&nbsp;(in&nbsp;progress)</span></li>"
+        }
+        if let itemCount = nCounts[4] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Not&nbsp;useful</span></li>"
+        }
+        if let itemCount = nCounts[5] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Abuse</span></li>"
+        }
+        statusList += "</ul></p>"
+
+        let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
+        return output
+    }
+
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {

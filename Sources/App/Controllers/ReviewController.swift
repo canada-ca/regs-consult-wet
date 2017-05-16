@@ -39,7 +39,7 @@ final class ReviewController{
 
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
         var commentaryStatusCounts: [String:Int] = [:]
-        let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status, .in, [CommentaryStatus.new, CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+        let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status,  CommentaryStatus.analysis).all()
         commentaryStatusArray.forEach { element in
             if let stat = element.status , let docid = element.document?.uint {
                 let counthash = stat + String(docid)
@@ -57,13 +57,21 @@ final class ReviewController{
             //                let aa = version.array
             //            }
             let docid = String(describing: document.id!.uint!)
-            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] ?? 0
-            let countNew: Int = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
-            let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] ?? 0
-            let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
+//            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] ?? 0
+//            let countNew: Int = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
+//            let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] ?? 0
+//            let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-            result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/review/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
-            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">All </p>")
+//            result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/review/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
+            result["newsubmit"] = Node( Commentary.dashboard(link: "/review/documents/\(doc)/",
+                commentaryCounts: [commentaryStatusCounts[CommentaryStatus.submitted + docid],
+                                   commentaryStatusCounts[CommentaryStatus.attemptedsubmit + docid],
+                                   commentaryStatusCounts[CommentaryStatus.analysis + docid],
+                                   commentaryStatusCounts[CommentaryStatus.new + docid],
+                                   commentaryStatusCounts[CommentaryStatus.notuseful + docid] ,
+                                   commentaryStatusCounts[CommentaryStatus.abuse + docid]
+                ]))
+            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">Comments and dispositions</p>")
             
             results.append(Node(result))
 
@@ -392,7 +400,7 @@ final class ReviewController{
         let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
         var usersOwnNote: [String: Note] = [:]
         var accu2: [String: Int] = [:]
-
+        var dispositionNote: [String: [Note]?] = [:]
         rawNoteArray.forEach { nte in
             if let comm = nte.commentary {
                 if commentarySet.contains(comm.uint ?? 0) {
@@ -405,6 +413,14 @@ final class ReviewController{
                     if let stat = nte.status, stat != "" { //subcount on status
                         let key = keyidx + stat
                         accu2[key] = (accu2[key] ?? 0) + 1
+                        if stat == Note.Status.disposition {
+                            if var arry = dispositionNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                dispositionNote[keyidx] = arry
+                            } else {
+                                dispositionNote[keyidx] = [nte]
+                            }
+                        }
                     }
                 }
             }
@@ -420,44 +436,15 @@ final class ReviewController{
 
 
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-            var buttonText = "Note&nbsp;+"
-            if let usrNote = usersOwnNote[keyidx], let noteStatus = usrNote.status {
-                switch noteStatus {
-                case Note.Status.analysis:
-                    buttonText = "<span class=\"badge badge-default\">&nbsp;Note&nbsp;</span>"
-                case Note.Status.review:
-                    buttonText = "<span class=\"badge badge-primary\">&nbsp;Note&nbsp;</span>"
-                case Note.Status.disposition:
-                    buttonText = "<span class=\"badge badge-success\">&nbsp;Note&nbsp;</span>"
-                default:
-                    buttonText = "Note"
-                }
-            }
-            var notesTagDuplicateBadge:String = ""
-            if let notesTagDuplicate = accu2[keyidx + Note.Status.duplicate] {
-                notesTagDuplicateBadge = "<span class=\"\"> Dup&nbsp;\(notesTagDuplicate) </span>"
-            }
-            var notesTagNotUsefulBadge:String = ""
-            if let notesTagNotUseful = accu2[keyidx + Note.Status.notuseful] {
-                notesTagNotUsefulBadge = "<span class=\"\"> Not&nbsp;U&nbsp;\(notesTagNotUseful) </span>"
-            }
-            result["tags"] = Node("<p>\(notesTagDuplicateBadge)\(notesTagNotUsefulBadge)</p>")
+            result["disposition"] = Node( Note.format(notes: dispositionNote[keyidx] ?? []))
 
-            var notesInAnalysisBadge:String = ""
-            if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
-                notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
-            }
-            var notesInReviewBadge:String = ""
-            if let notesInReview = accu2[keyidx + Note.Status.review] {
-                notesInReviewBadge = "<span class=\"badge badge-primary\">\(notesInReview)<span class=\"wb-inv\">notes in review</span></span>"
-            }
-            var notesInDispositionBadge:String = ""
-            if let notesInDisposition = accu2[keyidx + Note.Status.disposition] {
-                notesInDispositionBadge = "<span class=\"badge badge-success\">\(notesInDisposition)<span class=\"wb-inv\">notes in disposition</span></span>"
-            }
-
-            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/review/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) \(notesInAnalysisBadge)\(notesInReviewBadge)\(notesInDispositionBadge)</p>")
-
+            result["link"] = Node( Note.dashboard(link: "/review/documents/\(documentId)/comments/\(commentstr)",
+                userNoteStatus: usersOwnNote[keyidx]?.status,
+                noteCounts: [accu2[keyidx + Note.Status.disposition],
+                             accu2[keyidx + Note.Status.review],
+                             accu2[keyidx + Note.Status.analysis],
+                             accu2[keyidx + Note.Status.duplicate],
+                             accu2[keyidx + Note.Status.notuseful]    ]))
             results.append(Node(result))
 
         }
