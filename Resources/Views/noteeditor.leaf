@@ -3,34 +3,10 @@
 
 } ##else() {
 <form action="/analyze/note/" id="create-post-form" method="post">
-<div class="row">
-<div class="col-md-4">
-<label for="commentary-status">
-<span class="field-name">Change note status to:</span>
-</label>
-<div class="input-group">
-<select id="note-status" class="form-control">
-<option value="analysis" #equal(note.status, "analysis") {selected}>Analysis</option>
-<option value="disposition" #equal(note.status, "disposition") {selected}>Disposition</option>
-<option value="review" #equal(note.status, "review") {selected}>Review</option>
-<option value="duplicate" #equal(note.status, "duplicate") {selected}>Duplicate</option>
-<option value="notuseful" #equal(note.status, "notuseful") {selected}>Not Useful</option>
-</select>
-<span class="input-group-btn"><button id="setNoteStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button>
-</span>
-<p>Default:</p>
-<div class="btn-group mrgn-bttm-lg">
-<button type="button" class="btn btn-default">Left</button>
-<button type="button" class="btn btn-default">Middle</button>
-<button type="button" class="btn btn-default">Right</button>
-</div>
-</div>
 
-</div>
-
-</div>
 #if(note) {
 <h3>Public Note</h3>
+#embed("notestatus")
 <textarea name="publicnote" id="publicnote" data-noteid="#(note.id)" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
 >#(note.textshared)</textarea>
 <h3>Private Note</h3>

@@ -38,11 +38,11 @@ struct Note: Model {
 
     }
     struct Status {
-        static let disposition = "disposition"
-        static let review = "review"
-        static let analysis = "analysis"
-        static let duplicate = "duplicate"
-        static let notuseful = "notuseful"
+        static let decision = "decision"
+        static let discard = "discard"
+        static let ready = "ready"
+        static let inprogress = "inprogress"
+
     }
     var id: Node?
     var document: Node?
@@ -179,11 +179,11 @@ extension Note {
     ]
     
     static let reviewSortOrder: [String: Int] =
-        [Note.Status.disposition: 1,
-         Note.Status.review: 2,
-         Note.Status.analysis: 3,
-         Note.Status.duplicate: 4,
-         Note.Status.notuseful: 5]
+        [Note.Status.decision: 1,
+         Note.Status.ready: 3,
+         Note.Status.inprogress: 4,
+         Note.Status.discard: 2,
+         ]
 
     static func singleDocOrderSort (_ a: Note,_ b: Note) -> Bool {
         // not needed as all from same document assumed to speed up sort.
@@ -283,7 +283,7 @@ extension Note {
 //    }
     mutating func updateStatus(of item: String, to newStatus: String) {
         switch newStatus {
-        case Status.analysis, Status.duplicate, Status.notuseful, Status.review, Status.disposition:
+        case Status.inprogress, Status.discard, Status.ready, Status.decision:
             status = newStatus
         default:
             break  // not a recognized state string should log error.
@@ -318,9 +318,9 @@ extension Note {
         var buttonText = "Note&nbsp;+"
         if let noteStatus = userNoteStatus {
             switch noteStatus {
-            case Note.Status.review:
+            case Note.Status.ready:
                 buttonText = "<span class=\"bg-default\">&nbsp;Note&nbsp;</span>"
-            case Note.Status.disposition:
+            case Note.Status.decision:
                 buttonText = "<span class=\"bg-default\">&nbsp;Note&nbsp;</span>"
             default:
                 buttonText = "Note"
@@ -335,17 +335,15 @@ extension Note {
             statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Decision</span></li>"
         }
         if let itemCount = nCounts[1] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Ready</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Discard</span></li>"
         }
         if let itemCount = nCounts[2] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">In&nbsp;progress</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Ready</span></li>"
         }
         if let itemCount = nCounts[3] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Duplicate</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">In&nbsp;progress</span></li>"
         }
-        if let itemCount = nCounts[4] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Not&nbsp;useful</span></li>"
-        }
+
         statusList += "</ul></p>"
 
         let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"

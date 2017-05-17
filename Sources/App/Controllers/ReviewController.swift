@@ -318,7 +318,7 @@ final class ReviewController{
             if let stat = nte.status, stat != "" { //subcount on status
                 let key = keyidx + stat
                 accu2[key] = (accu2[key] ?? 0) + 1
-                if stat == Note.Status.disposition {
+                if stat == Note.Status.decision {
                     if var arry = dispositionNote[keyidx] as? [Note] {
                         arry.append(nte)
                         dispositionNote[keyidx] = arry
@@ -341,11 +341,10 @@ final class ReviewController{
             result["disposition"] = Node( Note.format(notes: dispositionNote[keyidx] ?? []))
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,
-                noteCounts: [accu2[keyidx + Note.Status.disposition],
-                             accu2[keyidx + Note.Status.review],
-                             accu2[keyidx + Note.Status.analysis],
-                             accu2[keyidx + Note.Status.duplicate],
-                             accu2[keyidx + Note.Status.notuseful]    ]))
+                noteCounts: [accu2[keyidx + Note.Status.decision],
+                             accu2[keyidx + Note.Status.discard],
+                             accu2[keyidx + Note.Status.ready],
+                             accu2[keyidx + Note.Status.inprogress]   ]))
 
 
             results.append(Node(result))
@@ -454,7 +453,7 @@ final class ReviewController{
                     if let stat = nte.status, stat != "" { //subcount on status
                         let key = keyidx + stat
                         accu2[key] = (accu2[key] ?? 0) + 1
-                        if stat == Note.Status.disposition {
+                        if stat == Note.Status.decision {
                             if var arry = dispositionNote[keyidx] as? [Note] {
                                 arry.append(nte)
                                 dispositionNote[keyidx] = arry
@@ -481,11 +480,10 @@ final class ReviewController{
 
             result["link"] = Node( Note.dashboard(link: "/review/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,
-                noteCounts: [accu2[keyidx + Note.Status.disposition],
-                             accu2[keyidx + Note.Status.review],
-                             accu2[keyidx + Note.Status.analysis],
-                             accu2[keyidx + Note.Status.duplicate],
-                             accu2[keyidx + Note.Status.notuseful]    ]))
+                noteCounts: [accu2[keyidx + Note.Status.decision],
+                             accu2[keyidx + Note.Status.discard],
+                             accu2[keyidx + Note.Status.ready],
+                             accu2[keyidx + Note.Status.inprogress]   ]))
             results.append(Node(result))
 
         }

@@ -1,0 +1,15 @@
+#if(langfra) {
+
+
+} ##else() {
+
+<div id="note-status" class="btn-group mrgn-bttm-md">
+<button type="button" class="btn btn-default active" data-selected-class="btn-default">In progress</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-primary">Ready</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-info">Discard</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-success">Decision</button>
+</div>
+
+
+
+}

@@ -228,11 +228,10 @@ final class AnalyzeController {
             result["usernote"] = Node( Note.format(userNote: usersOwnNote[keyidx]))
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                                         userNoteStatus: usersOwnNote[keyidx]?.status,
-                                        noteCounts: [accu2[keyidx + Note.Status.disposition],
-                                                     accu2[keyidx + Note.Status.review],
-                                                     accu2[keyidx + Note.Status.analysis],
-                                                     accu2[keyidx + Note.Status.duplicate],
-                                                     accu2[keyidx + Note.Status.notuseful]    ]))
+                                        noteCounts: [accu2[keyidx + Note.Status.decision],
+                                                     accu2[keyidx + Note.Status.discard],
+                                                     accu2[keyidx + Note.Status.ready],
+                                                     accu2[keyidx + Note.Status.inprogress]   ]))
 
 
             results.append(Node(result))
@@ -329,11 +328,10 @@ final class AnalyzeController {
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,
-                noteCounts: [accu2[keyidx + Note.Status.disposition],
-                             accu2[keyidx + Note.Status.review],
-                             accu2[keyidx + Note.Status.analysis],
-                             accu2[keyidx + Note.Status.duplicate],
-                             accu2[keyidx + Note.Status.notuseful]    ]))
+                noteCounts: [accu2[keyidx + Note.Status.decision],
+                             accu2[keyidx + Note.Status.discard],
+                             accu2[keyidx + Note.Status.ready],
+                             accu2[keyidx + Note.Status.inprogress]  ]))
                 results.append(Node(result))
 
         }
@@ -701,7 +699,7 @@ final class AnalyzeController {
                     if let item = update[Note.JSONKeys.status]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
                         note?.updateStatus(of: Note.JSONKeys.status, to: newitem)
-                        if let content = note?.status, content != Note.Status.analysis { noteHasContent = true }
+                        if let content = note?.status, content != Note.Status.inprogress { noteHasContent = true }
                     }
                     if let item = update[Note.JSONKeys.statususer]?.string {
                         let newitem = item.trimmingCharacters(in: .whitespacesAndNewlines)
