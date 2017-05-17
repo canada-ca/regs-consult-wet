@@ -5,7 +5,7 @@
 }
 #export("body") {
 #embed("taskselect")
-<h2><a href="#(documentshref)">Documents</a> > Notes</h2>
+<h2><a href="#(documentshref)">Documents</a> > Your notes</h2>
 <h3>#(document.knownas)</h3>
 <h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)">#(title)</h1>
 #embed("notestable")

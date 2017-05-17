@@ -20,7 +20,7 @@
 </table>
 
 } ##else() {
-<h2>User notes</h2>
+<h2>Your notes</h2>
 <table  id="comment-table" class="wb-tables table table-hover limit-comment" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
 "ordering": false,
@@ -41,7 +41,7 @@
 <th>Section</th>
 
 <th>Represents</th>
-<th>User note</th>
+<th>Your note</th>
 
 <th>Actions</th>
 </tr>
