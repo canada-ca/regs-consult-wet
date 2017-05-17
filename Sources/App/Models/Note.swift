@@ -332,13 +332,13 @@ extension Note {
         }
         var statusList: String = "<p><ul class=\"list-unstyled\">"
         if let itemCount = nCounts[0] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Disposition</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Decision</span></li>"
         }
         if let itemCount = nCounts[1] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Review</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Ready</span></li>"
         }
         if let itemCount = nCounts[2] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Analysis</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">In&nbsp;progress</span></li>"
         }
         if let itemCount = nCounts[3] {
             statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Duplicate</span></li>"

@@ -254,7 +254,7 @@
 //                    console.log(simplemdepub.value());
                     postupdatenote();
                 });
-                $("#setStatus").on("click",function(){
+                $("#setNoteStatus").on("click",function(){
 
                     postupdatenote();
                     });

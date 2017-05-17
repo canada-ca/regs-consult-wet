@@ -71,7 +71,7 @@ final class ReviewController{
                                    commentaryStatusCounts[CommentaryStatus.notuseful + docid] ,
                                    commentaryStatusCounts[CommentaryStatus.abuse + docid]
                 ]))
-            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">Comments and dispositions</p>")
+            result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">Comments and decisions</p>")
             
             results.append(Node(result))
 

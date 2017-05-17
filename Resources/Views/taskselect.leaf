@@ -3,10 +3,10 @@
 
 } ##else() {
 <div class="btn-group btn-group-justified mrgn-tp-md">
-<a class="btn btn-default #if(prepare_page) {active}" role="button" href="/admin/">Prepare</a>
-<a class="btn btn-default #if(receive_page) {active}" role="button" href="/receive/">Receive</a>
-<a class="btn btn-default #if(analyze_page) {active}" role="button" href="/analyze/">Analyze</a>
-<a class="btn btn-default #if(review_page) {active}" role="button" href="/review/">Review</a>
+<a class="btn btn-default #if(prepare_page) {active}" role="button" href="/admin/">Prepare documents</a>
+<a class="btn btn-default #if(receive_page) {active}" role="button" href="/receive/">Receive commentaries</a>
+<a class="btn btn-default #if(analyze_page) {active}" role="button" href="/analyze/">Make notes</a>
+<a class="btn btn-default #if(review_page) {active}" role="button" href="/review/">Review and decide</a>
 </div>
 
 
