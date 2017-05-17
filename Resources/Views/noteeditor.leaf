@@ -18,7 +18,12 @@
 </select>
 <span class="input-group-btn"><button id="setNoteStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button>
 </span>
-
+<p>Default:</p>
+<div class="btn-group mrgn-bttm-lg">
+<button type="button" class="btn btn-default">Left</button>
+<button type="button" class="btn btn-default">Middle</button>
+<button type="button" class="btn btn-default">Right</button>
+</div>
 </div>
 
 </div>
