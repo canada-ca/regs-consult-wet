@@ -225,7 +225,7 @@ final class AnalyzeController {
             result["order"] = Node(index)
             let commentstr = String(describing: comment.id!.int!)
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-
+            result["usernote"] = Node( Note.format(userNote: usersOwnNote[keyidx]))
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                                         userNoteStatus: usersOwnNote[keyidx]?.status,
                                         noteCounts: [accu2[keyidx + Note.Status.disposition],
@@ -327,41 +327,6 @@ final class AnalyzeController {
             
 
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-//            var buttonText = "Note&nbsp;+"
-//            if let usrNote = usersOwnNote[keyidx], let noteStatus = usrNote.status {
-//                switch noteStatus {
-//                case Note.Status.analysis:
-//                    buttonText = "<span class=\"badge badge-default\">&nbsp;Note&nbsp;</span>"
-//                case Note.Status.review:
-//                    buttonText = "<span class=\"badge badge-primary\">&nbsp;Note&nbsp;</span>"
-//                case Note.Status.disposition:
-//                    buttonText = "<span class=\"badge badge-success\">&nbsp;Note&nbsp;</span>"
-//                default:
-//                    buttonText = "Note"
-//                }
-//            }
-//            var notesTagDuplicateBadge:String = ""
-//            if let notesTagDuplicate = accu2[keyidx + Note.Status.duplicate] {
-//                notesTagDuplicateBadge = "<span class=\"\"> Dup&nbsp;\(notesTagDuplicate) </span>"
-//            }
-//            var notesTagNotUsefulBadge:String = ""
-//            if let notesTagNotUseful = accu2[keyidx + Note.Status.notuseful] {
-//                notesTagNotUsefulBadge = "<span class=\"\"> Not&nbsp;U&nbsp;\(notesTagNotUseful) </span>"
-//            }
-//            result["tags"] = Node("<p>\(notesTagDuplicateBadge)\(notesTagNotUsefulBadge)</p>")
-//
-//            var notesInAnalysisBadge:String = ""
-//            if let notesInAnalysis = accu2[keyidx + Note.Status.analysis] {
-//                notesInAnalysisBadge = "<span class=\"badge badge-default\">\(notesInAnalysis)<span class=\"wb-inv\">notes in analysis</span></span>"
-//            }
-//            var notesInReviewBadge:String = ""
-//            if let notesInReview = accu2[keyidx + Note.Status.review] {
-//                notesInReviewBadge = "<span class=\"badge badge-primary\">\(notesInReview)<span class=\"wb-inv\">notes in review</span></span>"
-//            }
-//            var notesInDispositionBadge:String = ""
-//            if let notesInDisposition = accu2[keyidx + Note.Status.disposition] {
-//                notesInDispositionBadge = "<span class=\"badge badge-success\">\(notesInDisposition)<span class=\"wb-inv\">notes in disposition</span></span>"
-//            }
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,
                 noteCounts: [accu2[keyidx + Note.Status.disposition],
@@ -369,9 +334,7 @@ final class AnalyzeController {
                              accu2[keyidx + Note.Status.analysis],
                              accu2[keyidx + Note.Status.duplicate],
                              accu2[keyidx + Note.Status.notuseful]    ]))
-//            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/comments/\(commentstr)\">\(buttonText) \(notesInAnalysisBadge)\(notesInReviewBadge)\(notesInDispositionBadge)</p>")
-//
-            results.append(Node(result))
+                results.append(Node(result))
 
         }
         response["data"] = Node(results)
@@ -593,7 +556,12 @@ final class AnalyzeController {
                 result[CommentaryJSONKeys.represents] = Node("unknown")
             }
             let notestr = String(describing: note.id!.int!)
-            result["link"] = Node("<p><a class=\"btn btn-default\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)\"><i class=\"fa fa-edit\" aria-hidden=\"true\"></i> Edit Note</a></p><p><a class=\"btn btn-warning delete-note\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)/delete\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i></a></p>")
+            var statusCounts: [Int?] = [nil,nil,nil,nil,nil]
+            statusCounts[(Note.reviewSortOrder[note.status ?? ""] ?? 5 ) - 1] = 1
+            let noteDash = Note.dashboard(link: "/analyze/documents/\(documentId)/notes/\(notestr)",
+                userNoteStatus: note.status,
+                noteCounts: statusCounts )
+            result["link"] = Node("\(noteDash)<p><a class=\"btn btn-default delete-note\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)/delete\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i>&nbsp;Delete</a></p>")
 
             results.append(Node(result))
         }

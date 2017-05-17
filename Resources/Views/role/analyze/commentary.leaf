@@ -9,7 +9,7 @@
 <h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)" data-commentaryid="#(commentary.id)">#(title)</h1>
 #embed("commentarysummary")
 #embed("commentarystatusform")
-#embed("commenttable")
+#embed("commenttableanalyze")
 #embed("documentoverlay")
 }
 #export("scripts") {

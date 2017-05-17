@@ -20,30 +20,26 @@
 </table>
 
 } ##else() {
-<h2>User notes</h2>
-<table  id="comment-table" class="wb-tables table table-hover limit-comment" aria-live="polite" data-wb-tables='{
+<h2>Comments</h2>
+<table  id="comment-table" class="wb-tables table table-striped table-hover limit-comment" aria-live="polite" data-wb-tables='{
 "bDeferRender": false,
 "ordering": false,
-"ajaxSource": "/analyze/documents/#(document.idbase62)/notes/",
+"ajaxSource": "/analyze/commentaries/#(commentary.id)/comments/",
 "order": [0, "asc"],
 "columns": [
-{ "data": "order","type": "num", "visible": false, "searchable": false},
+{ "data": "order","type": "num", "visible": false, "searchable": false },
 { "data": "referencecoded", "defaultContent": "" },
-
-{ "data": "represents", "defaultContent": "" },
-{ "data": "notehtml",  "type": "html", "defaultContent": "" },
-
-{ "data": "link", "searchable": false, "type": "html" }
+{ "data": "text", "defaultContent": "" },
+{ "data": "usernote","type": "html", "width": "40%", "defaultContent": "" },
+{ "data": "link", "type": "html",  "defaultContent": ""}
 ]}'>
 <thead>
 <tr>
 <th>order</th>
 <th>Section</th>
-
-<th>Represents</th>
+<th>Comment</th>
 <th>User note</th>
-
-<th>Actions</th>
+<th>Notes</th>
 </tr>
 </thead>
 </table>

@@ -363,4 +363,19 @@ extension Note {
         noteList += "</div>"
         return noteList
     }
+    static func format(userNote: Note?) -> String {
+        guard let note = userNote else {return ""}
+        var noteList: String = "<div>"
+
+        if let txt = note.textshared {
+            let out = try? markdownToHTML(txt)
+            noteList += "<div class=\"well well-sm\">\(String(describing: out ?? ""))</div>"
+        }
+        if let txt = note.textuser {
+            let out = try? markdownToHTML(txt)
+            noteList += "<div class=\"well well-sm\">\(String(describing: out ?? ""))</div>"
+        }
+        noteList += "</div>"
+        return noteList
+    }
 }
