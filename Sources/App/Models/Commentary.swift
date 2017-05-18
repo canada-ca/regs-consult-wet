@@ -286,7 +286,27 @@ final class Commentary: Model {
         let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
         return output
     }
+    func htmlStatus()  -> String {
+        var statusOutput: String = ""
+        switch status ?? "" {
+        case CommentaryStatus.submitted:
+            statusOutput += "<span class=\"label label-info\">Submitted</span>"
+        case CommentaryStatus.attemptedsubmit:
+            statusOutput += "<span class=\"label label-info\">Attempted&nbsp;submit</span>"
+        case CommentaryStatus.analysis:
+            statusOutput += "<span class=\"label label-success\">Analysis</span>"
+        case CommentaryStatus.new:
+            statusOutput += "<span class=\"label label-primary\">New&nbsp;(in&nbsp;progress)</span>"
+        case CommentaryStatus.notuseful:
+            statusOutput += "<span class=\"label label-default\">Not&nbsp;useful</span>"
+        case CommentaryStatus.abuse:
+            statusOutput += "</samp><span class=\"label label-default\">Abuse</span>"
+        default:
+            statusOutput += "</samp><span class=\"label label-default\">unknown</span>"
+        }
+        return statusOutput
 
+    }
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let em = id , let emu = em.uint {
@@ -297,7 +317,7 @@ final class Commentary: Model {
         if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
         if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
         if let st = status {
-            result[CommentaryJSONKeys.status] = Node(st)
+            result[CommentaryJSONKeys.status] = Node(htmlStatus())  //Node(st)
             result["commentarystatus" + st] = Node(true)
         }
         if let cd = createddate {result[CommentaryJSONKeys.createddate] = Node(dateFormatter.string(from: cd))}

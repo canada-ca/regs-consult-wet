@@ -147,7 +147,7 @@
                     //                        interfaceUpdate(data);
                     var overlay = data["commentary"];
                     if (typeof  overlay != "undefined") {
-                        $("#cty-status").find("strong").text(overlay["status"]);
+                        $("#cty-status").html(overlay["status"]);
                         //                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
                     }
 
