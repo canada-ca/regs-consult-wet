@@ -296,7 +296,10 @@ final class Commentary: Model {
         if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
         if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
         if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
-        if let st = status {result[CommentaryJSONKeys.status] = Node(st)}
+        if let st = status {
+            result[CommentaryJSONKeys.status] = Node(st)
+            result["commentarystatus" + st] = Node(true)
+        }
         if let cd = createddate {result[CommentaryJSONKeys.createddate] = Node(dateFormatter.string(from: cd))}
         if let sd = submitteddate {result[CommentaryJSONKeys.submitteddate] = Node(dateFormatter.string(from: sd))}
         if let ad = acknowledgeddate {result[CommentaryJSONKeys.acknowledgeddate] = Node(dateFormatter.string(from: ad))}

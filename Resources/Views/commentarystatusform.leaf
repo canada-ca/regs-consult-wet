@@ -3,21 +3,15 @@
 
 } ##else() {
 
-<div class="row">
-<div class="col-md-4">
-<label for="commentary-status">
-<span class="field-name">Change commentary status to:</span>
-</label>
-<div class="input-group">
-<select id="commentary-status" class="form-control">
-<option value="submitted">Submitted</option>
-<option value="analysis" selected>Analysis</option>
-<option value="notuseful">Not Useful</option>
-<option value="abuse">Abuse</option>
-</select>
-<span class="input-group-btn"><button id="setStatus" class="btn btn-md btn-default" data-command="status" type="button" >Set&nbsp;status</button></span>
-</div>
-</div>
-</div>
 
+<p>Change commentary status to:</p>
+
+<div id="commentary-status" class="btn-group mrgn-bttm-md"  data-command="status">
+<button type="button" class="btn btn-default  #if(note.commentarystatusnew) {active}" data-selected-class="btn-default" data-status="new">In progress</button>
+<button type="button" class="btn #if(commentary.commentarystatussubmitted) {btn-primary active} ##else() { btn-default }" data-selected-class="btn-primary" data-status="submitted">Submitted</button>
+<button type="button" class="btn  #if(commentary.commentarystatusanalysis) { btn-success active} ##else() { btn-default }" data-selected-class="btn-success" data-status="analysis">Analysis</button>
+<button type="button" class="btn btn-default disabled #if(note.commentarystatusinprogress) {active}" data-selected-class="btn-default" data-status="">_________</button>
+<button type="button" class="btn   #if(commentary.commentarystatusnotuseful) { btn-default active} ##else() { btn-default }" data-selected-class="btn-default" data-status="notuseful">Not Useful</button>
+<button type="button" class="btn  #if(commentary.commentarystatusabuse) { btn-default active} ##else() { btn-default }" data-selected-class="btn-default" data-status="abuse">Abuse</button>
+</div>
 }

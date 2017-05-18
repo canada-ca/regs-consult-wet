@@ -107,15 +107,28 @@
             $('#button').click( function () {
                 table.row('.selected').remove().draw( false );
             } );
-            $(document).on('click', '#setStatus', function (e) {
-                e.preventDefault();
+            $('#commentary-status button').on('click', function (e) {
+                var item = $(this);
+                item.siblings().each(function( index ) {
+
+                    var cl = $(this).attr("data-selected-class");
+                    $(this).removeClass("active");
+                    $(this).removeClass(cl);
+                    $(this).addClass("btn-default");
+
+
+                });
+                item.addClass("active");
+                item.addClass(item.attr("data-selected-class"));
+
                 // Get some values from elements on the comment:
-                var det = $(e.target).attr("data-command");
+                var det = item.parent('div').attr("data-command");
                 if (typeof  det == "undefined") {
                     det = "request";
                 }
                 var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
-                var mySelection = $(e.target).closest("div").find("#commentary-status").find(":selected").val();
+                var mySelection = $("#commentary-status button.active").attr("data-status");
+
                 var url = "/receive/commentaries/" + commentaryid + "/" + det + "/";
                 // Send the data using post
                 var posting = $.ajax({
