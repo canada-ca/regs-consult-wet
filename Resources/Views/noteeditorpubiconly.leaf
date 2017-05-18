@@ -10,6 +10,12 @@
 
 } ##else() {
 <h3>Public Note</h3>
+div id="note-status" class="btn-group mrgn-bttm-md">
+<button type="button" class="btn btn-default active" data-selected-class="btn-default" data-status="inprogress">In progress</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-primary" data-status="ready">Ready</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-info" data-status="discard">Discard</button>
+<button type="button" class="btn btn-default" data-selected-class="btn-success" data-status="decision">Decision</button>
+</div>
 <textarea name="publicnote" id="publicnote" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
 ></textarea>
 

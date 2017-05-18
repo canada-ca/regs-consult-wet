@@ -174,7 +174,7 @@
                     var noteid = $("#publicnote").attr("data-noteid");
 
                     var linenum = $("#publicnote").attr("data-linenumber");
-                    var notestatus = $("#note-status").val();
+                    var notestatus = $("#note-status button.active").attr("data-status");
                     var pubnotetext = simplemdepub.value();
                     if (simplemdepriv !== undefined) {
                         var privnotetext = simplemdepriv.value();
@@ -258,6 +258,21 @@
 
                     postupdatenote();
                     });
+                $("#note-status button").on("click",function(){
+                    var item = $(this);
+                    item.siblings().each(function( index ) {
+
+                        var cl = $(this).attr("data-selected-class");
+                        $(this).removeClass("active");
+                        $(this).removeClass(cl);
+                        $(this).addClass("btn-default");
+
+
+                    });
+                    item.addClass("active");
+                    item.addClass(item.attr("data-selected-class"));
+                    postupdatenote();
+                });
             }
 
                 }

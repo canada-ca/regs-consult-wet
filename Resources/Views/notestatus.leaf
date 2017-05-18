@@ -4,10 +4,10 @@
 } ##else() {
 
 <div id="note-status" class="btn-group mrgn-bttm-md">
-<button type="button" class="btn btn-default active" data-selected-class="btn-default">In progress</button>
-<button type="button" class="btn btn-default" data-selected-class="btn-primary">Ready</button>
-<button type="button" class="btn btn-default" data-selected-class="btn-info">Discard</button>
-<button type="button" class="btn btn-default" data-selected-class="btn-success">Decision</button>
+<button type="button" class="btn btn-default #if(note.notestatusinprogress) {active}" data-selected-class="btn-default" data-status="inprogress">In progress</button>
+<button type="button" class="btn #if(note.notestatusready) {btn-primary active} ##else() { btn-default }" data-selected-class="btn-primary" data-status="ready">Ready</button>
+<button type="button" class="btn  #if(note.notestatusdiscard) { btn-info active} ##else() { btn-default }" data-selected-class="btn-info" data-status="discard">Discard</button>
+<button type="button" class="btn  #if(note.notestatusdecision) { btn-success active} ##else() { btn-default }" data-selected-class="btn-success" data-status="decision">Decision</button>
 </div>
 
 

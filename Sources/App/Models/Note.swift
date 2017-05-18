@@ -235,13 +235,20 @@ extension Note {
             let thru4 = String(rf.characters.prefix(4))
             result[JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
         }
-        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)}
+        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)} else {
+            result[JSONKeys.textshared] = Node("")
+        }
         if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
         if let u = user?.int , let uinput = usr.id?.int, u == uinput {
-            if let tx = textuser {result[JSONKeys.textuser] = Node(tx)}
+            if let tx = textuser {result[JSONKeys.textuser] = Node(tx)} else {
+                result[JSONKeys.textuser] = Node("")
+            }
             if let st = statususer {result[JSONKeys.statususer] = Node(st)}
         }
-        if let st = status {result[JSONKeys.status] = Node(st)}
+        if let st = status {
+            result["notestatus" + st] = Node(true)
+            result[JSONKeys.status] = Node(st)
+        }
 
         return result
 
@@ -260,11 +267,18 @@ extension Note {
             let thru4 = String(rf.characters.prefix(4))
             result[JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
         }
-        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)}
+        if let tx = textshared {result[JSONKeys.textshared] = Node(tx)} else {
+            result[JSONKeys.textshared] = Node("")
+        }
         if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
-        if let tx = textuser {result[JSONKeys.textuser] = Node(tx)}
+        if let tx = textuser {result[JSONKeys.textuser] = Node(tx)} else {
+            result[JSONKeys.textuser] = Node("")
+            }
         if let st = statususer {result[JSONKeys.statususer] = Node(st)}
-        if let st = status {result[JSONKeys.status] = Node(st)}
+        if let st = status {
+            result[JSONKeys.status] = Node(st)
+            result["notestatus" + st] = Node(true)
+        }
 
         return result
     }
@@ -286,7 +300,7 @@ extension Note {
         case Status.inprogress, Status.discard, Status.ready, Status.decision:
             status = newStatus
         default:
-            break  // not a recognized state string should log error.
+            status = Status.inprogress  // not a recognized state string should log error.
         }
 
     }
@@ -335,10 +349,10 @@ extension Note {
             statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Decision</span></li>"
         }
         if let itemCount = nCounts[1] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Discard</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Discard</span></li>"
         }
         if let itemCount = nCounts[2] {
-            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Ready</span></li>"
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Ready</span></li>"
         }
         if let itemCount = nCounts[3] {
             statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">In&nbsp;progress</span></li>"
