@@ -24,6 +24,8 @@ final class ReceiveController{
         documentrole.get(handler: commentariesSummary)
         documentrole.get("commentaries", handler: commentaryIndex)
         documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
+        documentrole.get("commentaries", "load", handler: commentaryLoad) //use to manually load commentaries
+        documentrole.post("commentaries", "load", handler: commentaryLoader)
         role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
@@ -153,6 +155,30 @@ final class ReceiveController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
+    func commentaryLoad(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+
+        var parameters = try Node(node: [
+            "commentary_page": Node(true),
+            "role": Node("receive"),
+            "receive_page": Node(true)
+
+            ])
+        parameters["signon"] = Node(true)
+        if let usr = request.storage["userid"] as? User {
+            parameters["signedon"] = Node(true)
+            parameters["activeuser"] = try usr.makeNode()
+        }
+        let docjson = documentdata!.forJSON()
+        parameters["document"] = Node(docjson)
+        parameters["documentshref"] = Node("/receive/")
+        return try   pubDrop.view.make("role/receive/commentaryload", parameters)
+    }
     func commentarySummary(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -242,6 +268,97 @@ final class ReceiveController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
+    func commentaryLoader(_ request: Request)throws -> ResponseRepresentable {
+        guard let documentId = request.parameters["id"]?.string else {
+            throw Abort.badRequest
+        }
+
+        let idInt = base62ToID(string: documentId)
+        let documentdata = try Document.find(Node(idInt))
+        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
+//        let rawBytes = request.body.bytes?.string
+//        pubDrop.console.output("uploaded data" + String(describing: rawBytes), style: .info, newLine: true);
+        if let commentaryFiles = request.data["commentaries"]?.array {
+//            try commentaryFiles.forEach { fileitem  in
+                for fileitem  in commentaryFiles {
+//                pubDrop.console.output("uploaded file" + fileitem.string!, style: .info, newLine: true);
+
+                guard let file = fileitem as? JSON, let fn = file["filename"]?.string, let cmty = file["commentary"]?.object, let comments = file["comments"]?.array else {
+                    continue
+                }
+                let lowBound = fn.index(fn.startIndex, offsetBy: 10)
+                let hiBound = fn.index(fn.endIndex, offsetBy: -5)
+                let midRange = lowBound ..< hiBound
+                if let commid = Int(fn.substring(with: midRange)) {
+                    guard try Commentary.find(commid) == nil else {
+                        throw Abort.badRequest
+                    }
+                    var initial: Node = [CommentaryConstants.id: Node(commid)]
+                    initial[CommentaryConstants.documentId] = documentdata!.id
+                    
+                    if let val = cmty[CommentaryConstants.name]?.string {
+                        initial[CommentaryConstants.name] = Node(val)
+                    }
+                    if let val = cmty[CommentaryConstants.email]?.string {
+                        initial[CommentaryConstants.email] = Node(val)
+                    }
+                    if let val = cmty[CommentaryConstants.represents]?.string {
+                        initial[CommentaryConstants.represents] = Node(val)
+                    }
+                    if let val = cmty[CommentaryConstants.organization]?.string {
+                        initial[CommentaryConstants.organization] = Node(val)
+                    }
+                    if let val = cmty["submitstatus"]?.string {
+                        initial[CommentaryConstants.status] = Node(val)
+                    }
+                    guard var commentary = try? Commentary(node: initial, in: []) else {
+                        throw Abort.badRequest
+                    }
+                    try commentary.save()
+                    for comment in comments {
+                        if let cmt = comment.object {
+                        var initial: Node = [Comment.Constants.commentaryId: commentary.id!]
+                        initial[Comment.Constants.documentId] = documentdata!.id
+
+                        if let val = cmt["reftext"]?.string {
+                            initial[Comment.Constants.reference] = Node(val)
+                        }
+                        if let val = cmt[Comment.Constants.text]?.string {
+                            initial[Comment.Constants.text] = Node(val)
+                        }
+                        if let val = cmt[Comment.Constants.status]?.string {
+                            initial[Comment.Constants.status] = Node(val)
+                        }
+                        if let val = cmt["ref"]?.string {
+                            let lowBound = val.index(val.startIndex, offsetBy: 4)
+                            let hiBound = val.index(val.endIndex, offsetBy: 0)
+                            let midRange = lowBound ..< hiBound
+                            let lineid = Int(val.substring(with: midRange)) ?? 0
+                            initial[Comment.Constants.linenumber] = Node(lineid)
+                        }
+
+                        guard var newcomment = try? Comment(node: initial, in: []) else {
+                            continue
+                        }
+                        try newcomment.save()
+                        }
+                    }
+                }
+
+            }
+        }
+
+        var response: [String: Node] = [:]
+
+        response["commentary"] = Node(true)
+        let headers: [HeaderKey: String] = [
+            "Content-Type": "application/json; charset=utf-8"
+        ]
+        let json = JSON(Node(response))
+        let resp = Response(status: .ok, headers: headers, body: try Body(json))
+        return resp
+    }
+
     
 
 }

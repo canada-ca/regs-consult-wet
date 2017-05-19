@@ -289,7 +289,78 @@
             }
 
                 }
+        $(function(){
 
+            $("#drop-box").click(function(){
+                $("#upl").click();
+            });
+
+            // To prevent Browsers from opening the file when its dragged and dropped on to the page
+            $(document).on('drop dragover', function (e) {
+                e.preventDefault();
+            });
+
+            // Add events
+            $('input[type=file]').on('change', fileUpload);
+
+            // File uploader function
+
+            function fileUpload(event){
+                $("#drop-box").html("<p>"+event.target.value+" uploading...</p>");
+                var files = event.target.files;
+                var dataobj = new Object();
+                dataobj["commentaries"] = new Array(0)
+                var error = 0;
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    console.log(file.size);
+                    if(!file.type.match('application/json')) {
+                        $("#drop-box").html("<p> Json files only. Select another file</p>");
+                        error = 1;
+                    }else if(file.size > 1048576){
+                        $("#drop-box").html("<p> Too large Payload. Select another file</p>");
+                        error = 1;
+                    }else{
+                        var fr = new FileReader();
+                        fr.onload = function(){
+                            var arrayBuffer = fr.result;
+                            var fobj = JSON.parse(arrayBuffer);
+                            fobj["filename"] = file.name
+                            dataobj["commentaries"].push(fobj);
+                            
+                            var url = '/receive/documents/a8r/commentaries/load/';
+                            // Send the data using post
+                            var posting = $.ajax({
+                            type: "POST",
+                            url: url,
+                            xhrFields: {
+                            withCredentials: true
+                                },
+                                // The key needs to match your method's input parameter (case-sensitive).
+                            data: JSON.stringify(dataobj),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data) {
+                                $("#drop-box").html("<p> File Uploaded. Select more files</p>");
+                            }
+                                ,
+                            error: function(errMsg) {
+                                $("#drop-box").html("<p> Error in upload, try again.</p>");
+                            }
+                                });
+
+                        };
+                        fr.readAsText(file);
+
+                    }
+                }
+                if(!error){
+
+
+                }
+            }
+            
+        });
         init_multifield();
 
         
