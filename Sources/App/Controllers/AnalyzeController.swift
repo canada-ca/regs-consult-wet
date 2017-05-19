@@ -53,15 +53,8 @@ final class AnalyzeController {
 
         for document in documentsArray {
             var result: [String: Node] = document.forJSON()
-            //            if let mysql = pubDrop.database?.driver as? MySQLDriver {
-            //                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
-            //                let aa = version.array
-            //            }
+
             let docid = String(describing: document.id!.uint!)
-//            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] ?? 0
-//            let countNew: Int = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
-//            let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] ?? 0
-//            let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
             result["newsubmit"] = Node( Commentary.dashboard(link: "/analyze/documents/\(doc)/",
                                 commentaryCounts: [commentaryStatusCounts[CommentaryStatus.submitted + docid],
@@ -71,7 +64,7 @@ final class AnalyzeController {
                              commentaryStatusCounts[CommentaryStatus.notuseful + docid] ,
                              commentaryStatusCounts[CommentaryStatus.abuse + docid]
                                     ]))
-//            result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/analyze/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/analyze/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
+
             result["commentlink"] = Node("<p><a class=\"btn btn-block btn-primary\" href=\"/analyze/documents/\(doc)/comments/summary/\">All Comments</p>")
             result["notelink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/analyze/documents/\(doc)/notes/summary/\">All Your Notes</a></p>")
             results.append(Node(result))
@@ -190,11 +183,6 @@ final class AnalyzeController {
             throw Abort.badRequest
         }
         let documentId = documentdata.docID()
-        //        let idInt = base62ToID(string: documentId)
-        //        let documentdata = try Document.find(Node(idInt))
-        //        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
-
-
         var commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
         commentArray.sort(by: Comment.docOrderSort)
 
@@ -347,7 +335,7 @@ final class AnalyzeController {
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let documentdata = try Document.find(commentary.document!) else {
+        guard let _ = try Document.find(commentary.document!) else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {
@@ -530,9 +518,6 @@ final class AnalyzeController {
 
         rawNoteArray.sort(by: Note.singleDocOrderSort)
 
-
-
-
         var response: [String: Node] = [:]
         var results: [Node] = []
         let notelead = "<div>"
@@ -673,7 +658,6 @@ final class AnalyzeController {
                     let lnum = update[Note.JSONKeys.linenumber]?.int ?? 0
                     let ref = update[Note.JSONKeys.reference]?.string ?? ""
                     if note == nil, let refID = update[Note.JSONKeys.commentaryId]?.int {
-//                        note = try Note.query().filter(Note.Constants.commentaryId, refID).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(Note.Constants.reference, ref).first()
                          note = try Note.query().filter(Note.Constants.commentaryId, Node(refID)).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(Note.Constants.reference, ref).first()
                         if note == nil {
                             let initNode:[String:Node] = [

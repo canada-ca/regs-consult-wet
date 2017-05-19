@@ -7,7 +7,6 @@ import Foundation
 
 final class PublisherController {
     let pubDrop: Droplet
-//    let jwtSigner: Signer
     let templateDir: String
     let filePackDir: String
     let fm = FileManager()
@@ -16,10 +15,7 @@ final class PublisherController {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
-//        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
-//        let protect = ProtectMiddleware(error:
-//            Abort.custom(status: .forbidden, message: "Not authorized.")
-//        )
+
         let role = drop.grouped("prepare").grouped(cookieSetter).grouped(protect) //.grouped(protect)
 
 
@@ -31,25 +27,6 @@ final class PublisherController {
         role.post("load", ":filename", handler: loadDocument)
     }
 
-//    func getUserFromCookie(_ request: Request)throws -> User {
-//        var userJWT: JWT?
-//        do {
-//            if let incookie = request.cookies[ConsultConstants.cookieUser] {
-//                userJWT = try JWT(token: incookie)
-//            }
-//            if userJWT != nil {
-//                try userJWT!.verifySignature(using: jwtSigner)
-//                if let username = userJWT!.payload["user"]?.string {
-//                    if let user = try User.query().filter("username", username).first() {
-//                        return user
-//                    }
-//                }
-//            }
-//        } catch {
-//
-//        }
-//        throw Abort.custom(status: .forbidden, message:  "Not authorized.")
-//    }
 
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
         guard let user = request.storage["userid"] as? User, user.admin else {
@@ -188,8 +165,7 @@ final class PublisherController {
                     outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
                 }
             }
-//            if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
-//                outDocument.append(section) }
+
             if let meta = try? tempRenderer.make("reglead-" + lang.0, fnode) {
                 outDocument.append(Data(meta.data))
             }

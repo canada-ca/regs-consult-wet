@@ -22,7 +22,7 @@
 </tr>
 <tr>
 <td class="text-right">Status</td>
-<td id="cty-status"><strong>#(commentary.status)</strong></td>
+<td id="cty-status">#raw(commentary.status)</td>
 </tr>
 <tr>
 <td class="text-right">Section</td>

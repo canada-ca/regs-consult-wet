@@ -11,7 +11,6 @@ struct AdminController {
 
     // MARK: - Properties
     fileprivate let drop: Droplet
-//    let jwtSigner: Signer
 
     // MARK: - Initialiser
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
@@ -24,14 +23,9 @@ struct AdminController {
 
         let routerSecure = routerLogin.grouped(protect)
         routerSecure.get(handler: adminHandler)
-        //        routerSecure.get("createPost", handler: createPostHandler)
-        //        routerSecure.post("createPost", handler: createPostPostHandler)
+
         routerSecure.get("createUser", handler: createUserHandler)
         routerSecure.post("createUser", handler: createUserPostHandler)
-        //        router.get("profile", handler: profileHandler)
-        //        routerSecure.get("posts", BlogPost.self, "delete", handler: deletePostHandler)
-        //        routerSecure.get("posts", BlogPost.self, "edit", handler: editPostHandler)
-        //        routerSecure.post("posts", BlogPost.self, "edit", handler: editPostPostHandler)
         routerSecure.get("users", User.self, "edit", handler: editUserHandler)
         routerSecure.post("users", User.self, "edit", handler: editUserPostHandler)
         routerSecure.get("users", User.self, "delete", handler: deleteUserPostHandler)
@@ -157,26 +151,14 @@ struct AdminController {
         }
     }
     func createAdminView(_ request: Request, errors: [String]? = nil) throws -> View {
-//        let publishedBlogPosts = try BlogPost.query().filter("published", true).sort("created", .descending).all()
-//        let draftBlogPosts = try BlogPost.query().filter("published", false).sort("created", .descending).all()
+
          guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
         let users = try User.all()
 
-//        var parameters = try Node(node: [
-//            "users": users.makeNode()
-//            ])
         var parameters = try Node(node: [
             "prepare_page": Node(true)
             ])
-//        parameters["users"] =  Node(users.map{try! $0.makeNode()})
         parameters["users"] = try users.makeNode(context: EmptyNode)
-//        if publishedBlogPosts.count > 0 {
-//            parameters["published_posts"] = try publishedBlogPosts.makeNode(context: BlogPostContext.all)
-//        }
-//
-//        if draftBlogPosts.count > 0 {
-//            parameters["draft_posts"] = try draftBlogPosts.makeNode(context: BlogPostContext.all)
-//        }
         parameters["signon"] = Node(true)
 
         parameters["signedon"] = Node(true)
@@ -185,9 +167,6 @@ struct AdminController {
         if let errors = errors {
             parameters["errors"] = try errors.makeNode()
         }
-
-//        parameters["adminPage"] = true
-
         return try drop.view.make("role/admin/index", parameters)
     }
 
@@ -351,37 +330,7 @@ struct AdminController {
     func adminHandler(_ request: Request) throws -> ResponseRepresentable {
         return try createAdminView(request, errors: nil)
     }
-
-    // MARK: - Profile Handler
-//    func profileHandler(_ request: Request) throws -> ResponseRepresentable {
-//
-//        guard let user = try request.auth.user() as? User else {
-//            throw Abort.badRequest
-//        }
-//
-//        return try createProfileView(uri: request.uri, author: user, isMyProfile: true, posts: try user.posts(), loggedInUser: user, disqusName: nil, siteTwitterHandle: nil)
-//    }
-//    func createProfileView(uri: URI, author: User, isMyProfile: Bool, posts: [BlogPost], loggedInUser: User?, disqusName: String?, siteTwitterHandle: String?) throws -> View {
-//        func createProfileView(uri: URI, author: User, isMyProfile: Bool, posts: [], loggedInUser: User?, disqusName: String?, siteTwitterHandle: String?) throws -> View {
-//
-//        var parameters: [String: Vapor.Node] = [
-//            "author": try author.makeNode(),
-//            ]
-//
-//        if isMyProfile {
-//            parameters["myProfile"] = true.makeNode()
-//        }
-//        else {
-//            parameters["profilePage"] = true.makeNode()
-//        }
-//
-//        if posts.count > 0 {
-//            parameters["posts"] = []  //try posts.makeNode(context: BlogPostContext.shortSnippet)
-//        }
-//
-//        return try createPublicView(template: "blog/profile", uri: uri, parameters: parameters, user: loggedInUser, disqusName: disqusName, siteTwitterHandle: siteTwitterHandle)
-//    }
-
+ 
     // MARK: - Password handlers
     func resetPasswordHandler(_ request: Request) throws -> ResponseRepresentable {
         return try createResetPasswordView(errors: nil, passwordError: nil, confirmPasswordError: nil)

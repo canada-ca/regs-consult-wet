@@ -32,15 +32,7 @@ final class ReceiveController{
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
        
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
-//        let commentaryStatusCounts = try Commentary.query().all().reduce([:]) {
-//            ( accu, element) in
-//            var accu2: [String: Int] = accu as! [String : Int]
-//            if let stat = element.status , let docid = element.document?.uint {
-//                let counthash = stat + String(docid)
-//                accu2[counthash] = (accu2[counthash] ?? 0) + 1
-//            }
-//            return accu2
-//        }
+
         var commentaryStatusCounts: [String:Int] = [:]
         let commentaryStatusArray = try Commentary.query().all()
         commentaryStatusArray.forEach { element in
@@ -56,14 +48,7 @@ final class ReceiveController{
 
         for document in documentsArray {
             var result: [String: Node] = document.forJSON()
-//            if let mysql = pubDrop.database?.driver as? MySQLDriver {
-//                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
-//                let aa = version.array
-//            }
             let docid = String(describing: document.id!.uint!)
-//            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] as? Int ?? 0
-//            let buttonStyle = countSubmitted == 0 ? "btn-default" : "btn-primary"
-//            let countNew = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
             result["newsubmit"] = Node( Commentary.dashboard(link: "/receive/documents/\(doc)/",
                 commentaryCounts: [commentaryStatusCounts[CommentaryStatus.submitted + docid],
@@ -74,7 +59,7 @@ final class ReceiveController{
                                    commentaryStatusCounts[CommentaryStatus.abuse + docid]
                 ]))
 
-//            result["newsubmit"] = Node("<p><a class=\"btn \(buttonStyle)\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> unread emails</span></span></a><a class=\"btn btn-default\" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> unread emails</span></span></a></p>")
+
             results.append(Node(result))
             
         }
@@ -201,7 +186,7 @@ final class ReceiveController{
         }
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
-        parameters["documentshref"] = Node("/receive/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+        parameters["documentshref"] = Node("/receive/")
         parameters["commentarieshref"] = Node("/receive/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/")
         parameters["commentary"] = Node(commentary.forJSON())
         return try   pubDrop.view.make("role/receive/commentary", parameters)
@@ -210,14 +195,9 @@ final class ReceiveController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, let commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let documentdata = try Document.find(commentary.document!) else {
+        guard let _ = try Document.find(commentary.document!) else {
             throw Abort.badRequest
         }
-
-//        let idInt = base62ToID(string: documentId)
-//        let documentdata = try Document.find(Node(idInt))
-//        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
-
 
         var commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
         commentArray.sort(by: Comment.docOrderSort)
@@ -227,8 +207,6 @@ final class ReceiveController{
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index)
-//            let commentstr = String(describing: commentary.id!.int!)
-//            result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
         }
@@ -244,7 +222,7 @@ final class ReceiveController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let documentdata = try Document.find(commentary.document!) else {
+        guard let _ = try Document.find(commentary.document!) else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {
@@ -268,6 +246,7 @@ final class ReceiveController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
+    //needs generalization
     func commentaryLoader(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -275,14 +254,9 @@ final class ReceiveController{
 
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
-        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
-//        let rawBytes = request.body.bytes?.string
-//        pubDrop.console.output("uploaded data" + String(describing: rawBytes), style: .info, newLine: true);
-        if let commentaryFiles = request.data["commentaries"]?.array {
-//            try commentaryFiles.forEach { fileitem  in
-                for fileitem  in commentaryFiles {
-//                pubDrop.console.output("uploaded file" + fileitem.string!, style: .info, newLine: true);
 
+        if let commentaryFiles = request.data["commentaries"]?.array {
+                for fileitem  in commentaryFiles {
                 guard let file = fileitem as? JSON, let fn = file["filename"]?.string, let cmty = file["commentary"]?.object, let comments = file["comments"]?.array else {
                     continue
                 }

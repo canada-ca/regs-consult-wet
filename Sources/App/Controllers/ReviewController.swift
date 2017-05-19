@@ -363,7 +363,7 @@ final class ReviewController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let documentdata = try Document.find(commentary.document!) else {
+        guard let _ = try Document.find(commentary.document!) else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {

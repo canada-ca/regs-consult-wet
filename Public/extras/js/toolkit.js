@@ -144,11 +144,9 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(data){
-                    //                        interfaceUpdate(data);
                     var overlay = data["commentary"];
                     if (typeof  overlay != "undefined") {
                         $("#cty-status").html(overlay["status"]);
-                        //                            $( "#submit-panel" ).trigger( "open.wb-overlay" );
                     }
 
 
@@ -327,8 +325,11 @@
                             var fobj = JSON.parse(arrayBuffer);
                             fobj["filename"] = file.name
                             dataobj["commentaries"].push(fobj);
-                            
-                            var url = '/receive/documents/a8r/commentaries/load/';
+                            var docid = $("#commentarysummary").attr("data-documentid");
+                            if (typeof docid == "undefined") {
+                                return;
+                            }
+                            var url = '/receive/documents/" + docid + "/commentaries/load/';
                             // Send the data using post
                             var posting = $.ajax({
                             type: "POST",
@@ -336,7 +337,6 @@
                             xhrFields: {
                             withCredentials: true
                                 },
-                                // The key needs to match your method's input parameter (case-sensitive).
                             data: JSON.stringify(dataobj),
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",

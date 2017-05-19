@@ -214,11 +214,7 @@ final class CommentaryController{
 
         if commid != nil {
             do {
-                pubDrop.console.info("looking for \(commid!)")
-
                 commentary = try Commentary.find(Node(commid!))
-//                pubDrop.console.info("found \(commentary!)")
-
             } catch {
                 throw Abort.custom(status: .internalServerError, message: "commentary lookup failure")
             }
@@ -387,26 +383,7 @@ final class CommentaryController{
                     tagsA = thetags
                 }
                 if let thetags = filejson["reg-tags"] as? [[String: Any]] {
-                    // Finally we got the tags
                     tags = thetags
-                    // need to unique the tags as they will need to be unique id elements in the html
-                    //TODO: warn and clean step in preflight
-//                    var tagset: Set<String> = []
-//                    for (index, tag) in tags.enumerated() {
-//                        var theref = tag["ref"] as? String
-//                        if (theref ?? "").isEmpty {
-//                            theref = "t-\(index)"
-//                        }
-//                        if tagset.contains(theref!) {
-//                            theref = theref! + "-t-\(index)"
-//                            guard !tagset.contains(theref!) else {
-//                                return JSON(["prepare":"regulation","status":"failed"])
-//                            }
-//                        }
-//                        tags[index]["ref"] = theref
-//                        tagsDict["reg-" + theref!] = tags[index]
-//                        tagset.insert(theref!)
-//                    }
                 }
             }
         }

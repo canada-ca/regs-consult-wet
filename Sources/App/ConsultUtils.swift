@@ -3,8 +3,6 @@
 //  Consultation
 //
 //  Created by Steve Hume on 2017-01-31.
-//
-//
 
 import Foundation
 import Base62

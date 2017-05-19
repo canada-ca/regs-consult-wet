@@ -131,44 +131,4 @@ extension User: Auth.User {
             throw Abort.custom(status: .forbidden, message: "Unsupported credentials type \(type(of: credentials))")
         }
     }
-//
-//    static func authenticate(credentials: Credentials) throws -> Auth.User {
-//        switch credentials {
-//        case let id as Identifier:
-//            guard let user = try User.find(id.id) else {
-//                throw Abort.custom(status: .forbidden, message: "Invalid user identifier.")
-//            }
-//
-//            return user
-//
-//        case let usernamePassword as UsernamePassword:
-//            let fetchedUser = try User.query().filter("username", usernamePassword.username).first()
-//            guard let user = fetchedUser else {
-//                throw Abort.custom(status: .networkAuthenticationRequired, message: "Invalid user name or password.")
-//            }
-//            if try BCrypt.verify(password: usernamePassword.password, matchesHash: fetchedUser!.password) {
-//                return user
-//            } else {
-//                throw Abort.custom(status: .networkAuthenticationRequired, message: "Invalid user name or password.")
-//            }
-//
-//        default:
-//            let type = type(of: credentials)
-//            throw Abort.custom(status: .forbidden, message: "Unsupported credential type: \(type).")
-//        }
-//    }
-//    static func register(credentials: Credentials) throws -> Auth.User {
-//        let usernamePassword = credentials as? UsernamePassword
-//
-//        guard let creds = usernamePassword else {
-//            let type = type(of: credentials)
-//            throw Abort.custom(status: .forbidden, message: "Unsupported credential type: \(type).")
-//        }
-//
-//        if let user = try? User(username: creds.username, password: BCrypt.digest(password: creds.password, salt: BCryptSalt(workFactor:10))) {
-//            return user
-//        } else {
-//            throw Abort.custom(status: .forbidden, message: "digest problem")
-//        }
-//    }
 }

@@ -21,12 +21,10 @@ final class CommentsController{
 
     }
 
-
     func commentDocument(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
         }
-
         //locate document
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
