@@ -407,7 +407,7 @@ final class ReviewController{
         }
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
-        parameters["documentshref"] = Node("/review/") //\(docjson[Document.JSONKeys.idbase62]!.string!)/
+        parameters["documentshref"] = Node("/review/")
 
         return try   pubDrop.view.make("role/review/comments", parameters)
     }
@@ -420,7 +420,7 @@ final class ReviewController{
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
-        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, CommentaryStatus.analysis).all()
         var commentarySet: Set<UInt> = []
         for  element in commentaryStatus {
             if let comm = element.id, let itemid = comm.uint {
@@ -440,7 +440,9 @@ final class ReviewController{
         let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
         var usersOwnNote: [String: Note] = [:]
         var accu2: [String: Int] = [:]
-        var dispositionNote: [String: [Note]?] = [:]
+        var decisionNote: [String: [Note]?] = [:]
+        var discardNote: [String: [Note]?] = [:]
+        var readyNote: [String: [Note]?] = [:]
         rawNoteArray.forEach { nte in
             if let comm = nte.commentary {
                 if commentarySet.contains(comm.uint ?? 0) {
@@ -453,13 +455,30 @@ final class ReviewController{
                     if let stat = nte.status, stat != "" { //subcount on status
                         let key = keyidx + stat
                         accu2[key] = (accu2[key] ?? 0) + 1
-                        if stat == Note.Status.decision {
-                            if var arry = dispositionNote[keyidx] as? [Note] {
+                        switch stat {
+                        case Note.Status.decision:
+                            if var arry = decisionNote[keyidx] as? [Note] {
                                 arry.append(nte)
-                                dispositionNote[keyidx] = arry
+                                decisionNote[keyidx] = arry
                             } else {
-                                dispositionNote[keyidx] = [nte]
+                                decisionNote[keyidx] = [nte]
                             }
+                        case Note.Status.discard:
+                            if var arry = discardNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                discardNote[keyidx] = arry
+                            } else {
+                                discardNote[keyidx] = [nte]
+                            }
+                        case Note.Status.ready:
+                            if var arry = readyNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                readyNote[keyidx] = arry
+                            } else {
+                                readyNote[keyidx] = [nte]
+                            }
+                        default:
+                            break
                         }
                     }
                 }
@@ -476,7 +495,10 @@ final class ReviewController{
 
 
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
-            result["disposition"] = Node( Note.format(notes: dispositionNote[keyidx] ?? []))
+            var dispositionhtml = Note.format(notes: decisionNote[keyidx] ?? [])
+            dispositionhtml += Note.format(notes: discardNote[keyidx] ?? [])
+            dispositionhtml += Note.format(notes: readyNote[keyidx] ?? [])
+            result["disposition"] = Node(dispositionhtml)
 
             result["link"] = Node( Note.dashboard(link: "/review/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,

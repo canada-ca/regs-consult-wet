@@ -363,13 +363,31 @@ extension Note {
         let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
         return output
     }
+    func htmlStatus()  -> String {
+        var statusOutput: String = ""
+        switch status ?? "" {
+        case Note.Status.decision:
+            statusOutput += "<span class=\"label label-success\">Decision</span>"
+        case Note.Status.discard:
+            statusOutput += "<span class=\"label label-primary\">Discard</span>"
+        case Note.Status.ready:
+            statusOutput += "<span class=\"label label-info\">Ready</span>"
+        case Note.Status.inprogress:
+            statusOutput += "<span class=\"label label-default\">In&nbsp;progress</span>"
+        default:
+            statusOutput += "</samp><span class=\"label label-default\">unknown</span>"
+        }
+        return statusOutput
+
+    }
+
     static func format(notes: [Note]?) -> String {
         guard (notes?.count)! > 0 else {return ""}
         var noteList: String = "<div>"
         notes!.forEach { note in
             if let txt = note.textshared {
                 let out = try? markdownToHTML(txt) 
-                noteList += "<div class=\"well well-sm\">\(String(describing: out ?? ""))</div>"
+                noteList += "<div class=\"well well-sm\"><p>\(note.htmlStatus())</p>\(String(describing: out ?? ""))</div>"
                 }
             }
         noteList += "</div>"

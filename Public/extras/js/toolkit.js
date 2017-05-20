@@ -173,12 +173,51 @@
                     placeholder: "",
                     });
                     if (!simplemdeitem.isPreviewActive()) {simplemdeitem.togglePreview()};
+                    simplemdeitem.codemirror.on('beforeChange',function(cm,change) {
 
+                            change.cancel();
+
+                    });
                 });
 
             }
             if ($("#publicnote").length>0) {
+                var postnotestatus = function (noteid, notestatus){
+                    // Get some values from elements on the identity:
 
+                    var commentaryid =  $("#commentarysummary").attr("data-commentaryid");
+
+                    var noteobj  = new Object();
+                    if (noteid !== undefined) { noteobj["id"] = noteid }
+                    if (notestatus !== undefined) { noteobj["status"] = notestatus }
+                    if (commentaryid !== undefined) { noteobj["commentaryid"] = commentaryid }
+
+                    var docid =  $("#commentarysummary").attr("data-documentid");
+                    var url = "/analyze/documents/" + docid + "/notes/";
+                    // Send the data using post
+                    var posting = $.ajax({
+                    type: "POST",
+                    url: url,
+                    xhrFields: {
+                    withCredentials: true
+                        },
+                        // The key needs to match your method's input parameter (case-sensitive).
+                    data: JSON.stringify({ "notes":[
+                        noteobj
+                        ]
+                        }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(data){
+                        //                        console.log("update success" + JSON.stringify(data));
+
+                    },
+                    error: function(errMsg) {
+                        //                        console.log("update fail" + errMsg);
+                    }
+                        });
+                    
+                }
                 var postupdatenote = function (){
                     // Get some values from elements on the identity:
 
@@ -265,10 +304,10 @@
 //                    console.log(simplemdepub.value());
                     postupdatenote();
                 });
-                $("#setNoteStatus").on("click",function(){
-
-                    postupdatenote();
-                    });
+//                $("#setNoteStatus").on("click",function(){
+//
+//                    postupdatenote();
+//                    });
                 $("#note-status button").on("click",function(){
                     var item = $(this);
                     item.siblings().each(function( index ) {
@@ -282,7 +321,7 @@
                     });
                     item.addClass("active");
                     item.addClass(item.attr("data-selected-class"));
-                    postupdatenote();
+                    postnotestatus(item.parent('div').attr("data-noteid"),item.attr("data-status"));
                 });
             }
 
