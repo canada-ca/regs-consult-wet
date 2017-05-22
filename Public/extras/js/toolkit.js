@@ -168,6 +168,7 @@
                 $("#notesofotherseditable textarea.publicnote").each(function(i, el){
                     var simplemdeitem = new SimpleMDE({ element: el,
                     spellChecker: false,
+                    toolbar: ["preview", "side-by-side", "fullscreen", "|", "guide"],
                     forceSync: true,
                     status: false,
                     placeholder: "",
