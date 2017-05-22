@@ -156,7 +156,7 @@ final class CommentsController{
                 for ind in 0..<commarray.count {
                     if let update = commarray[ind].object {
                         if let ref = update["ref"]?.string, let reftext = update["reftext"]?.string {
-                            var comment = try Comment.query().filter("commentary_id", commentary!.id!).filter("reference", ref as NodeRepresentable).first()
+                            var comment = try Comment.query().filter("commentary_id", commentary!.id!).filter("reference", reftext as NodeRepresentable).first()
                             if comment == nil {
                                 let index4 = ref.index(ref.startIndex, offsetBy: 4)
                                 comment = try Comment(node: [

@@ -249,7 +249,7 @@
                         noteobj
                         ]
                         });
-                    if (lastobj === thisobj) return;
+                    if (lastobj === thisobj) return; //skip duplicates
                     localStorage.setObject("lastnoteupdate",thisobj);
                     // Send the data using post
                     var posting = $.ajax({
@@ -275,11 +275,7 @@
                 var simplemdepub = new SimpleMDE({ element: $("#publicnote")[0],
                 spellChecker: false,
                 forceSync: true,
-//                autosave: {
-//                enabled: true,
-//                uniqueId: "Public-Note",
-//                delay: 10000,
-//                    },
+
                 placeholder: "Type notes that will be seen by other users.",
                     });
 
@@ -292,11 +288,7 @@
                 var simplemdepriv = new SimpleMDE({ element: $("#privatenote")[0],
                 spellChecker: false,
                 forceSync: true,
-//                autosave: {
-//                enabled: true,
-//                uniqueId: "Private-Note",
-//                delay: 10000,
-//                    },
+
                 placeholder: "Type notes that will only be seen by you.",
                     });
                 
@@ -310,10 +302,7 @@
 //                    console.log(simplemdepub.value());
                     postupdatenote();
                 });
-//                $("#setNoteStatus").on("click",function(){
-//
-//                    postupdatenote();
-//                    });
+
                 $("#note-status button").on("click",function(){
                     var item = $(this);
                     item.siblings().each(function( index ) {
