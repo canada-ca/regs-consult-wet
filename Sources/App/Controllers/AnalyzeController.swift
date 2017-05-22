@@ -678,6 +678,7 @@ final class AnalyzeController {
                             note?.linenumber = item
                     }
                     if let item = update[Note.JSONKeys.reference]?.string {
+                        if item.count <= 4 { continue }  //somehow missing a reference
                         note?.reference = item
                     }
                     if let item = update[Note.JSONKeys.status]?.string {

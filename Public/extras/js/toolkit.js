@@ -243,6 +243,14 @@
 
                     var docid =  $("#commentarysummary").attr("data-documentid");
                     var url = "/analyze/documents/" + docid + "/notes/";
+                    // compare to last update
+                    var lastobj = localStorage.getObject("lastnoteupdate");
+                    var thisobj = JSON.stringify({ "notes":[
+                        noteobj
+                        ]
+                        });
+                    if (lastobj === thisobj) return;
+                    localStorage.setObject("lastnoteupdate",thisobj);
                     // Send the data using post
                     var posting = $.ajax({
                     type: "POST",
@@ -251,10 +259,7 @@
                     withCredentials: true
                         },
                         // The key needs to match your method's input parameter (case-sensitive).
-                    data: JSON.stringify({ "notes":[
-                        noteobj
-                        ]
-                        }),
+                    data: thisobj,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){
