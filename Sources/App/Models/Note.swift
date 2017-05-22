@@ -228,7 +228,7 @@ extension Note {
             result[JSONKeys.id] = Node(emu)
         }
         result[JSONKeys.linenumber] = Node(linenumber)
-        if let rf = reference {
+        if let rf = reference, rf.count >= 4 {
             result[JSONKeys.reference] = Node(rf)
             let index4 = rf.index(rf.startIndex, offsetBy: 4)
             let from4 = String(rf.characters.suffix(from: index4))

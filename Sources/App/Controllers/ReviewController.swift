@@ -52,17 +52,11 @@ final class ReviewController{
 
         for document in documentsArray {
             var result: [String: Node] = document.forJSON()
-            //            if let mysql = pubDrop.database?.driver as? MySQLDriver {
-            //                let version = try mysql.raw("SELECT status, COUNT(status) AS occurrence FROM commentaries GROUP BY status;")
-            //                let aa = version.array
-            //            }
+
             let docid = String(describing: document.id!.uint!)
-//            let countSubmitted: Int = commentaryStatusCounts[CommentaryStatus.submitted + docid] ?? 0
-//            let countNew: Int = commentaryStatusCounts[CommentaryStatus.new + docid] ?? 0
-//            let countAnalysis: Int = commentaryStatusCounts[CommentaryStatus.analysis + docid] ?? 0
-//            let buttonStyle = countAnalysis == 0 ? "btn-default" : "btn-primary"
+
             let doc = String((result[Document.JSONKeys.idbase62]?.string!)!)!
-//            result["newsubmit"] = Node("<p><a class=\"btn btn-block \(buttonStyle)\" href=\"/review/documents/\(doc)/\">Analysis <span class=\"badge\">\(countAnalysis)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-block btn-default\" href=\"/receive/documents/\(doc)/\">Submissions <span class=\"badge\">\(countSubmitted)<span class=\"wb-inv\"> submissions to accept</span></span></a><a class=\"btn btn-default btn-block \" href=\"/receive/documents/\(doc)/\">Composition <span class=\"badge\">\(countNew)<span class=\"wb-inv\"> not submitted</span></span></a></p>")
+
             result["newsubmit"] = Node( Commentary.dashboard(link: "/review/documents/\(doc)/",
                 commentaryCounts: [commentaryStatusCounts[CommentaryStatus.submitted + docid],
                                    commentaryStatusCounts[CommentaryStatus.attemptedsubmit + docid],
@@ -119,12 +113,7 @@ final class ReviewController{
         var filejson: [String: Any] = [:]
         var sectionTags: [[[String: Any]]] = []
 
-        //        let docRenderer = LeafRenderer(viewsDir: filePack)
-//        let tempRenderer = LeafRenderer(viewsDir: templatePack)
-        //find page language from referrer
-//        var tagsDict: [String:[String: Any]] = [:]
-//        var fileJson: JSON = JSON(.null)
-        //get data from disk/network
+
         let sections = [("rias", "ris") , ("reg",  "reg")]
         if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
 //            fileJson = try! JSON(serialized: data.makeBytes())
@@ -202,9 +191,6 @@ final class ReviewController{
         let json = JSON(Node(response))
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
-
-
-//        return View(data: [UInt8](outDocument))
     }
 
     func commentariesSummary(_ request: Request)throws -> ResponseRepresentable {
@@ -229,6 +215,7 @@ final class ReviewController{
         parameters["documentshref"] = Node("/review/")
         return try   pubDrop.view.make("role/review/commentaries", parameters)
     }
+
     func commentaryIndex(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -294,10 +281,6 @@ final class ReviewController{
             throw Abort.badRequest
         }
         let documentId = documentdata.docID()
-        //        let idInt = base62ToID(string: documentId)
-        //        let documentdata = try Document.find(Node(idInt))
-        //        guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
-
 
         var commentArray = try Comment.query().filter(Comment.Constants.commentaryId, commentaryId).all()
         commentArray.sort(by: Comment.docOrderSort)
