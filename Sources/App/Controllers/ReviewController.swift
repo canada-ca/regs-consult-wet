@@ -234,7 +234,7 @@ final class ReviewController{
         for (index, commentary) in commentaryArray.enumerated() {
             var result: [String: Node] = commentary.forJSON()
             let commentstr = String(describing: commentary.id!.int!)
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/review/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
@@ -318,7 +318,7 @@ final class ReviewController{
 
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             result["disposition"] = Node( Note.format(notes: dispositionNote[keyidx] ?? []))
@@ -473,7 +473,7 @@ final class ReviewController{
 
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
 
 

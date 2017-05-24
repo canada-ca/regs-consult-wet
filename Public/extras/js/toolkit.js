@@ -363,7 +363,7 @@
                             if (typeof docid == "undefined") {
                                 return;
                             }
-                            var url = '/receive/documents/" + docid + "/commentaries/load/';
+                            var url = "/receive/documents/" + docid + "/commentaries/load/";
                             // Send the data using post
                             var posting = $.ajax({
                             type: "POST",

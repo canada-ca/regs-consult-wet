@@ -134,7 +134,7 @@ final class AnalyzeController {
         for (index, commentary) in commentaryArray.enumerated() {
             var result: [String: Node] = commentary.forJSON()
             let commentstr = String(describing: commentary.id!.int!)
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/analyze/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
@@ -210,7 +210,7 @@ final class AnalyzeController {
 
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             result["usernote"] = Node( Note.format(userNote: usersOwnNote[keyidx]))
@@ -309,7 +309,7 @@ final class AnalyzeController {
 
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
             
 
@@ -525,7 +525,7 @@ final class AnalyzeController {
         let notetail = "</div></section>"
         for (index, note) in rawNoteArray.enumerated() {
             var result: [String: Node] = note.forJSON(usr)
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             let sharedhtml = try? markdownToHTML(note.textshared ?? "")
             let userhtml =  try? markdownToHTML(note.textuser ?? "")
             if userhtml == "" {

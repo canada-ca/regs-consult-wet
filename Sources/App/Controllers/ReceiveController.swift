@@ -127,7 +127,7 @@ final class ReceiveController{
         for (index, commentary) in commentaryArray.enumerated() {
             var result: [String: Node] = commentary.forJSON()
             let commentstr = String(describing: commentary.id!.int!)
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             result["link"] = Node("<p><a class=\"btn btn-primary\" href=\"/receive/documents/\(documentId)/commentaries/\(commentstr)\">View</a></p>")
             results.append(Node(result))
 
@@ -206,7 +206,7 @@ final class ReceiveController{
 
         for (index, comment) in commentArray.enumerated() {
             var result: [String: Node] = comment.forJSON()
-            result["order"] = Node(index)
+            result["order"] = Node(index + 1)
             results.append(Node(result))
 
         }
