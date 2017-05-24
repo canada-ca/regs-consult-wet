@@ -29,7 +29,8 @@
 "columns": [
 { "data": "order","type": "num", "visible": false, "searchable": false},
 { "data": "referencecoded", "defaultContent": "" },
-{ "data": "text", "defaultContent": "" },
+{ "data": "text","type": "html", "defaultContent": "" },
+{ "data": "disposition","type": "html", "width": "40%", "defaultContent": "" },
 { "data": "link", "type": "html" }
 ]}'>
 <thead>
@@ -37,6 +38,7 @@
 <th>order</th>
 <th>Section</th>
 <th>Comment</th>
+<th>Note summary</th>
 <th>Notes</th>
 </tr>
 </thead>

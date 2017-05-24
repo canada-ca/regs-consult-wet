@@ -286,7 +286,10 @@ final class AnalyzeController {
         let rawNoteArray = try Note.query().filter(Note.Constants.documentId, idInt).all()
         var usersOwnNote: [String: Note] = [:]
         var accu2: [String: Int] = [:]
-
+        var decisionNote: [String: [Note]?] = [:]
+        var discardNote: [String: [Note]?] = [:]
+        var readyNote: [String: [Note]?] = [:]
+        var inprogressNote: [String: [Note]?] = [:]
         rawNoteArray.forEach { nte in
             if let comm = nte.commentary {
                 if commentarySet.contains(comm.uint ?? 0) {
@@ -299,6 +302,38 @@ final class AnalyzeController {
                     if let stat = nte.status, stat != "" { //subcount on status
                         let key = keyidx + stat
                         accu2[key] = (accu2[key] ?? 0) + 1
+                        switch stat {
+                        case Note.Status.decision:
+                            if var arry = decisionNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                decisionNote[keyidx] = arry
+                            } else {
+                                decisionNote[keyidx] = [nte]
+                            }
+                        case Note.Status.discard:
+                            if var arry = discardNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                discardNote[keyidx] = arry
+                            } else {
+                                discardNote[keyidx] = [nte]
+                            }
+                        case Note.Status.ready:
+                            if var arry = readyNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                readyNote[keyidx] = arry
+                            } else {
+                                readyNote[keyidx] = [nte]
+                            }
+                        case Note.Status.inprogress:
+                            if var arry = inprogressNote[keyidx] as? [Note] {
+                                arry.append(nte)
+                                inprogressNote[keyidx] = arry
+                            } else {
+                                inprogressNote[keyidx] = [nte]
+                            }
+                        default:
+                            break
+                        }
                     }
                 }
             }
@@ -311,17 +346,23 @@ final class AnalyzeController {
             var result: [String: Node] = comment.forJSON()
             result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
-            
+
 
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
+            var dispositionhtml = Note.format(notes: decisionNote[keyidx] ?? [])
+            dispositionhtml += Note.format(notes: discardNote[keyidx] ?? [])
+            dispositionhtml += Note.format(notes: readyNote[keyidx] ?? [])
+            dispositionhtml += Note.format(notes: inprogressNote[keyidx] ?? [])
+            result["disposition"] = Node(dispositionhtml)
+
             result["link"] = Node( Note.dashboard(link: "/analyze/documents/\(documentId)/comments/\(commentstr)",
                 userNoteStatus: usersOwnNote[keyidx]?.status,
                 noteCounts: [accu2[keyidx + Note.Status.decision],
                              accu2[keyidx + Note.Status.discard],
                              accu2[keyidx + Note.Status.ready],
-                             accu2[keyidx + Note.Status.inprogress]  ]))
-                results.append(Node(result))
-
+                             accu2[keyidx + Note.Status.inprogress]   ]))
+            results.append(Node(result))
+            
         }
         response["data"] = Node(results)
         let headers: [HeaderKey: String] = [
