@@ -172,7 +172,12 @@ extension Comment {
             result[Comment.JSONKeys.referenceCoded] = Node(thru4 + String(self.linenumber) + " " + from4)
         }
         if let st = status {result[Comment.JSONKeys.status] = Node(st)}
-        if let tx = text {result[Comment.JSONKeys.text] = Node(String("<div class=\"lc\">\(tx)</div>"))}
+//        if let tx = text {result[Comment.JSONKeys.text] = Node(String("<div class=\"lc\">\(tx)</div>"))}
+        if let txt = text {
+            let out = try? markdownToHTML(txt)
+            result[Comment.JSONKeys.text] = Node(String("<div class=\"lc\"><span style=\"white-space: pre-line\">\(String(describing: out ?? ""))</span></div>"))
+//            noteList += "<div class=\"well well-sm\"><p>\(note.htmlStatus())</p>\(String(describing: out ?? ""))</div>"
+        }
 
         return result
     }
