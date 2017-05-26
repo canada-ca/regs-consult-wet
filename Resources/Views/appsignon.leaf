@@ -18,7 +18,7 @@
 <div class="container">
 <div class="row">
 <div class="col-md-12">
-<p class="btn">Signed in as <span class="wb-so-uname">#(activeuser.name)</span></p>
+<p class="btn">Signed in as <span class="wb-so-uname privatetext">#(activeuser.name)</span></p>
 <a class="btn btn-default" href="/admin/users/#(activeuser.id)/edit/">Account settings</a>
 <a class="btn btn-primary" href="/admin/logout/">Sign out</a>
 </div>

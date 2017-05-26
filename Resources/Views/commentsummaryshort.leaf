@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 <td class="text-right">Name</td>
-<td><strong>#(commentary.name)</strong></td>
+<td class="privatetext"><strong>#(commentary.name)</strong></td>
 </tr>
 <tr>
 <td class="text-right">Organization</td>

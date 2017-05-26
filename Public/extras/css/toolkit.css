@@ -270,4 +270,8 @@ h5.comment-empty  {
 #upl{
     display: none;
 }
+/*.privatetext {*/
+/*    color: transparent;*/
+/*    text-shadow: rgba(0, 0, 0, 0.95) 0px 0px 10px;*/
+/*}*/
 }

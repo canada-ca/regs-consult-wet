@@ -34,17 +34,17 @@
 { "data": "order","type": "num"},
 { "data": "represents", "defaultContent": "" },
 { "data": "organization", "orderable": false, "defaultContent": "" },
-{ "data": "name", "orderable": false, "defaultContent": ""},
+{ "data": "name", "orderable": false, "className": "privatetext", "defaultContent": ""},
 { "data": "link", "orderable": false, "searchable": false, "type": "html" }
 
 ]}'>
 <thead>
 <tr>
-<th>order</th>
-<th>represents</th>
-<th>organization</th>
-<th>name</th>
-<th>view</th>
+<th>Order</th>
+<th>Represents</th>
+<th>Organization</th>
+<th>Name</th>
+<th>View</th>
 </tr>
 </thead>
 </table>

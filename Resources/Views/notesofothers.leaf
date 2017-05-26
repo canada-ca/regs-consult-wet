@@ -5,11 +5,11 @@
 #if(notes) {
 <h5>Notes by:</h5>
 <details id="notesofothers">
-<summary>#loop(notesusers, "usrname") {#(usrname)  |}</summary>
+<summary>#loop(notesusers, "usrname") {<span class="privatetext">#(usrname)</span>  |}</summary>
 #loop(notes, "othernote") {
 <section class="panel panel-default">
 <header class="panel-heading">
-<h5 class="panel-title">#(othernote.username)  | Status: #(othernote.status)</h5>
+<h5 class="panel-title"><span class="privatetext">#(othernote.username)</span>  | Status: #(othernote.status)</h5>
 </header>
 <div class="panel-body">
 #markdown(othernote.textshared)

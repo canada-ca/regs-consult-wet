@@ -10,7 +10,7 @@
 <tbody>
 <tr>
 <td class="text-right">Name</td>
-<td><strong>#(commentary.name)</strong></td>
+<td class="privatetext"><strong>#(commentary.name)</strong></td>
 </tr>
 <tr>
 <td class="text-right">Organization</td>
@@ -22,7 +22,7 @@
 </tr>
 <tr>
 <td class="text-right">email</td>
-<td><strong>#(commentary.email)</strong></td>
+<td class="privatetext"><strong>#(commentary.email)</strong></td>
 </tr>
 </tbody>
 </table>
