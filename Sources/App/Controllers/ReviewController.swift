@@ -106,8 +106,7 @@ final class ReviewController {
     func buildDocumentLoad(_ request: Request, document: Document, docId: String)throws -> ResponseRepresentable {
         let filePackBaseDir = filePackDir + document.filepack!
         let filePack = filePackBaseDir + "/elements/"
-        //TODO: need new document types in future
-//        let templatePack = templateDir + "proposedregulation/elements/"
+
         var filejson: [String: Any] = [:]
         var sectionTags: [[[String: Any]]] = []
 
