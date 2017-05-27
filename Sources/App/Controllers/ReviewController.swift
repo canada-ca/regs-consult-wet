@@ -9,7 +9,7 @@ import Cookies
 import Fluent
 import FluentMySQL
 
-final class ReviewController{
+final class ReviewController {
     let pubDrop: Droplet
     let templateDir: String
     let filePackDir: String
@@ -24,7 +24,7 @@ final class ReviewController{
         role.get(handler: receiverSummary)
         role.get("documents", handler: documentIndex)
 
-        let documentrole = role.grouped("documents",":id")
+        let documentrole = role.grouped("documents", ":id")
         documentrole.get("comments", "summary", handler: allCommentsSummary)
         documentrole.get("comments", handler: allCommentsIndex)
         documentrole.get("comments", ":commentId", handler: commentSummary)
@@ -32,16 +32,16 @@ final class ReviewController{
         documentrole.get("load", handler: documentLoader)
         documentrole.get("commentaries", handler: commentaryIndex)
         documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
-        role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        role.get("commentaries", ":commentaryId", "comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
 
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
         var commentaryStatusCounts: [String:Int] = [:]
-        let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status,  CommentaryStatus.analysis).all()
+        let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status, CommentaryStatus.analysis).all()
         commentaryStatusArray.forEach { element in
-            if let stat = element.status , let docid = element.document?.uint {
+            if let stat = element.status, let docid = element.document?.uint {
                 let counthash = stat + String(docid)
                 commentaryStatusCounts[counthash] = (commentaryStatusCounts[counthash] ?? 0) + 1
             }
@@ -66,7 +66,7 @@ final class ReviewController{
                                    commentaryStatusCounts[CommentaryStatus.abuse + docid]
                 ]))
             result["commentlink"] = Node("<p><a class=\"btn btn-block btn-default\" href=\"/review/documents/\(doc)/comments/summary/\">Comments and decisions</p>")
-            
+
             results.append(Node(result))
 
         }
@@ -100,8 +100,6 @@ final class ReviewController{
         //TODO: document not found errors
         guard documentdata != nil else {throw Abort.badRequest}
 
-
-    
         return try buildDocumentLoad(request, document: documentdata!, docId: documentId)
     }
 
@@ -113,8 +111,7 @@ final class ReviewController{
         var filejson: [String: Any] = [:]
         var sectionTags: [[[String: Any]]] = []
 
-
-        let sections = [("rias", "ris") , ("reg",  "reg")]
+        let sections = [("rias", "ris"), ("reg", "reg")]
         if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
 //            fileJson = try! JSON(serialized: data.makeBytes())
             if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -135,14 +132,13 @@ final class ReviewController{
         //could also cache this work.
         let languages =  [("eng", "-eng.html", "line-eng", "en-CA", "prompt-eng"), ("fra", "-fra.html", "line-fra", "fr-CA", "prompt-fra")]
         var sequencePosition: Int = 0
-        var keyArray:[Node] = []
+        var keyArray: [Node] = []
         for (sectionIndex, sectionType) in sections.enumerated() {
             var dataStrings: [[String]] = []
             var lastline: [Int] = []
             for lang in languages {
                 if let section = fm.contents(atPath: filePack + sectionType.0 + lang.1),
-                     let lines = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines)
-                {
+                     let lines = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     dataStrings.append(lines)
                 } else {
                     dataStrings.append([])
@@ -161,7 +157,7 @@ final class ReviewController{
                     sequencePosition += 1
                     storageItem["lineid"] = Node(keyLinenum)
                     keyArray.append(Node(storageKey))
-                    for (langIndex,lang) in languages.enumerated() {
+                    for (langIndex, lang) in languages.enumerated() {
                         var endlinenum: Int = 0
                         if var linenum = tag[lang.2] as? Int {
                             if linenum > dataStrings[langIndex].count {
@@ -223,7 +219,6 @@ final class ReviewController{
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
-
 
         var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).filter(CommentaryConstants.status, CommentaryStatus.analysis).all()
         commentaryArray.sort(by: Commentary.reviewSort)
@@ -329,7 +324,6 @@ final class ReviewController{
                              accu2[keyidx + Note.Status.ready],
                              accu2[keyidx + Note.Status.inprogress]   ]))
 
-
             results.append(Node(result))
 
         }
@@ -346,7 +340,7 @@ final class ReviewController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let _ = try Document.find(commentary.document!) else {
+        guard try Document.find(commentary.document!) != nil else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {
@@ -476,7 +470,6 @@ final class ReviewController{
             result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
 
-
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             var dispositionhtml = Note.format(notes: decisionNote[keyidx] ?? [])
             dispositionhtml += Note.format(notes: discardNote[keyidx] ?? [])
@@ -524,7 +517,6 @@ final class ReviewController{
         parameters["signedon"] = Node(true)
         parameters["activeuser"] = try usr.makeNode()
 
-
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
         parameters["documentshref"] = Node("/review/")
@@ -536,27 +528,29 @@ final class ReviewController{
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/review/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            var notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
+            var notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(
+                Note.Constants.linenumber, commentdata!.linenumber).filter(
+                    Note.Constants.reference, commentdata!.reference!).all()
             var userIDsWithNotes: Set<Int> = []
-            notesarray.forEach() {nte in
+            notesarray.forEach {nte in
                 if let usrId = nte.user?.int {
                     userIDsWithNotes.insert(usrId)
                 }
             }
             notesarray.sort(by: Note.singleDocOrderSort)
-            
+
             var usersWithNotes: [Int: User] = [:]
             if userIDsWithNotes.count > 0 {
-                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()
+                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map {$0}).all()
 
-                usersFetched.forEach() {usr in
+                usersFetched.forEach {usr in
                     if let usridx = usr.id?.int {
                         usersWithNotes[usridx] = usr
                     }
                 }
             }
-            var otherNotes:[Node] = []
-            var usrlist:[Node] = []
+            var otherNotes: [Node] = []
+            var usrlist: [Node] = []
             for note in notesarray {
                 var thisNote = note.forJSON(usr)
                 let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
@@ -573,7 +567,6 @@ final class ReviewController{
             if usrlist.count > 0 {parameters["notesusers"] = Node(usrlist)}
             if otherNotes.count > 0 {parameters["notes"] = Node(otherNotes)}
         }
-
 
         return try   pubDrop.view.make("role/review/noteedit", parameters)
     }

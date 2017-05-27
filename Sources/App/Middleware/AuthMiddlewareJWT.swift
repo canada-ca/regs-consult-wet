@@ -14,7 +14,7 @@ public class AuthMiddlewareJWT: Middleware {
 
     public init(for drop: Droplet, jwtSigner: Signer) {
         self.jwtSigner = jwtSigner
-        authDomainName = drop.config["crypto", "jwtuser","authuserdomain"]?.string ?? "domain"
+        authDomainName = drop.config["crypto", "jwtuser", "authuserdomain"]?.string ?? "domain"
         domname = drop.config["app", "appdomain"]?.string  ?? "example.com"
     }
 
@@ -30,7 +30,8 @@ public class AuthMiddlewareJWT: Middleware {
                                                                "domain": Node(authDomainName)]),
                                          signer: jwtSigner) {
                 let token = try commentJWT.createToken()
-                let myCookie = Cookie(name: ConsultConstants.cookieUser,value: token, expires: Date().addingTimeInterval(cookieTime), domain: domname, httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieUser, value: token, expires: Date().addingTimeInterval(cookieTime),
+                                      domain: domname, httpOnly: true)
                 response.cookies.insert(myCookie)
             }
         }

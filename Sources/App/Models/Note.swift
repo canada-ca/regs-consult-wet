@@ -88,7 +88,7 @@ extension Note: NodeConvertible {
             } else {
                 throw Error.idTooLarge
             }
-            
+
         } else {
             throw Error.userNotSupplied
         }
@@ -177,15 +177,15 @@ extension Note {
          "ris": 2,
          "reg": 3
     ]
-    
+
     static let reviewSortOrder: [String: Int] =
         [Note.Status.decision: 1,
          Note.Status.ready: 3,
          Note.Status.inprogress: 4,
-         Note.Status.discard: 2,
+         Note.Status.discard: 2
          ]
-
-    static func singleDocOrderSort (_ a: Note,_ b: Note) -> Bool {
+//swiftlint:disable:next identifier_name
+    static func singleDocOrderSort (_ a: Note, _ b: Note) -> Bool {
         // not needed as all from same document assumed to speed up sort.
 //        let aOrder = a.document?.int ?? 0
 //        let bOrder = b.document?.int ?? 0
@@ -220,11 +220,11 @@ extension Note {
         }
         return false
     }
-    
+
     // shields user private component from leaking
     func forJSON(_ usr: User) -> [String: Node] {
         var result: [String: Node] = [:]
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             result[JSONKeys.id] = Node(emu)
         }
         result[JSONKeys.linenumber] = Node(linenumber)
@@ -239,7 +239,7 @@ extension Note {
             result[JSONKeys.textshared] = Node("")
         }
         if let st = statusshared {result[JSONKeys.statusshared] = Node(st)}
-        if let u = user?.int , let uinput = usr.id?.int, u == uinput {
+        if let u = user?.int, let uinput = usr.id?.int, u == uinput {
             if let tx = textuser {result[JSONKeys.textuser] = Node(tx)} else {
                 result[JSONKeys.textuser] = Node("")
             }
@@ -256,7 +256,7 @@ extension Note {
 
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             result[JSONKeys.id] = Node(emu)
         }
         result[JSONKeys.linenumber] = Node(linenumber)
@@ -340,7 +340,7 @@ extension Note {
                 buttonText = "Note"
             }
         }
-        var nCounts:[Int?] = noteCounts
+        var nCounts: [Int?] = noteCounts
         for _ in 1..<(6 - noteCounts.count) {
             nCounts.append(nil)  //pad a short array in case states are added later
         }
@@ -363,7 +363,7 @@ extension Note {
         let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
         return output
     }
-    func htmlStatus()  -> String {
+    func htmlStatus() -> String {
         var statusOutput: String = ""
         switch status ?? "" {
         case Note.Status.decision:
@@ -386,7 +386,7 @@ extension Note {
         var noteList: String = "<div>"
         notes!.forEach { note in
             if let txt = note.textshared {
-                let out = try? markdownToHTML(txt) 
+                let out = try? markdownToHTML(txt)
                 noteList += "<div class=\"well well-sm\"><p>\(note.htmlStatus())</p>\(String(describing: out ?? ""))</div>"
                 }
             }

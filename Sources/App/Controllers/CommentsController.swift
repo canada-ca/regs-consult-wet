@@ -8,19 +8,19 @@ import Node
 import Cookies
 import FluentMySQL
 
-final class CommentsController{
+final class CommentsController {
     let pubDrop: Droplet
     let jwtSigner: Signer
     let submitRender: LeafRenderer
-    
+
     init(to drop: Droplet) {
         pubDrop = drop
         submitRender = LeafRenderer(viewsDir: drop.viewsDir)
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary","secret"]?.string ?? "secret").bytes)
-        drop.post("documents",":id","comments", handler: commentDocument)
+        jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary", "secret"]?.string ?? "secret").bytes)
+        drop.post("documents", ":id", "comments", handler: commentDocument)
 
     }
-
+//swiftlint:disable:next cyclomatic_complexity
     func commentDocument(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -126,7 +126,6 @@ final class CommentsController{
                     if !(newitem == commentary?.name) {
 
                             commentary?.name = newitem
-                        
                     }
                 }
                 if let item = commentator["organization"]?.string {
@@ -162,7 +161,7 @@ final class CommentsController{
                                 comment = try Comment(node: [
                                     Comment.Constants.documentId: documentdata!.id!,
                                     Comment.Constants.commentaryId: commentary!.id!,
-                                    Comment.Constants.linenumber:  Int(String(ref.characters.suffix(from: index4))) ?? 0,
+                                    Comment.Constants.linenumber: Int(String(ref.characters.suffix(from: index4))) ?? 0,
                                     Comment.Constants.reference: reftext,
                                     Comment.Constants.text: update["text"]?.string,
                                     Comment.Constants.status: Comment.Status.new
@@ -189,7 +188,10 @@ final class CommentsController{
             commentJWT = try JWT(payload: Node.object(["commid": Node(commid!)]),
                                  signer: jwtSigner)
             if let token = try commentJWT?.createToken() {
-                let myCookie = Cookie(name: ConsultConstants.cookieComment,value: token, expires: Date() + 7 * 24 * 3600, domain: pubDrop.config["app", "appdomain"]?.string ?? "example.com", httpOnly: true)
+                let myCookie = Cookie(name: ConsultConstants.cookieComment, value: token,
+                                      expires: Date() + 7 * 24 * 3600,
+                                      domain: pubDrop.config["app", "appdomain"]?.string ?? "example.com",
+                                      httpOnly: true)
                 resp.cookies.insert(myCookie)
             }
         }

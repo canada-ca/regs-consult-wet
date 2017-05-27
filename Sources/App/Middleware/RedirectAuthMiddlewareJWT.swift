@@ -4,12 +4,12 @@ import Cookies
 import JWT
 
 public class RedirectAuthMiddlewareJWT: Middleware {
-    
+
     var jwtSigner: Signer
     let authDomainName: String
     init(for drop: Droplet, jwtSigner: Signer) {
         self.jwtSigner = jwtSigner
-        authDomainName = drop.config["crypto", "jwtuser","authuserdomain"]?.string ?? "domain"
+        authDomainName = drop.config["crypto", "jwtuser", "authuserdomain"]?.string ?? "domain"
     }
     public func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         if let cookieUser = request.cookies[ConsultConstants.cookieUser] {

@@ -118,8 +118,7 @@ extension User: Auth.User {
             }
             if try BCrypt.verify(password: usernamePassword.password, matchesHash: user.password) {
                 return user
-            }
-            else {
+            } else {
                 throw Abort.custom(status: .networkAuthenticationRequired, message: "Invalid username or password")
             }
         case let id as Identifier:

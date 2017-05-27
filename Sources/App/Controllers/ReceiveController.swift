@@ -9,7 +9,7 @@ import Cookies
 import Fluent
 import FluentMySQL
 
-final class ReceiveController{
+final class ReceiveController {
     let pubDrop: Droplet
 
     init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
@@ -26,22 +26,21 @@ final class ReceiveController{
         documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
         documentrole.get("commentaries", "load", handler: commentaryLoad) //use to manually load commentaries
         documentrole.post("commentaries", "load", handler: commentaryLoader)
-        role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        role.get("commentaries", ":commentaryId", "comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
     }
     func documentIndex(_ request: Request)throws -> ResponseRepresentable {
-       
+
         let documentsArray = try Document.query().filter("archived", .notEquals, true).all()
 
         var commentaryStatusCounts: [String:Int] = [:]
         let commentaryStatusArray = try Commentary.query().all()
         commentaryStatusArray.forEach { element in
-            if let stat = element.status , let docid = element.document?.uint {
+            if let stat = element.status, let docid = element.document?.uint {
                 let counthash = stat + String(docid)
                 commentaryStatusCounts[counthash] = (commentaryStatusCounts[counthash] ?? 0) + 1
             }
         }
-
 
         var response: [String: Node] = [:]
         var results: [Node] = []
@@ -59,9 +58,7 @@ final class ReceiveController{
                                    commentaryStatusCounts[CommentaryStatus.abuse + docid]
                 ]))
 
-
             results.append(Node(result))
-            
         }
         response["data"] = Node(results)
         let headers: [HeaderKey: String] = [
@@ -73,7 +70,7 @@ final class ReceiveController{
     }
 
     func receiverSummary(_ request: Request)throws -> ResponseRepresentable {
-        
+
         var parameters = try Node(node: [
             "receive_page": Node(true)
             ])
@@ -106,7 +103,7 @@ final class ReceiveController{
         }
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
-        parameters["documentshref"] = Node("/receive/") 
+        parameters["documentshref"] = Node("/receive/")
         return try   pubDrop.view.make("role/receive/commentaries", parameters)
     }
     func commentaryIndex(_ request: Request)throws -> ResponseRepresentable {
@@ -116,7 +113,6 @@ final class ReceiveController{
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/receive/")}  //go to list of all documents if not found
-
 
         var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
         commentaryArray.sort(by: Commentary.receiveSort)
@@ -195,7 +191,7 @@ final class ReceiveController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, let commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let _ = try Document.find(commentary.document!) else {
+        guard try Document.find(commentary.document!) != nil else {
             throw Abort.badRequest
         }
 
@@ -222,7 +218,7 @@ final class ReceiveController{
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let _ = try Document.find(commentary.document!) else {
+        guard try Document.find(commentary.document!) != nil else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {
@@ -269,7 +265,7 @@ final class ReceiveController{
                     }
                     var initial: Node = [CommentaryConstants.id: Node(commid)]
                     initial[CommentaryConstants.documentId] = documentdata!.id
-                    
+
                     if let val = cmty[CommentaryConstants.name]?.string {
                         initial[CommentaryConstants.name] = Node(val)
                     }
@@ -332,7 +328,5 @@ final class ReceiveController{
         let resp = Response(status: .ok, headers: headers, body: try Body(json))
         return resp
     }
-
-    
 
 }

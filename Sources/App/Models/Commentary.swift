@@ -37,7 +37,6 @@ struct CommentaryStatus {
     static let analysis = "analysis"
 }
 
-
 // to report status
 struct CommentarySubmitStatus {
     static let submitted = "submitted"
@@ -112,7 +111,7 @@ final class Commentary: Model {
             } else {
                 createddate = Date()  // now
             }
-            
+
             if let unix = node[CommentaryConstants.submitteddate]?.double {
                 // allow unix timestamps (easy to send this format from Paw)
                 submitteddate = Date(timeIntervalSince1970: unix)
@@ -148,7 +147,7 @@ final class Commentary: Model {
 
         func merge(updates: Commentary) {
             id = updates.id ?? id
-            document = updates.document ?? document 
+            document = updates.document ?? document
             name = updates.name ?? name
             email = updates.email ?? email
             represents = updates.represents ?? represents
@@ -197,9 +196,9 @@ final class Commentary: Model {
          CommentaryStatus.analysis: 1,
          CommentaryStatus.notuseful: 5,
          CommentaryStatus.abuse: 6]
-    
 
-    static func statusSort (_ a: Commentary,_ b: Commentary, _ sortOrder: [String: Int]) -> Bool {
+//swiftlint:disable:next identifier_name
+    static func statusSort (_ a: Commentary, _ b: Commentary, _ sortOrder: [String: Int]) -> Bool {
         let aOrder = sortOrder[a.status ?? "none"] ?? 0
         let bOrder = sortOrder[b.status ?? "none"] ?? 0
 
@@ -209,26 +208,28 @@ final class Commentary: Model {
             return false
         }
         if let adate = a.submitteddate {
-            if let bdate = b.submitteddate , adate > bdate {
+            if let bdate = b.submitteddate, adate > bdate {
                 return true
             }
             return false
         }
-        if let _ = b.submitteddate {
+        if b.submitteddate != nil {
             return true
         }
         return false
     }
-
-    static func receiveSort (_ a: Commentary,_ b: Commentary) -> Bool {
-        return statusSort(a,b,Commentary.receiveSortOrder)
-
-    }
-    static func analyzeSort (_ a: Commentary,_ b: Commentary) -> Bool {
-        return statusSort(a,b,Commentary.analyzeSortOrder)
+    //swiftlint:disable:next identifier_name
+    static func receiveSort (_ a: Commentary, _ b: Commentary) -> Bool {
+        return statusSort(a, b, Commentary.receiveSortOrder)
 
     }
-    static func reviewSort (_ a: Commentary,_ b: Commentary) -> Bool {
+    //swiftlint:disable:next identifier_name
+    static func analyzeSort (_ a: Commentary, _ b: Commentary) -> Bool {
+        return statusSort(a, b, Commentary.analyzeSortOrder)
+
+    }
+    //swiftlint:disable:next identifier_name
+    static func reviewSort (_ a: Commentary, _ b: Commentary) -> Bool {
         let aOrder = a.represents ?? ""
         let bOrder = b.represents ?? ""
 
@@ -238,12 +239,12 @@ final class Commentary: Model {
             return false
         }
         if let adate = a.submitteddate {
-            if let bdate = b.submitteddate , adate > bdate {
+            if let bdate = b.submitteddate, adate > bdate {
                 return true
             }
             return false
         }
-        if let _ = b.submitteddate {
+        if b.submitteddate != nil {
             return true
         }
         return false
@@ -258,7 +259,7 @@ final class Commentary: Model {
 //         CommentaryStatus.abuse: 6
     static func dashboard(link: String, commentaryCounts: [Int?]) -> String {
         let buttonText = "View&nbsp;Commentaries"
-        var nCounts:[Int?] = commentaryCounts
+        var nCounts: [Int?] = commentaryCounts
         for _ in 0..<(6 - commentaryCounts.count) {
             nCounts.append(nil)  //pad a short array in case states are added later
         }
@@ -286,7 +287,7 @@ final class Commentary: Model {
         let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
         return output
     }
-    func htmlStatus()  -> String {
+    func htmlStatus() -> String {
         var statusOutput: String = ""
         switch status ?? "" {
         case CommentaryStatus.submitted:
@@ -309,7 +310,7 @@ final class Commentary: Model {
     }
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             result[CommentaryJSONKeys.id] = Node(emu)
         }
         if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
@@ -325,7 +326,7 @@ final class Commentary: Model {
         if let ad = acknowledgeddate {result[CommentaryJSONKeys.acknowledgeddate] = Node(dateFormatter.string(from: ad))}
         return result
     }
-    
+
     func nodeForJSON() -> Node? {
         var result: [String: Node] = [:]
         if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}

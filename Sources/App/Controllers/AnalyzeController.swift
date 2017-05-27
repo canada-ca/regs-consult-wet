@@ -32,7 +32,7 @@ final class AnalyzeController {
         documentrole.get(handler: commentariesSummary)
         documentrole.get("commentaries", handler: commentaryIndex)
         documentrole.get("commentaries", ":commentaryId", handler: commentarySummary)
-        role.get("commentaries", ":commentaryId","comments", handler: commentIndex)
+        role.get("commentaries", ":commentaryId", "comments", handler: commentIndex)
         role.post("commentaries", ":commentaryId", ":command", handler: commentaryUpdate)
         documentrole.post("notes", handler: notesUpdate)
     }
@@ -42,7 +42,7 @@ final class AnalyzeController {
         var commentaryStatusCounts: [String:Int] = [:]
         let commentaryStatusArray = try Commentary.query().filter(CommentaryConstants.status, .notEquals, CommentaryStatus.abuse).all()
             commentaryStatusArray.forEach { element in
-                if let stat = element.status , let docid = element.document?.uint {
+                if let stat = element.status, let docid = element.document?.uint {
                     let counthash = stat + String(docid)
                     commentaryStatusCounts[counthash] = (commentaryStatusCounts[counthash] ?? 0) + 1
                 }
@@ -124,7 +124,6 @@ final class AnalyzeController {
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
-
         var commentaryArray = try Commentary.query().filter(CommentaryConstants.documentId, documentdata!.id!).all()
         commentaryArray.sort(by: Commentary.analyzeSort)
 
@@ -187,7 +186,7 @@ final class AnalyzeController {
         commentArray.sort(by: Comment.docOrderSort)
 
         guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
-        
+
         let rawNoteArray = try Note.query().filter(Note.Constants.commentaryId, commentaryId).all()
         var usersOwnNote: [String: Note] = [:]
         var accu2: [String: Int] = [:]
@@ -220,7 +219,6 @@ final class AnalyzeController {
                                                      accu2[keyidx + Note.Status.discard],
                                                      accu2[keyidx + Note.Status.ready],
                                                      accu2[keyidx + Note.Status.inprogress]   ]))
-
 
             results.append(Node(result))
 
@@ -266,7 +264,8 @@ final class AnalyzeController {
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
-        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(
+            CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
         var commentarySet: Set<UInt> = []
         for  element in commentaryStatus {
             if let comm = element.id, let itemid = comm.uint {
@@ -347,7 +346,6 @@ final class AnalyzeController {
             result["order"] = Node(index + 1)
             let commentstr = String(describing: comment.id!.int!)
 
-
             let keyidx = "\(comment.commentary!.int!)\(String(describing: comment.reference!))\(comment.linenumber)"
             var dispositionhtml = Note.format(notes: decisionNote[keyidx] ?? [])
             dispositionhtml += Note.format(notes: discardNote[keyidx] ?? [])
@@ -362,7 +360,7 @@ final class AnalyzeController {
                              accu2[keyidx + Note.Status.ready],
                              accu2[keyidx + Note.Status.inprogress]   ]))
             results.append(Node(result))
-            
+
         }
         response["data"] = Node(results)
         let headers: [HeaderKey: String] = [
@@ -376,7 +374,7 @@ final class AnalyzeController {
         guard let commentaryId = request.parameters["commentaryId"]?.int, var commentary = try Commentary.find(commentaryId) else {
             throw Abort.badRequest
         }
-        guard let _ = try Document.find(commentary.document!) else {
+        guard try Document.find(commentary.document!) != nil else {
             throw Abort.badRequest
         }
         if let commentator = request.data["commentary"]?.object {
@@ -410,7 +408,7 @@ final class AnalyzeController {
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
-        
+
         let commentdata = try Comment.find(Node(commentId))
         guard commentdata != nil else {return Response(redirect: "/analyze/")}  //go to list of all documents if not found
 
@@ -423,7 +421,6 @@ final class AnalyzeController {
         parameters["signedon"] = Node(true)
         parameters["activeuser"] = try usr.makeNode()
 
-
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
         parameters["documentshref"] = Node("/analyze/")
@@ -435,25 +432,26 @@ final class AnalyzeController {
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, commentdata!.linenumber).filter(Note.Constants.reference, commentdata!.reference!).all()
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(
+                Note.Constants.linenumber, commentdata!.linenumber).filter(
+                    Note.Constants.reference, commentdata!.reference!).all()
             var userIDsWithNotes: Set<Int> = []
-            notesarray.forEach() {nte in
+            notesarray.forEach { nte in
                 if let usrId = nte.user?.int {
                     userIDsWithNotes.insert(usrId)
                 }
             }
             var usersWithNotes: [Int: User] = [:]
             if userIDsWithNotes.count > 0 {
-                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()
-
-                usersFetched.forEach() {usr in
+                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map {$0}).all()
+                usersFetched.forEach { usr in
                     if let usridx = usr.id?.int {
                         usersWithNotes[usridx] = usr
                     }
                 }
             }
-            var otherNotes:[Node] = []
-            var usrlist:[Node] = []
+            var otherNotes: [Node] = []
+            var usrlist: [Node] = []
             for note in notesarray {
                 var thisNote = note.forJSON(usr)
                 let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
@@ -470,7 +468,6 @@ final class AnalyzeController {
             if usrlist.count > 0 {parameters["notesusers"] = Node(usrlist)}
             if otherNotes.count > 0 {parameters["notes"] = Node(otherNotes)}
         }
-
 
         return try   pubDrop.view.make("role/analyze/noteedit", parameters)
     }
@@ -513,7 +510,6 @@ final class AnalyzeController {
         return try   pubDrop.view.make("role/analyze/notes", parameters)
     }
 
-
     func allNotesSummary(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -547,7 +543,8 @@ final class AnalyzeController {
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.badRequest}  //go to list of all documents if not found
 
-        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
+        let commentaryStatus = try Commentary.query().filter(CommentaryConstants.documentId, idInt).filter(
+            CommentaryConstants.status, .in, [CommentaryStatus.submitted, CommentaryStatus.analysis]).all()
         var commentaryDict: [UInt:Commentary] = [:]
         for  element in commentaryStatus {
             if let comm = element.id, let itemid = comm.uint {
@@ -562,6 +559,7 @@ final class AnalyzeController {
         var response: [String: Node] = [:]
         var results: [Node] = []
         let notelead = "<div>"
+        // swiftlint:disable:next line_length
         let noteseparator = "</div></section><section class=\"panel panel-info\"><header class=\"panel-heading\"><h5 class=\"panel-title\">Private Note</h5></header><div class=\"panel-body\">"
         let notetail = "</div></section>"
         for (index, note) in rawNoteArray.enumerated() {
@@ -580,17 +578,18 @@ final class AnalyzeController {
                 result[CommentaryJSONKeys.represents] = Node("unknown")
             }
             let notestr = String(describing: note.id!.int!)
-            var statusCounts: [Int?] = [nil,nil,nil,nil,nil]
+            var statusCounts: [Int?] = [nil, nil, nil, nil, nil]
             statusCounts[(Note.reviewSortOrder[note.status ?? ""] ?? 5 ) - 1] = 1
             let noteDash = Note.dashboard(link: "/analyze/documents/\(documentId)/notes/\(notestr)",
                 userNoteStatus: note.status,
                 noteCounts: statusCounts )
+            // swiftlint:disable:next line_length
             result["link"] = Node("\(noteDash)<p><a class=\"btn btn-default delete-note\" href=\"/analyze/documents/\(documentId)/notes/\(notestr)/delete\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i>&nbsp;Delete</a></p>")
 
             results.append(Node(result))
         }
         response["data"] = Node(results)
-        
+
         let headers: [HeaderKey: String] = [
             "Content-Type": "application/json; charset=utf-8"
         ]
@@ -622,7 +621,6 @@ final class AnalyzeController {
         parameters["signedon"] = Node(true)
         parameters["activeuser"] = try usr.makeNode()
 
-
         let docjson = documentdata!.forJSON()
         parameters["document"] = Node(docjson)
         parameters["documentshref"] = Node("/analyze/")
@@ -633,29 +631,33 @@ final class AnalyzeController {
             let commentstr = String(describing: commentary.id!.int!)
             parameters["commentaryhref"] = Node("/analyze/documents/\(docjson[Document.JSONKeys.idbase62]!.string!)/commentaries/\(commentstr)")
             parameters["commentary"] = Node(commentary.forJSON())
-            if let commentdata = try Comment.query().filter(Comment.Constants.commentaryId, commentary.id!).filter(Comment.Constants.linenumber, notedata!.linenumber).filter(Comment.Constants.reference, notedata!.reference!).first() {
+            if let commentdata = try Comment.query().filter(Comment.Constants.commentaryId, commentary.id!).filter(
+                Comment.Constants.linenumber, notedata!.linenumber).filter(
+                    Comment.Constants.reference, notedata!.reference!).first() {
                 let commentjson = commentdata.forJSON()
                 parameters["comment"] = Node(commentjson)
             }
-            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(Note.Constants.linenumber, notedata!.linenumber).filter(Note.Constants.reference, notedata!.reference!).all()
+            let notesarray = try Note.query().filter(Note.Constants.commentaryId, commentary.id!).filter(
+                Note.Constants.linenumber, notedata!.linenumber).filter(
+                    Note.Constants.reference, notedata!.reference!).all()
             var userIDsWithNotes: Set<Int> = []
-            notesarray.forEach() {nte in
+            notesarray.forEach {nte in
                 if let usrId = nte.user?.int {
                     userIDsWithNotes.insert(usrId)
                 }
             }
             var usersWithNotes: [Int: User] = [:]
             if userIDsWithNotes.count > 0 {
-                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map{$0}).all()
+                let usersFetched = try User.query().filter("id", .in, userIDsWithNotes.map {$0}).all()
 
-                usersFetched.forEach() {usr in
+                usersFetched.forEach {usr in
                     if let usridx = usr.id?.int {
                         usersWithNotes[usridx] = usr
                     }
                 }
             }
-            var otherNotes:[Node] = []
-            var usrlist:[Node] = []
+            var otherNotes: [Node] = []
+            var usrlist: [Node] = []
             for note in notesarray {
                 var thisNote = note.forJSON(usr)
                 let usrname = Node(usersWithNotes[note.user?.int ?? 0]?.name ?? "unknown")
@@ -672,11 +674,10 @@ final class AnalyzeController {
             if usrlist.count > 0 {parameters["notesusers"] = Node(usrlist)}
             if otherNotes.count > 0 {parameters["notes"] = Node(otherNotes)}
         }
-        
-        
+
         return try   pubDrop.view.make("role/analyze/noteedit", parameters)
     }
-
+//swiftlint:disable:next cyclomatic_complexity
     func notesUpdate(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -684,7 +685,7 @@ final class AnalyzeController {
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard documentdata != nil else {throw Abort.custom(status: .conflict, message: "cannot locate document")}
-        
+
         guard let usr = request.storage["userid"] as? User else {throw Abort.custom(status: .conflict, message: "cannot locate user")}
 
         if let notesarray = request.json?["notes"]?.array {
@@ -699,9 +700,11 @@ final class AnalyzeController {
                     let lnum = update[Note.JSONKeys.linenumber]?.int ?? 0
                     let ref = update[Note.JSONKeys.reference]?.string ?? ""
                     if note == nil, let refID = update[Note.JSONKeys.commentaryId]?.int {
-                         note = try Note.query().filter(Note.Constants.commentaryId, Node(refID)).filter(Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(Note.Constants.reference, ref).first()
+                         note = try Note.query().filter(Note.Constants.commentaryId, Node(refID)).filter(
+                            Note.Constants.userId, usr.id!).filter(Note.Constants.linenumber, lnum).filter(
+                                Note.Constants.reference, ref).first()
                         if note == nil {
-                            let initNode:[String:Node] = [
+                            let initNode: [String: Node] = [
                                 Note.Constants.commentaryId: Node(refID),
                                 Note.Constants.documentId: documentdata!.id!,
                                 Note.Constants.userId: usr.id!,
@@ -711,10 +714,10 @@ final class AnalyzeController {
                             note = try Note(node: Node(initNode), in: [])
                             noteExisted = false
                         }
-                        
+
                     }
                     guard note != nil, note!.user == usr.id! else { continue }
-                    
+
                     if let item = update[Note.JSONKeys.linenumber]?.int {
                             note?.linenumber = item
                     }
@@ -755,7 +758,7 @@ final class AnalyzeController {
             }
         }
 
-        var response:[String: Node] = [:]
+        var response: [String: Node] = [:]
 
         response["note"] = Node(true)
         let headers: [HeaderKey: String] = [
@@ -766,5 +769,4 @@ final class AnalyzeController {
         return resp
     }
 
-    
 }

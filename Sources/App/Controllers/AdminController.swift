@@ -36,7 +36,11 @@ struct AdminController {
 
     // MARK: - User handlers
     func createUserHandler(_ request: Request) throws -> ResponseRepresentable {
-        return try createUserView(request, editing: false, errors: nil, name: nil, username: nil, passwordError: nil, confirmPasswordError: nil, resetPasswordRequired: nil, userId: nil)
+        return try createUserView(request, editing: false, errors: nil, name: nil,
+                                  username: nil, passwordError: nil,
+                                  confirmPasswordError: nil,
+                                  resetPasswordRequired: nil,
+                                  userId: nil)
     }
 
     func createUserPostHandler(_ request: Request) throws -> ResponseRepresentable {
@@ -48,21 +52,37 @@ struct AdminController {
         let rawPasswordResetRequired = request.data["inputResetPasswordOnLogin"]?.string
         let resetPasswordRequired = rawPasswordResetRequired != nil
 
-        let (createUserRawErrors, passwordRawError, confirmPasswordRawError) = validateUserSaveDataExists(edit: false, name: rawName, username: rawUsername, password: rawPassword, confirmPassword: rawConfirmPassword)
+        let (createUserRawErrors, passwordRawError, confirmPasswordRawError) = validateUserSaveDataExists(edit: false, name: rawName,
+              username: rawUsername,
+              password: rawPassword,
+              confirmPassword: rawConfirmPassword)
 
         // Return if we have any missing fields
         if (createUserRawErrors?.count)! > 0 {
-            return try createUserView(request, editing: false, errors: createUserRawErrors, name: rawName, username: rawUsername, passwordError: passwordRawError, confirmPasswordError: confirmPasswordRawError, resetPasswordRequired: resetPasswordRequired, userId: nil)
+            return try createUserView(request, editing: false, errors: createUserRawErrors,
+                                      name: rawName,
+                                      username: rawUsername,
+                                      passwordError: passwordRawError,
+                                      confirmPasswordError: confirmPasswordRawError,
+                                      resetPasswordRequired: resetPasswordRequired, userId: nil)
         }
 
         guard let name = rawName, let username = rawUsername?.lowercased(), let password = rawPassword, let confirmPassword = rawConfirmPassword else {
             throw Abort.badRequest
         }
 
-        let (createUserErrors, passwordError, confirmPasswordError) = validateUserSaveData(edit: false, name: name, username: username, password: password, confirmPassword: confirmPassword)
+        let (createUserErrors, passwordError, confirmPasswordError) = validateUserSaveData(edit: false, name: name,
+                                                                                           username: username,
+                                                                                           password: password,
+                                                                                           confirmPassword: confirmPassword)
 
         if (createUserErrors?.count)! > 0 {
-            return try createUserView(request, editing: false, errors: createUserErrors, name: name, username: username, passwordError: passwordError, confirmPasswordError: confirmPasswordError, resetPasswordRequired: resetPasswordRequired,userId: nil)
+            return try createUserView(request, editing: false, errors: createUserErrors, name: name,
+                                      username: username,
+                                      passwordError: passwordError,
+                                      confirmPasswordError: confirmPasswordError,
+                                      resetPasswordRequired: resetPasswordRequired,
+                                      userId: nil)
         }
 
         // We now have valid data
@@ -73,39 +93,66 @@ struct AdminController {
             }
             try user.save()
             return Response(redirect: "/admin")
-        }
-        else {
-            return try createUserView(request, editing: false, errors: ["There was an error creating the user. Please try again"], name: name, username: username, passwordError: passwordError, confirmPasswordError: confirmPasswordError, resetPasswordRequired: resetPasswordRequired, userId: nil)
+        } else {
+            return try createUserView(request, editing: false, errors: ["There was an error creating the user. Please try again"], name: name,
+                                      username: username,
+                                      passwordError: passwordError,
+                                      confirmPasswordError: confirmPasswordError,
+                                      resetPasswordRequired: resetPasswordRequired,
+                                      userId: nil)
         }
     }
 
     func editUserHandler(request: Request, user: User) throws -> ResponseRepresentable {
-        return try createUserView(request, editing: true, errors: nil, name: user.name, username: user.username, passwordError: nil, confirmPasswordError: nil, resetPasswordRequired: nil, userId: user.id)
+        return try createUserView(request, editing: true, errors: nil, name: user.name,
+                                  username: user.username,
+                                  passwordError: nil,
+                                  confirmPasswordError: nil,
+                                  resetPasswordRequired: nil,
+                                  userId: user.id)
     }
 
     func editUserPostHandler(request: Request, user: User) throws -> ResponseRepresentable {
         let rawName = request.data["inputName"]?.string
+
         let rawUsername = request.data["inputUsername"]?.string
         let rawPassword = request.data["inputPassword"]?.string
         let rawConfirmPassword = request.data["inputConfirmPassword"]?.string
         let rawPasswordResetRequired = request.data["inputResetPasswordOnLogin"]?.string
         let resetPasswordRequired = rawPasswordResetRequired != nil
 
-        let (saveUserRawErrors, passwordRawError, confirmPasswordRawError) = validateUserSaveDataExists(edit: true, name: rawName, username: rawUsername, password: rawPassword, confirmPassword: rawConfirmPassword)
+        let (saveUserRawErrors, passwordRawError, confirmPasswordRawError) = validateUserSaveDataExists(edit: true, name: rawName,
+                    username: rawUsername,
+                    password: rawPassword,
+                    confirmPassword: rawConfirmPassword)
 
         // Return if we have any missing fields
         if (saveUserRawErrors?.count)! > 0 {
-            return try createUserView(request, editing: true, errors: saveUserRawErrors, name: rawName, username: rawUsername, passwordError: passwordRawError, confirmPasswordError: confirmPasswordRawError, resetPasswordRequired: resetPasswordRequired, userId: user.id)
+            return try createUserView(request, editing: true, errors: saveUserRawErrors, name: rawName,
+                                      username: rawUsername,
+                                      passwordError: passwordRawError,
+                                      confirmPasswordError: confirmPasswordRawError,
+                                      resetPasswordRequired: resetPasswordRequired,
+                                      userId: user.id)
         }
 
         guard let name = rawName, let username = rawUsername else {
             throw Abort.badRequest
         }
 
-        let (saveUserErrors, passwordError, confirmPasswordError) = validateUserSaveData(edit: true, name: name, username: username, password: rawPassword, confirmPassword: rawConfirmPassword, previousUsername: user.username)
+        let (saveUserErrors, passwordError, confirmPasswordError) = validateUserSaveData(edit: true, name: name,
+                                                                                         username: username,
+                                                                                         password: rawPassword,
+                                                                                         confirmPassword: rawConfirmPassword,
+                                                                                         previousUsername: user.username)
 
         if (saveUserErrors?.count)! > 0 {
-            return try createUserView(request, editing: true, errors: saveUserErrors, name: name, username: username, passwordError: passwordError, confirmPasswordError: confirmPasswordError, resetPasswordRequired: resetPasswordRequired, userId: user.id)
+            return try createUserView(request, editing: true, errors: saveUserErrors, name: name,
+                                      username: username,
+                                      passwordError: passwordError,
+                                      confirmPasswordError: confirmPasswordError,
+                                      resetPasswordRequired: resetPasswordRequired,
+                                      userId: user.id)
         }
 
         // We now have valid data
@@ -138,14 +185,13 @@ struct AdminController {
             throw Abort.badRequest
         }
 
-        if user.admin  {
+        if user.admin {
             return try createAdminView(request, errors: ["You cannot delete admin users"])
         }
             // Make sure we aren't deleting ourselves!
         else if currentUser.id == user.id {
             return try createAdminView(request, errors: ["You cannot delete yourself whilst logged in"])
-        }
-        else {
+        } else {
             try user.delete()
             return Response(redirect: "/admin")
         }
@@ -170,7 +216,9 @@ struct AdminController {
         return try drop.view.make("role/admin/index", parameters)
     }
 
-    func createUserView(_ request: Request, editing: Bool = false, errors: [String]? = nil, name: String? = nil, username: String? = nil, passwordError: Bool? = nil, confirmPasswordError: Bool? = nil, resetPasswordRequired: Bool? = nil, userId: Vapor.Node? = nil) throws -> View {
+    func createUserView(_ request: Request, editing: Bool = false, errors: [String]? = nil, name: String? = nil,
+                        username: String? = nil, passwordError: Bool? = nil, confirmPasswordError: Bool? = nil,
+                        resetPasswordRequired: Bool? = nil, userId: Vapor.Node? = nil) throws -> View {
         let nameError = name == nil && errors != nil
         let usernameError = username == nil && errors != nil
 
@@ -201,7 +249,7 @@ struct AdminController {
             parameters["confirm_password_error"] = confirmPasswordError.makeNode()
         }
 
-        if let _ = resetPasswordRequired {
+        if resetPasswordRequired != nil {
             parameters["reset_password_on_login_supplied"] = true
         }
         parameters["signon"] = Node(true)
@@ -211,7 +259,7 @@ struct AdminController {
         }
         if editing {
             parameters["editing"] = true
-            
+
             if let usr = request.storage["userid"] as? User {
                 //only edit yourself
                 guard usr.admin || usr.id == userId else {
@@ -241,59 +289,56 @@ struct AdminController {
                     print("You will be asked to change your password once you have logged in, please do this immediately!")
                 }
             }
-        }
-        catch {
+        } catch {
             print("There was an error creating a new admin user: \(error)")
         }
-        
+
         let loginRequired = request.uri.rawQuery == "loginRequired"
         return try createLoginView(loginWarning: loginRequired, errors: nil, username: nil, password: nil)
     }
-    
+
     func loginPostHandler(_ request: Request) throws -> ResponseRepresentable {
-        
+
         let rawUsername = request.data["inputUsername"]?.string
         let rawPassword = request.data["inputPassword"]?.string
         let rememberMe = request.data["remember-me"]?.string != nil
-        
+
         var loginErrors: [String] = []
-        
+
         if rawUsername == nil {
             loginErrors.append("You must supply your username")
         }
-        
+
         if rawPassword == nil {
             loginErrors.append("You must supply your password")
         }
-        
+
         if loginErrors.count > 0 {
             return try createLoginView(loginWarning: false, errors: loginErrors, username: rawUsername, password: rawPassword)
         }
-        
+
         guard let username = rawUsername, let password = rawPassword else {
             throw Abort.badRequest
         }
-        
+
         let credentials = UserCredentials(username: username.lowercased(), password: password)
-        
+
         if rememberMe {
             request.storage["remember_me"] = true
-        }
-        else {
+        } else {
             request.storage.removeValue(forKey: "remember_me")
         }
-        
+
         do {
             guard let usr = try User.authenticate(credentials: credentials)as? User else {
                 throw Abort.badRequest
             }
             request.storage["setcookie"] = usr
             return Response(redirect: "/admin")
-        }
-        catch {
+        } catch {
             print("Got error logging in \(error)")
             let loginError = ["Your username or password was incorrect"]
-            
+
             return try createLoginView(loginWarning: false, errors: loginError, username: username, password: "")
         }
     }
@@ -330,7 +375,7 @@ struct AdminController {
     func adminHandler(_ request: Request) throws -> ResponseRepresentable {
         return try createAdminView(request, errors: nil)
     }
- 
+
     // MARK: - Password handlers
     func resetPasswordHandler(_ request: Request) throws -> ResponseRepresentable {
         return try createResetPasswordView(errors: nil, passwordError: nil, confirmPasswordError: nil)
@@ -434,7 +479,9 @@ struct AdminController {
         return createPostErrors
     }
 
-    private func validateUserSaveDataExists(edit: Bool, name: String?, username: String?, password: String?, confirmPassword: String?) -> ([String]?, Bool?, Bool?) {
+    private func validateUserSaveDataExists(edit: Bool, name: String?, username: String?,
+                                            password: String?,
+                                            confirmPassword: String?) -> ([String]?, Bool?, Bool?) {
         var userSaveErrors: [String] = []
         var passwordError: Bool?
         var confirmPasswordError: Bool?
@@ -462,7 +509,9 @@ struct AdminController {
         return (userSaveErrors, passwordError, confirmPasswordError)
     }
 
-    private func validateUserSaveData(edit: Bool, name: String, username: String, password: String?, confirmPassword: String?, previousUsername: String? = nil) -> ([String]?, Bool?, Bool?) {
+    private func validateUserSaveData(edit: Bool, name: String, username: String, password: String?,
+                                      confirmPassword: String?,
+                                      previousUsername: String? = nil) -> ([String]?, Bool?, Bool?) {
 
         var userSaveErrors: [String] = []
         var passwordError: Bool?
@@ -501,12 +550,11 @@ struct AdminController {
         // Check username unique
         do {
             if username != previousUsername {
-                if let _ = try User.query().filter("username", username.lowercased()).first() {
+                if try User.query().filter("username", username.lowercased()).first() != nil {
                     userSaveErrors.append("Sorry that username has already been taken")
                 }
             }
-        }
-        catch {
+        } catch {
             userSaveErrors.append("Unable to validate username")
         }
 
@@ -534,8 +582,7 @@ extension String {
         let whitespaceSet = CharacterSet.whitespacesAndNewlines
         if isEmpty || self.trimmingCharacters(in: whitespaceSet).isEmpty {
             return true
-        }
-        else {
+        } else {
             return false
         }
     }

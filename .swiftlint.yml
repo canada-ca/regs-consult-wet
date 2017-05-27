@@ -1,0 +1,21 @@
+disabled_rules: # rule identifiers to exclude from running
+  - todo
+  - file_length
+  - function_body_length
+  - type_body_length
+  - legacy_constructor
+  - type_name
+  - large_tuple
+included: # paths to include during linting. `--path` is ignored if present.
+    - Sources/
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+    - Packages/
+force_cast: warning 
+line_length: 180
+cyclomatic_complexity: 20
+variable_name:
+  excluded: # excluded via string array
+    - UUI
+    - fm
+    - df
+    - id

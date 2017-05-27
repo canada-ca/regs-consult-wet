@@ -6,7 +6,7 @@ import LeafMarkdown
 
 let drop = Droplet()
 
-let jwtUserSigner: Signer = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
+let jwtUserSigner: Signer = HS256(key: (drop.config["crypto", "jwtuser", "secret"]?.string ?? "secret").bytes)
 
 drop.middleware.append(CorsMiddleware())
 
@@ -36,7 +36,7 @@ let commentController = CommentsController(to: drop)
 let commentaryController = CommentaryController(to: drop)
 
 //TODO: show last edited document?
-drop.get { req in
+drop.get { _ in
     return try drop.view.make("splashpage.html")
 }
 

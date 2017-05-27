@@ -22,7 +22,6 @@ struct Document: Model {
         static let knownas = "knownas"
     }
 
-
     var id: Node?
     var knownas: String?
     var filepack: String?
@@ -32,7 +31,6 @@ struct Document: Model {
     var publishingpageprefix: String?
     var archived: Bool?
 
-
     // used by fluent internally
     var exists: Bool = false
     static var entity = "documents"   //db table name
@@ -41,31 +39,30 @@ struct Document: Model {
         case dateNotSupported
         case idTooLarge
     }
-    
+
     func nodeForJSON() -> Node? {
         var result: [String: Node] = [:]
         if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
         if let em = id {result[JSONKeys.id] = Node(em)}
         return Node(result)
     }
-    
+
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
         if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             result[JSONKeys.id] = Node(emu)
             result[JSONKeys.idbase62] = Node(Base62.encode(integer: UInt64(emu)))
         }
         return result
     }
     func docID() -> String {
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             return Base62.encode(integer: UInt64(emu))
         }
         return ""
     }
 }
-
 
 // MARK: NodeConvertible
 

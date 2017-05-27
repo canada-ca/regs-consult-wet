@@ -14,7 +14,7 @@ enum MailStyle {
     case jsonbackup
     case html
 }
-final class CommentaryController{
+final class CommentaryController {
     let pubDrop: Droplet
     let jwtSigner: Signer
     let templateDir: String
@@ -39,7 +39,7 @@ final class CommentaryController{
         filePackDir = drop.workDir + "FilePacks/"
         submitRender = LeafRenderer(viewsDir: drop.viewsDir)
         jwtSigner = HS256(key: (drop.config["crypto", "jwtcommentary", "secret"]?.string ?? "secret").bytes)
-        let role = drop.grouped("documents",":id", "commentaries")
+        let role = drop.grouped("documents", ":id", "commentaries")
         role.get("summary", handler: commentarySummary)
 //        previewer.get("submit",":command", handler: commentarySubmit)
         role.post("submit", ":command", handler: commentarySubmit)
@@ -124,7 +124,7 @@ final class CommentaryController{
         return resp
     }
 
-    func emailCommentary(_ request: Request, document: Document, commentary: Commentary, type: MailStyle) -> () {
+    func emailCommentary(_ request: Request, document: Document, commentary: Commentary, type: MailStyle) {
         // You can also create attachment from raw data.
         guard let recipient = drop.config["mail", "mailto", "to"]?.string, !recipient.isEmpty else {return}
         var response: [String: Node] = [:]
@@ -145,7 +145,7 @@ final class CommentaryController{
             response["comments"] = Node(results)
             response["commentary"] = commentary.nodeForJSON()
             let json = JSON(Node(response))
-
+//swiftlint:disable:next force_try
             let data = Data(bytes: try! json.serialize(prettyPrint: true))
             let mailjson = Attachment(
                 data: data,
@@ -172,7 +172,7 @@ final class CommentaryController{
         }
 
     }
-
+    //swiftlint:disable:next cyclomatic_complexity
     func commentarySubmit(_ request: Request)throws -> ResponseRepresentable {
         guard let documentId = request.parameters["id"]?.string else {
             throw Abort.badRequest
@@ -358,7 +358,7 @@ final class CommentaryController{
         }
         return try buildCommentaryPreview(request, document: documentdata!, commentary: commentary!, type: .onlyComments)
     }
-
+//swiftlint:disable:next cyclomatic_complexity
     func buildCommentaryPreview(_ request: Request, document: Document, commentary: Commentary, type: PreviewView)throws -> ResponseRepresentable {
         let filePackBaseDir = filePackDir + document.filepack!
         let filePack = filePackBaseDir + "/elements/"
@@ -374,6 +374,7 @@ final class CommentaryController{
         var fileJson: JSON = JSON(.null)
         //get data from disk/network
         if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
+            //swiftlint:disable:next force_try
             fileJson = try! JSON(serialized: data.makeBytes())
 
             if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -426,13 +427,14 @@ final class CommentaryController{
                 outDocument.append(section) }
 
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "reg"))
 
                     for comment in comments {
                         if let thisRef = comment.reference, let thisTag = tagsDict[thisRef] {
                             if let linenum = thisTag[lang.1] as? Int {
                                 guard linenum <= dataString.count else {continue}
+                                // swiftlint:disable force_cast
                                 substitutions["ref"] = Node(thisTag["ref"] as! String) //tag["ref"] as? String
                                 if let pmt = thisTag[lang.4] as? String {
                                     substitutions["prompt"] = Node(pmt) // as? String) // as? String
@@ -464,7 +466,7 @@ final class CommentaryController{
                 commentDict[cref] = comment
             }
             if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     var lastline: Int = 0
 
                     substitutions["reftype"] = Node(String(describing: "ris"))
@@ -505,14 +507,14 @@ final class CommentaryController{
                 }
             }
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     var lastline: Int = 0
 
                     substitutions["reftype"] = Node(String(describing: "reg"))
                     for tag in tags {
                         if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
-                            substitutions["ref"] = Node(tag["ref"] as! String) 
+                            substitutions["ref"] = Node(tag["ref"] as! String)
                             if let pmt = tag[lang.4] as? String {
                                 substitutions["prompt"] = Node(pmt)
                             } else {
@@ -527,6 +529,7 @@ final class CommentaryController{
                                 substitutions["commenttext"] = nil
                             }
                             substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
+                            // swiftlint:enable force_cast
                             let insertTypehead = (tag["type"] as? String ?? "comment") + "previewlisthead-" + lang.0
                             if let meta = try? tempRenderer.make(insertTypehead, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
                                 dataString[lastline] = templstr.appending(dataString[lastline])                            }

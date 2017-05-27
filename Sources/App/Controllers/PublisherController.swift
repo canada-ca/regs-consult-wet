@@ -18,15 +18,13 @@ final class PublisherController {
 
         let role = drop.grouped("prepare").grouped(cookieSetter).grouped(protect) //.grouped(protect)
 
-
-        role.get { request in
+        role.get { _ in
             //TODO: list of docs
             return "document info"
         }
         role.post("publish", ":id", handler: publishDocument)
         role.post("load", ":filename", handler: loadDocument)
     }
-
 
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
         guard let user = request.storage["userid"] as? User, user.admin else {
@@ -40,7 +38,8 @@ final class PublisherController {
 
         }
         do {
-            let fj = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
+            // swiftlint:disable force_cast
+            let fj = try JSONSerialization.jsonObject(with: data) as! [String: Any]
 //            let fileJson = try JSON(serialized: data.makeBytes())
             var adict: [String: Node] = [Document.Constants.id: base62ToNode(string: fj["document-id"] as? String)]
             if let check = fj["known-as"] as? String { adict[Document.Constants.knownas] = Node(check)}
@@ -55,11 +54,12 @@ final class PublisherController {
             var newDoc = try Document(node: adict, in: [])
             try newDoc.save()
 
-            return JSON(["prepare":"regulation", "status":"published"])
+            return JSON(["prepare": "regulation", "status": "published"])
         } catch {
             throw Abort.custom(status: .notAcceptable, message: "filepack.json faulty.")
         }
     }
+    //swiftlint:disable:next cyclomatic_complexity
     func publishDocument(_ request: Request)throws -> ResponseRepresentable {
 
         guard let user = request.storage["userid"] as? User, user.admin else {
@@ -74,7 +74,7 @@ final class PublisherController {
         let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard let document = documentdata else {throw Abort.custom(status: .notFound, message: "document unknown")}
-        
+
         let filePackBaseDir = filePackDir + document.filepack!
         let filePack = filePackBaseDir + "/elements/"
         // TODO: need new document types in future
@@ -88,6 +88,7 @@ final class PublisherController {
         var fileJson: JSON = JSON(.null)
         //get data from disk/network
         if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
+            //swiftlint:disable:next force_try
             fileJson = try! JSON(serialized: data.makeBytes())
 
             if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -141,11 +142,12 @@ final class PublisherController {
                 outDocument.append(Data(meta.data))
             }
             if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "ris"))
                     for tag in tagsA {
                         if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
+
                             substitutions["ref"] = Node(tag["ref"] as! String) //tag["ref"] as? String
                             if let pmt = tag[lang.4] as? String {
                                 substitutions["prompt"] = Node(pmt) // as? String) // as? String
@@ -170,7 +172,7 @@ final class PublisherController {
                 outDocument.append(Data(meta.data))
             }
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "reg"))
                     for tag in tags {
                         if let linenum = tag[lang.1] as? Int {
@@ -182,6 +184,7 @@ final class PublisherController {
                                 substitutions["prompt"] = nil
                             }
                             substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
+                            // swiftlint:enable force_cast
                             let insertType = (tag["type"] as? String ?? "comment") + "-" + lang.0
                             if let meta = try? tempRenderer.make(insertType, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
                                 dataString[linenum - 1] = dataString[linenum - 1].appending(templstr)
@@ -216,7 +219,7 @@ final class PublisherController {
                 throw Abort.custom(status: .methodNotAllowed, message: "failure saving published documants")
             }
         }
-        return JSON(["prepare":"regulation", "status":"published"])
+        return JSON(["prepare": "regulation", "status": "published"])
     }
 
 }

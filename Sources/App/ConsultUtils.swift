@@ -9,7 +9,6 @@ import Base62
 import Node
 import HTTP
 
-
 struct ConsultConstants {
     static let cookieComment = "consult-comment"
     static let cookieUser = "consult-user"
@@ -48,5 +47,5 @@ func languageDetect(_ request: Request) -> String {
     return "eng"
 }
 func addAdminUser () {
-    
+
 }

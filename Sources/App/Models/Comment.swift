@@ -129,8 +129,8 @@ extension Comment {
          "ris": 2,
          "reg": 3
         ]
-
-    static func docOrderSort (_ a: Comment,_ b: Comment) -> Bool {
+//swiftlint:disable:next identifier_name
+    static func docOrderSort (_ a: Comment, _ b: Comment) -> Bool {
         let aOrder = a.document?.int ?? 0
         let bOrder = b.document?.int ?? 0
         if bOrder > aOrder {
@@ -147,8 +147,8 @@ extension Comment {
         } else if bOrd < aOrd {
             return false
         }
-        let aLine = a.linenumber 
-        let bLine = b.linenumber 
+        let aLine = a.linenumber
+        let bLine = b.linenumber
         if bLine > aLine {
             return true
         } else {
@@ -157,10 +157,9 @@ extension Comment {
 
     }
 
-
     func forJSON() -> [String: Node] {
         var result: [String: Node] = [:]
-        if let em = id , let emu = em.uint {
+        if let em = id, let emu = em.uint {
             result[Comment.JSONKeys.id] = Node(emu)
         }
         result[Comment.JSONKeys.linenumber] = Node(linenumber)
