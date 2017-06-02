@@ -1,0 +1,54 @@
+
+#if(langfra) {
+<h2>Commentary – #(document.knownas)</h2>
+<
+} ##else() {
+<div class="row">
+<div class="panel panel-default col-md-6">
+<table class="table">
+<caption class="wb-inv">Commenter info</caption>
+<tbody>
+<tr>
+<td class="text-right">Name</td>
+<td class="privatetext"><strong>#(commentary.name)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Organization</td>
+<td><strong>#(commentary.organization)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Represents</td>
+<td><strong>#(commentary.represents)</strong></td>
+</tr>
+<tr>
+<td class="text-right">email</td>
+<td class="privatetext"><strong>#(commentary.email)</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="panel panel-default col-md-6">
+<table class="table">
+<caption class="wb-inv">Commenter info</caption>
+<tbody>
+<tr>
+<td class="text-right">Created</td>
+<td><strong>#(commentary.createddate)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Submitted</td>
+<td><strong>#(commentary.submitteddate)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Status</td>
+<td id="cty-status">#raw(commentary.status)</td>
+</tr>
+<tr>
+<td class="text-right">Acknowledged</td>
+<td>#if(commentary.acknowledgeddate) {<strong>#(commentary.acknowledgeddate)</strong>} ##if(commentary.email) {<a class="btn btn-default" href="#(commentarieshref)">Send Acknowledgement Email  (not implemented)</a>} ##else() {no email supplied}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+}

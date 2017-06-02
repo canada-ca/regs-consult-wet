@@ -1,0 +1,27 @@
+
+#if(langfra) {
+
+} ##else() {
+#if(notes) {
+<h5>Notes by:</h5>
+<details id="notesofotherseditable" open>
+<summary>#loop(notesusers, "usrname") {#(usrname)  |}</summary>
+#loop(notes, "othernote") {
+<section class="panel panel-default">
+<header class="panel-heading">
+<h5 class="panel-title">#(othernote.username)  | Status:<div id="note-status" class="btn-group mrgn-lft-md" data-noteid="#(othernote.id)">
+<button type="button" class="btn  btn-sm btn-default #if(othernote.notestatusinprogress) {active}" data-selected-class="btn-default" data-status="inprogress">In progress</button>
+<button type="button" class="btn  btn-sm #if(othernote.notestatusready) {btn-primary active} ##else() { btn-default }" data-selected-class="btn-primary" data-status="ready">Ready</button>
+<button type="button" class="btn  btn-sm #if(othernote.notestatusdiscard) { btn-info active} ##else() { btn-default }" data-selected-class="btn-info" data-status="discard">Discard</button>
+<button type="button" class="btn  btn-sm #if(othernote.notestatusdecision) { btn-success active} ##else() { btn-default }" data-selected-class="btn-success" data-status="decision">Decision</button>
+</div></h5>
+</header>
+<div class="panel-body">
+<textarea name="note_#(note.id)" class="publicnote" data-noteid="#(note.id)" data-reference="#(comment.reference)" data-linenumber="#(comment.linenumber)"
+>#(othernote.textshared)</textarea>
+</div>
+</section>
+}
+</details>
+}
+}

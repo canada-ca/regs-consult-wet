@@ -1,0 +1,17 @@
+
+#if(langfra) {
+
+} ##else() {
+
+
+<p>Change commentary status to:</p>
+
+<div id="commentary-status" class="btn-group mrgn-bttm-md"  data-command="status">
+<button type="button" class="btn btn-default  #if(note.commentarystatusnew) {active}" data-selected-class="btn-default" data-status="new">In progress</button>
+<button type="button" class="btn #if(commentary.commentarystatussubmitted) {btn-primary active} ##else() { btn-default }" data-selected-class="btn-primary" data-status="submitted">Submitted</button>
+<button type="button" class="btn  #if(commentary.commentarystatusanalysis) { btn-success active} ##else() { btn-default }" data-selected-class="btn-success" data-status="analysis">Analysis</button>
+<button type="button" class="btn btn-default disabled #if(note.commentarystatusinprogress) {active}" data-selected-class="btn-default" data-status="">_________</button>
+<button type="button" class="btn   #if(commentary.commentarystatusnotuseful) { btn-default active} ##else() { btn-default }" data-selected-class="btn-default" data-status="notuseful">Not Useful</button>
+<button type="button" class="btn  #if(commentary.commentarystatusabuse) { btn-default active} ##else() { btn-default }" data-selected-class="btn-default" data-status="abuse">Abuse</button>
+</div>
+}

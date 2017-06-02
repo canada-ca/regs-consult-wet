@@ -1,0 +1,96 @@
+#extend("role/toolkit")
+
+#export("head") {
+    <title>#if(editing) {Edit} ##else() {Create New} User |  Admin</title>
+}
+#export("role") {– #if(editing) {Edit} ##else() {Create A New} User}
+#export("scripts") {
+  <script src="/extras/js/admin/createUser.js"></script>
+}
+
+#export("body") {
+#embed("taskselect")
+    #if(editing) {
+        <div id="edit-user-data" data-editing-page="true"</div>
+    }
+
+    <div class="container mt-3">
+
+        <h1>#if(editing) {Edit} ##else() {Create A New} User</h1>
+
+        #if(errors) {
+<div class="alert alert-danger" role="alert">
+            #loop(errors, "error") {
+
+                <p><strong>Warning: </strong>#(error)</p>
+
+            }
+</div>
+        }
+
+        <form action="#if(editing) {/admin/users/#(user_id)/edit/} ##else() {/admin/createUser/}" id="create-user-form" method="post">
+            <div class="form-group #if(name_error) { has-danger }" id="create-user-name-group">
+                <label class="form-control-label" for="inputName">Name *</label>
+                <input type="text" class="form-control #if(name_error) { form-control-danger }" id="inputName" name="inputName" placeholder="Name" value="#(name_supplied)" autofocus required>
+            </div>
+
+            <div class="form-group #if(username_error) { has-danger }" id="create-user-username-group">
+                <label class="form-control-label" for="inputUsername">Username *</label>
+                <input type="text" class="form-control #if(username_error) { form-control-danger }" id="inputUsername" name="inputUsername" placeholder="Username" value="#(username_supplied)" required>
+            </div>
+
+            <div class="form-group #if(password_error) { has-danger }" id="create-user-password-group">
+                <label class="form-control-label" for="inputPassword">Password #if(editing) {} ##else() { *}</label>
+                <div class="input-group">
+                    <input type="password" class="form-control #if(password_error) { form-control-danger }" id="inputPassword" name="inputPassword" placeholder="Password" #if(editing) {} ##else() {required}>
+
+                </div>
+                #if(editing) {<small id="passwordHelpBlock" class="form-text text-muted">
+                Leave the password blank if you don't want to change the password
+                </small>}
+            </div>
+
+            <div class="form-group #if(confirm_password_error) { has-danger }" id="create-user-confirm-password-group">
+                <label class="form-control-label" for="inputConfirmPassword">Confirm Password #if(editing) {} ##else() { *}</label>
+                <input type="password" class="form-control #if(confirm_password_error) { form-control-danger }" id="inputConfirmPassword" name="inputConfirmPassword" placeholder="Confirm Password" #if(editing) {} ##else() {required}>
+            </div>
+
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="inputResetPasswordOnLogin" value="inputResetPasswordOnLogin" name="inputResetPasswordOnLogin" #if(reset_password_on_login_supplied) {checked}>
+                    User must reset password on #if(editing) {next} ##else() {first} login?
+                </label>
+            </div>
+
+            <div class="form-group mt-3">
+            <button type="Submit" class="btn btn-primary">#if(editing) {Save} ##else() {Create User}</button>
+                #if(editing) {
+                <a href="/admin/" class="btn btn-secondary" id="cancel-edit-button">Cancel</a>
+                }
+                <small class="text-muted ml-4">
+                    * Required Field
+                </small>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Password information Overlay -->
+<div id="passwordModal">
+
+
+                    <h4 class="modal-title" id="passwordModalLabel">Password Requirements</h4>
+               
+                <div >
+                    <p>Your password must be at least 8 characters long and contain three out of the four types:</p>
+                    <ul>
+                        <li>Uppercase character</li>
+                        <li>Lowercase character</li>
+                        <li>Number</li>
+                        <li>Special Character</li>
+                    </ul>
+                </div>
+
+
+    </div>
+}

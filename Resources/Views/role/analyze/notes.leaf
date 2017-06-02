@@ -1,0 +1,16 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Analyze Commentaries}</title>
+}
+#export("body") {
+#embed("taskselect")
+<h2><a href="#(documentshref)">Documents</a> > Your notes</h2>
+<h3>#(document.knownas)</h3>
+<h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)">#(title)</h1>
+#embed("notestable")
+#embed("documentoverlay")
+}
+#export("scripts") {
+<script src="/extras/js/toolkit.js"></script>
+}

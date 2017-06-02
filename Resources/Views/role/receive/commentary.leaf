@@ -1,0 +1,17 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Receive Commentaries}</title>
+}
+#export("body") {
+#embed("taskselect")
+#embed("receivebreadcrumbs")
+<h1 class="wb-inv" id="commentarysummary" data-documentid="#(document.idbase62)" data-commentaryid="#(commentary.id)">#(title)</h1>
+#embed("commentarysummary")
+#embed("commentarystatusform")
+#embed("commenttable")
+#embed("documentoverlay")
+}
+#export("scripts") {
+<script src="/extras/js/toolkit.js"></script>
+}

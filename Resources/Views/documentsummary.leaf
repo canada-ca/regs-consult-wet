@@ -1,0 +1,8 @@
+
+#if(langfra) {
+<h2>Document – #(document.knownas)</h2>
+<
+} ##else() {
+<h2><a href="#(documentshref)">Documents</a> > #(document.knownas)</h2>
+
+}

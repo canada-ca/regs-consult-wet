@@ -5,9 +5,9 @@
 <div class="container">
 <div class="row">
 <div class="col-md-12">
-<p class="btn">Connecté en tant que <span class="wb-so-uname">John Doe</span></p>
-<button class="btn btn-default" type="button">Paramètres du compte</button>
-<button class="btn btn-primary" type="button">Fermer la session</button>
+<p class="btn">Connecté en tant que <span class="wb-so-uname">#(activeuser.name)</span></p>
+<a class="btn btn-default" href="/admin/users/#(activeuser.id)/edit/">Paramètres du compte</a>
+<a class="btn btn-primary" href="/admin/logout/">Fermer la session</a>
 </div>
 </div>
 </div>
@@ -18,9 +18,9 @@
 <div class="container">
 <div class="row">
 <div class="col-md-12">
-<p class="btn">Signed in as <span class="wb-so-uname">John Doe</span></p>
-<button class="btn btn-default" type="button">Account settings</button>
-<button class="btn btn-primary" type="button">Sign out</button>
+<p class="btn">Signed in as <span class="wb-so-uname privatetext">#(activeuser.name)</span></p>
+<a class="btn btn-default" href="/admin/users/#(activeuser.id)/edit/">Account settings</a>
+<a class="btn btn-primary" href="/admin/logout/">Sign out</a>
 </div>
 </div>
 </div>

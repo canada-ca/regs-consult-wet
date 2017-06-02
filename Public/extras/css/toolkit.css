@@ -1,0 +1,277 @@
+@charset "utf-8";
+/*!
+ * Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+ * wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html
+ * v4.0.23-development - 2016-10-18
+ *
+ */
+details.addcomment summary{
+  background-color: lightblue;
+  text-decoration: underline
+}
+
+.commentpresent {
+  background-color: lightyellow  !important;
+}
+details.commentpresent summary {
+    color: #0535d2;
+    background-color: lightyellow  !important;
+    text-decoration: underline
+}
+details.commentpresent a {
+    margin-left: 3em
+}
+details.commentpresent button {
+    margin-top: 8px;
+    margin-right: 20px
+    }
+details.commentpresent div.savestatus  {
+    margin-top: 0px;
+    margin-left: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#bottom-bar header {
+  background-color: lightyellow;
+}
+#bottom-bar  button.mfp-close {
+	color: red;
+}
+ .wb-panel-r {
+    height: auto;
+    max-width: 90%;
+    top: 0
+}
+
+#commentpreview .wb-eqht section {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 49%;
+}
+#commentpreview.hideempty .emptycomment {
+    display: none;
+    
+}
+#commentpreview.hideorigtext .origtext {
+   display: none;
+
+}
+.checkboxcomment label:after {
+    padding-left: 4px;
+    padding-top: 2px;
+    font-size: 1.2em;
+}
+input.commentator  {
+    width: 50%;
+   }
+.badge-pill {
+    padding-right: 0.6em;
+    padding-left: 0.6em;
+    border-radius: 10rem;
+}
+
+.badge-default {
+    background-color: #636c72;
+}
+
+.badge-default[href]:focus, .badge-default[href]:hover {
+    background-color: #4b5257;
+}
+
+.badge-primary {
+    background-color: #0275d8;
+}
+
+.badge-primary[href]:focus, .badge-primary[href]:hover {
+    background-color: #025aa5;
+}
+
+.badge-success {
+    background-color: #5cb85c;
+}
+
+.badge-success[href]:focus, .badge-success[href]:hover {
+    background-color: #449d44;
+}
+
+.badge-info {
+    background-color: #5bc0de;
+}
+
+.badge-info[href]:focus, .badge-info[href]:hover {
+    background-color: #31b0d5;
+}
+
+.badge-warning {
+    background-color: #f0ad4e;
+}
+
+.badge-warning[href]:focus, .badge-warning[href]:hover {
+    background-color: #ec971f;
+}
+
+.badge-danger {
+    background-color: #d9534f;
+}
+
+.badge-danger[href]:focus, .badge-danger[href]:hover {
+    background-color: #c9302c;
+}
+.btn-default .badge.badge-default {
+    background-color: #636c72;
+    color: #eaebed;
+}
+.btn-default .badge.badge-primary {
+    background-color: #0275d8;
+    color: #eaebed;
+}
+.btn-default .badge.badge-success {
+    background-color: #5cb85c;
+    color: #eaebed;
+}
+@media only screen {
+h5.comment-edit {
+    color: #0535d2;
+    background-color: lightyellow  !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+h5.comment-empty  {
+    background-color: lightblue !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+#comment-table tbody td:nth-child(1) {
+    color: #0535d2;
+
+}
+.document-ref {
+    color: #0535d2;
+}
+/*#comment-table.limit-comment tbody tr td:nth-child(2){*/
+/*    max-height:250px;*/
+/*     max-width: 0;*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/**/
+/*}*/
+/* styles for '...' */
+.limit-comment div.lc  {
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 12em;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
+/* create the ... */
+.limit-comment div.lc:before {
+    /* points in the end */
+    content: '...';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of block */
+    right: 0;
+    bottom: 0;
+}
+/* hide ... if we have text, which is less than or equal to max lines */
+.limit-comment  div.lc:after {
+    /* points in the end */
+    content: '';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of text */
+    right: 0;
+    /* set width and height */
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    /* bg color = bg color under block */
+    background: white;
+}
+/* temp fix to avoid striped table appearance */
+.limit-comment tr:nth-child(odd) div.lc:after {
+    background: #f5f5f5;
+}
+.limit-comment .selected div.lc  {
+    /* hide text if it more than N lines  */
+    overflow: visible;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 100%;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
+.limit-comment.selected div.lc  {
+    /* hide text if it more than N lines  */
+    overflow: visible;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 100%;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
+.CodeMirror, .CodeMirror-scroll {
+    min-height: auto;
+}
+.CodeMirror {
+    height: auto;
+}
+#drop-box{
+    border: 10px solid rgb(14, 56, 119);
+    cursor: pointer;
+    margin: 20px auto;
+    position: relative;
+    height: 200px;
+    text-align: center;
+    width: 200px;
+}
+
+#drop-box p{
+    width: 90%;
+    display: block;
+    color: #fff;
+    margin: 3.3rem auto;
+}
+
+#drop-box:before {
+    content: " ";
+    position: absolute;
+    z-index: -1;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    border: 2px dashed rgb(255,255,255);
+    background-color: rgb(14, 56, 119);
+}
+
+#upl{
+    display: none;
+}
+/*.privatetext {*/
+/*    color: transparent;*/
+/*    text-shadow: rgba(0, 0, 0, 0.95) 0px 0px 10px;*/
+/*}*/
+}

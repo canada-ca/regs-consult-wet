@@ -1,0 +1,13 @@
+#extend("role/toolkit")
+#export("role") {– #if(langfra) {Recevoir des commentaires} ##else() {Review Commentaries}}
+#export("head") {
+<title>#if(langfra) {Recevoir des commentaires} ##else() {Review Commentaries}</title>
+}
+#export("body") {
+#embed("taskselect")
+#embed("receivebreadcrumbs")
+#embed("commentaryreviewtable")
+}
+#export("scripts") {
+
+}

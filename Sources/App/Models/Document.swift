@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import Foundation
+import Base62
 // MARK: Model
 
 struct Document: Model {
@@ -13,11 +14,15 @@ struct Document: Model {
         static let publishingpath = "publishingpath"
         static let publishingpageprefix = "publishingpageprefix"
         static let archived = "archived"
-
+    }
+    // to report status
+    struct JSONKeys {
+        static let id = "id"
+        static let idbase62 = "idbase62"
+        static let knownas = "knownas"
     }
 
     var id: Node?
-
     var knownas: String?
     var filepack: String?
     var publishingref: String?
@@ -25,7 +30,6 @@ struct Document: Model {
     var publishingpath: String?
     var publishingpageprefix: String?
     var archived: Bool?
-
 
     // used by fluent internally
     var exists: Bool = false
@@ -35,30 +39,43 @@ struct Document: Model {
         case dateNotSupported
         case idTooLarge
     }
-    
-    func nodeForJSON()  -> Node? {
-        var result:[String: Node] = [:]
-        if let nm = knownas {result["knownas"] = Node(nm)}
-        if let em = id {result["id"] = Node(em)}
 
-
+    func nodeForJSON() -> Node? {
+        var result: [String: Node] = [:]
+        if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
+        if let em = id {result[JSONKeys.id] = Node(em)}
         return Node(result)
     }
-}
 
+    func forJSON() -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let nm = knownas {result[JSONKeys.knownas] = Node(nm)}
+        if let em = id, let emu = em.uint {
+            result[JSONKeys.id] = Node(emu)
+            result[JSONKeys.idbase62] = Node(Base62.encode(integer: UInt64(emu)))
+        }
+        return result
+    }
+    func docID() -> String {
+        if let em = id, let emu = em.uint {
+            return Base62.encode(integer: UInt64(emu))
+        }
+        return ""
+    }
+}
 
 // MARK: NodeConvertible
 
 extension Document: NodeConvertible {
     init(node: Node, in context: Context) throws {
-        if let suggestedId = node["id"]?.uint, suggestedId != 0 {
+        if let suggestedId = node[Constants.id]?.uint, suggestedId != 0 {
             if suggestedId < UInt(UInt32.max) {
                 id = Node(suggestedId)
             } else {
                 throw Error.idTooLarge
             }
         } else {
-            id = Node(UniqueID32())
+            id = Node(uniqueID32())
         }
         knownas = node[Constants.knownas]?.string
         filepack = node[Constants.filepack]?.string
@@ -66,7 +83,6 @@ extension Document: NodeConvertible {
         publishingpath = node[Constants.publishingpath]?.string
         publishingpageprefix = node[Constants.publishingpageprefix]?.string
 
-        
         if let unix = node[Constants.publishingdate]?.double {
             // allow unix timestamps (easy to send this format from Paw)
             publishingdate = Date(timeIntervalSince1970: unix)
@@ -142,7 +158,8 @@ extension Document {
     }
     func publishedURL (languageStr: String?) -> URL? {
         let name = drop.config["app", "hosturl"]?.string ?? "/"
-        return URL(string: (publishingpath ?? "") + (publishingpageprefix ?? "") + ((languageStr?.hasPrefix("fr"))! ? "-fra.html" : "-eng.html"), relativeTo: URL(string: name))
+        return URL(string: (publishingpath ?? "") + (publishingpageprefix ?? "")
+            + ((languageStr?.hasPrefix("fr"))! ? "-fra.html" : "-eng.html"), relativeTo: URL(string: name))
     }
 }
 // MARK: Re-usable Date Formatter

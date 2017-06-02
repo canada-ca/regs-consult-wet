@@ -1,0 +1,40 @@
+
+#if(langfra) {
+<h2>Commentary – #(document.knownas)</h2>
+<
+} ##else() {
+<div class="row">
+<div class="panel panel-default col-md-4">
+<table class="table">
+<caption class="wb-inv">Commenter info</caption>
+<tbody>
+<tr>
+<td class="text-right">Name</td>
+<td class="privatetext"><strong>#(commentary.name)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Organization</td>
+<td><strong>#(commentary.organization)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Represents</td>
+<td><strong>#(commentary.represents)</strong></td>
+</tr>
+<tr>
+<td class="text-right">Status</td>
+<td id="cty-status">#raw(commentary.status)</td>
+</tr>
+<tr>
+<td class="text-right">Section</td>
+<td class="document-ref" data-document-ref="#(comment.referencecoded)"><strong>#(comment.referencecoded)</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+#if(comment) {
+<div class="panel panel-default col-md-8 comment-text limit-comment">
+#raw(comment.text)
+</div>
+}
+</div>
+}

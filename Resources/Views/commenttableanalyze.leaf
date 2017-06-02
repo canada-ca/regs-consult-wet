@@ -1,0 +1,46 @@
+
+#if(langfra) {
+<h2>Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="commentary-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/receive/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+]}'>
+<thead>
+<tr>
+<th>Known As</th>
+<th>Commentaries</th>
+</tr>
+</thead>
+</table>
+
+} ##else() {
+<h2>Comments</h2>
+<table  id="comment-table" class="wb-tables table table-striped table-hover limit-comment" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ordering": false,
+"ajaxSource": "/analyze/commentaries/#(commentary.id)/comments/",
+"order": [0, "asc"],
+"columns": [
+{ "data": "order","type": "num", "visible": false, "searchable": false },
+{ "data": "referencecoded", "defaultContent": "" },
+{ "data": "text", "defaultContent": "" },
+{ "data": "usernote","type": "html", "width": "40%", "defaultContent": "" },
+{ "data": "link", "type": "html",  "defaultContent": ""}
+]}'>
+<thead>
+<tr>
+<th>Order</th>
+<th>Section</th>
+<th>Comment</th>
+<th>Your note</th>
+<th>Notes</th>
+</tr>
+</thead>
+</table>
+}

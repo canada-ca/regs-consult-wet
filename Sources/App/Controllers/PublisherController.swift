@@ -5,56 +5,29 @@ import Vapor
 import Auth
 import Foundation
 
-
 final class PublisherController {
     let pubDrop: Droplet
-    let jwtSigner: Signer
     let templateDir: String
     let filePackDir: String
     let fm = FileManager()
 
-    init(to drop: Droplet) {
+    init(to drop: Droplet, cookieSetter: AuthMiddlewareJWT, protect: RedirectAuthMiddlewareJWT) {
         pubDrop = drop
         templateDir = drop.workDir + "TemplatePacks/"
         filePackDir = drop.workDir + "FilePacks/"
-        jwtSigner = HS256(key: (drop.config["crypto", "jwtuser","secret"]?.string ?? "secret").bytes)
-        let protect = ProtectMiddleware(error:
-            Abort.custom(status: .forbidden, message: "Not authorized.")
-        )
-        let prepare = drop.grouped("prepare").grouped(protect)
 
+        let role = drop.grouped("prepare").grouped(cookieSetter).grouped(protect) //.grouped(protect)
 
-        prepare.get { request in
+        role.get { _ in
             //TODO: list of docs
             return "document info"
         }
-        prepare.post("publish",":id", handler: publishDocument)
-        prepare.post("load",":filename", handler: loadDocument)
-    }
-
-    func getUserFromCookie(_ request: Request)throws -> User {
-        var userJWT: JWT?
-        do {
-            if let incookie = request.cookies[ConsultConstants.cookieUser] {
-                userJWT = try JWT(token: incookie)
-            }
-            if userJWT != nil {
-                try userJWT!.verifySignature(using: jwtSigner)
-                if let username = userJWT!.payload["user"]?.string {
-                    if let user = try User.query().filter("username", username).first() {
-                        return user
-                    }
-                }
-            }
-        }catch {
-
-        }
-        throw Abort.custom(status: .forbidden, message:  "Not authorized.")
+        role.post("publish", ":id", handler: publishDocument)
+        role.post("load", ":filename", handler: loadDocument)
     }
 
     func loadDocument(_ request: Request)throws -> ResponseRepresentable {
-        let user = try getUserFromCookie(request)
-        guard user.admin else {
+        guard let user = request.storage["userid"] as? User, user.admin else {
             throw Abort.custom(status: .forbidden, message:  "Not authorized.")
         }
         guard let documentId = request.parameters["filename"]?.string else {
@@ -64,10 +37,11 @@ final class PublisherController {
             throw Abort.custom(status: .notFound, message: "filepack.json not found.")
 
         }
-        do  {
-            let fj = try JSONSerialization.jsonObject(with: data) as! Dictionary<String, Any>
+        do {
+            // swiftlint:disable force_cast
+            let fj = try JSONSerialization.jsonObject(with: data) as! [String: Any]
 //            let fileJson = try JSON(serialized: data.makeBytes())
-            var adict: [String: Node] = [Document.Constants.id: Base62ToNode(string: fj["document-id"] as? String)]
+            var adict: [String: Node] = [Document.Constants.id: base62ToNode(string: fj["document-id"] as? String)]
             if let check = fj["known-as"] as? String { adict[Document.Constants.knownas] = Node(check)}
             adict[Document.Constants.filepack] = Node(documentId)
             if let check = fj["publishing-ref"] as? String { adict[Document.Constants.publishingref] = Node(check)}
@@ -80,14 +54,15 @@ final class PublisherController {
             var newDoc = try Document(node: adict, in: [])
             try newDoc.save()
 
-            return JSON(["prepare":"regulation","status":"published"])
+            return JSON(["prepare": "regulation", "status": "published"])
         } catch {
             throw Abort.custom(status: .notAcceptable, message: "filepack.json faulty.")
         }
     }
+    //swiftlint:disable:next cyclomatic_complexity
     func publishDocument(_ request: Request)throws -> ResponseRepresentable {
-        let user = try getUserFromCookie(request)
-        guard user.admin else {
+
+        guard let user = request.storage["userid"] as? User, user.admin else {
             throw Abort.custom(status: .forbidden, message:  "Not authorized.")
         }
 
@@ -96,13 +71,13 @@ final class PublisherController {
         }
 
         //locate document
-        let idInt = Base62ToID(string: documentId)
+        let idInt = base62ToID(string: documentId)
         let documentdata = try Document.find(Node(idInt))
         guard let document = documentdata else {throw Abort.custom(status: .notFound, message: "document unknown")}
-        
+
         let filePackBaseDir = filePackDir + document.filepack!
         let filePack = filePackBaseDir + "/elements/"
-        //TODO: need new document types in future
+        // TODO: need new document types in future
         let templatePack = templateDir + "proposedregulation/elements/"
 
         var filejson: [String: Any] = [:]
@@ -113,6 +88,7 @@ final class PublisherController {
         var fileJson: JSON = JSON(.null)
         //get data from disk/network
         if let data = fm.contents(atPath: filePackBaseDir + "/filepack.json") {
+            //swiftlint:disable:next force_try
             fileJson = try! JSON(serialized: data.makeBytes())
 
             if let fj =  try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
@@ -130,12 +106,10 @@ final class PublisherController {
         }
         guard let pagePrefix = document.publishingpageprefix  else {throw Abort.custom(status: .expectationFailed, message: "document publishing name missing")}
         var substitutions: [String:Node] = [:]
-        
-
 
         //cycle over 2 languages for now; handy tuples for loop language variation
-        for lang in [("eng","line-eng","line-fra","en-CA","prompt-eng"),
-        ("fra","line-fra","line-eng","fr-CA","prompt-fra")] {
+        for lang in [("eng", "line-eng", "line-fra", "en-CA", "prompt-eng"),
+        ("fra", "line-fra", "line-eng", "fr-CA", "prompt-fra")] {
 
             var tempNode: [String: Node] = fileJson.node.nodeObject ?? [:]
             tempNode[lang.0] = Node(true) //use in template to select language
@@ -168,11 +142,12 @@ final class PublisherController {
                 outDocument.append(Data(meta.data))
             }
             if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "ris"))
                     for tag in tagsA {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
+
                             substitutions["ref"] = Node(tag["ref"] as! String) //tag["ref"] as? String
                             if let pmt = tag[lang.4] as? String {
                                 substitutions["prompt"] = Node(pmt) // as? String) // as? String
@@ -192,16 +167,15 @@ final class PublisherController {
                     outDocument.append(dataString.joined(separator: "\n").data(using: .utf8)!)
                 }
             }
-//            if let section = fm.contents(atPath: filePack + "rias-" + lang.0 + ".html") {
-//                outDocument.append(section) }
+
             if let meta = try? tempRenderer.make("reglead-" + lang.0, fnode) {
                 outDocument.append(Data(meta.data))
             }
             if let section = fm.contents(atPath: filePack + "reg-" + lang.0 + ".html") {
-                if var dataString:[String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
+                if var dataString: [String] = String(data: section, encoding: String.Encoding.utf8)?.components(separatedBy: .newlines) {
                     substitutions["reftype"] = Node(String(describing: "reg"))
                     for tag in tags {
-                        if let linenum = tag[lang.1] as? Int{
+                        if let linenum = tag[lang.1] as? Int {
                             guard linenum <= dataString.count else {continue}
                             substitutions["ref"] = Node(tag["ref"] as! String) //tag["ref"] as? String
                             if let pmt = tag[lang.4] as? String {
@@ -210,6 +184,7 @@ final class PublisherController {
                                 substitutions["prompt"] = nil
                             }
                             substitutions["lineid"] = Node(String(tag["line-eng"] as! Int))
+                            // swiftlint:enable force_cast
                             let insertType = (tag["type"] as? String ?? "comment") + "-" + lang.0
                             if let meta = try? tempRenderer.make(insertType, substitutions), let templstr = String(data: Data(meta.data), encoding: String.Encoding.utf8) {
                                 dataString[linenum - 1] = dataString[linenum - 1].appending(templstr)
@@ -231,21 +206,20 @@ final class PublisherController {
             do {
                 guard let docpath = document.publishingpath  else {throw Abort.custom(status: .expectationFailed, message: "document publishing path missing")}
                 let  dirPath = pubDrop.workDir + "Public/" + docpath
-                try fm.createDirectory(atPath: dirPath , withIntermediateDirectories: true, attributes: nil)
+                try fm.createDirectory(atPath: dirPath, withIntermediateDirectories: true, attributes: nil)
                 let filePath = dirPath + pagePrefix + "-" + lang.0 + ".html"
-                do{
+                do {
                     try fm.removeItem(atPath: filePath)
                 } catch {
-                    
+
                 }
                 fm.createFile(atPath: filePath, contents: outDocument, attributes: nil)
-                
-            } catch{
+
+            } catch {
                 throw Abort.custom(status: .methodNotAllowed, message: "failure saving published documants")
             }
         }
-        return JSON(["prepare":"regulation","status":"published"])
+        return JSON(["prepare": "regulation", "status": "published"])
     }
 
-    
 }

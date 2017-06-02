@@ -1,42 +1,41 @@
-
 #if(langfra) {
-table class="wb-tables table table-striped table-hover comment-document" data-wb-tables='{ "ordering": false }'>
+<h2>Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="document-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ajaxSource": "/receive/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "id","type": "num", "className": "h4",  "visible": false  }
+]}'>
 <thead>
 <tr>
-<th>Known as</th>
-<th>New submissions</th>
-<th>In progress</th>
-<th>Engine version</th>
-<th>CSS grade</th>
+<th>Known As</th>
+<th>Commentaries</th>
 </tr>
 </thead>
-<tr class="gradeC">
-<td>Tasman</td>
-<td>Internet Explorer 5.2</td>
-<td>Mac OS 8-X</td>
-<td class="center">1</td>
-<td class="center">C</td>
-</tr>
 </table>
 
 } ##else() {
-<h3>Documents</h3>
-<table class="wb-tables table table-striped table-hover comment-document" data-wb-tables='{ "ordering": false }'>
+<h2>Published Documents</h2>
+<table class="wb-tables table table-striped table-hover" id="document-filter" aria-live="polite" data-wb-tables='{
+"bDeferRender": false,
+"ordering": false,
+"ajaxSource": "/receive/documents/",
+"order": [1, "desc"],
+"columns": [
+
+{ "data": "knownas" },
+{ "data": "newsubmit","type": "html" },
+{ "data": "id","type": "num", "className": "h4", "searchable": false,  "visible": false  }
+]}'>
 <thead>
 <tr>
 <th>Known as</th>
-<th>New submissions</th>
-<th>In progress</th>
-<th>In review</th>
-<th>Not acknowledged</th>
+<th>Commentaries</th>
 </tr>
 </thead>
-<tr class="gradeC">
-<td>Radio Pharma</td>
-<td>2</td>
-<td>20</td>
-<td class="center">1</td>
-<td class="center">4</td>
-</tr>
 </table>
 }

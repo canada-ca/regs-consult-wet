@@ -1,0 +1,21 @@
+#if(langfra) {
+
+
+} ##else() {
+
+
+
+<p>Select a .json commentary file to begin the upload</p>
+<form>
+<div class="row">
+<div class="column-small-12 padd0 align-center">
+<div id="drop-box">
+<p>Select Files</p>
+</div>
+</div>
+<div class="column-small-12 padd0">
+<input type="file" name="upl" id="upl" />
+</div>
+</div>
+</form>
+}

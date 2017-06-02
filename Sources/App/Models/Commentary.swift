@@ -10,6 +10,7 @@ struct Email: ValidationSuite, Validatable {
         try Vapor.Email.validate(input: value.value)
     }
 }
+// for Model
 struct CommentaryConstants {
     static let id = "id"
     static let documentId = "document_id"
@@ -26,26 +27,37 @@ struct CommentaryConstants {
     static let status = "status"
 }
 
+// to store in database
 struct CommentaryStatus {
     static let new = "new"
     static let attemptedsubmit = "attemptedsubmit"
     static let submitted = "submitted"
     static let notuseful = "notuseful"
     static let abuse = "abuse"
-
+    static let analysis = "analysis"
 }
 
+// to report status
 struct CommentarySubmitStatus {
     static let submitted = "submitted"
-
     static let missinginfo = "missing"
     static let ready = "ready"
-
 }
-
-
-struct Commentary: Model {
-       var id: Node?
+// to report status
+struct CommentaryJSONKeys {
+    static let id = "id"
+    static let name = "name"
+    static let email = "email"
+    static let represents = "represents"
+    static let organization = "organization"
+    static let createddate = "createddate"
+    static let submitteddate = "submitteddate"
+    static let submitstatus = "submitstatus"
+    static let acknowledgeddate = "acknowledgeddate"
+    static let status = "status"
+}
+final class Commentary: Model {
+    var id: Node?
     var document: Node?
     var name: String?
     var email: Email?
@@ -69,13 +81,13 @@ struct Commentary: Model {
 
            init(node: Node, in context: Context) throws {
             if let suggestedId = node[CommentaryConstants.id]?.uint {
-                if suggestedId < UInt(UInt32.max) &&  suggestedId != 0{
+                if suggestedId < UInt(UInt32.max) &&  suggestedId != 0 {
                     id = Node(suggestedId)
                 } else {
                     throw Error.idTooLarge
                 }
             } else {
-                id = Node(UniqueID32()) //conflict overwrite currently on caller
+                id = Node(uniqueID32()) //conflict overwrite currently on caller
             }
             document = try node.extract(CommentaryConstants.documentId)
             name = node[CommentaryConstants.name]?.string
@@ -99,7 +111,7 @@ struct Commentary: Model {
             } else {
                 createddate = Date()  // now
             }
-            
+
             if let unix = node[CommentaryConstants.submitteddate]?.double {
                 // allow unix timestamps (easy to send this format from Paw)
                 submitteddate = Date(timeIntervalSince1970: unix)
@@ -109,7 +121,6 @@ struct Commentary: Model {
                 guard let date = dateFormatter.date(from: raw) else {
                     throw Error.dateNotSupported
                 }
-                
                 self.submitteddate = date
             } else {
                 // leave as is
@@ -134,10 +145,9 @@ struct Commentary: Model {
         }
     // MARK: Merge
 
-
-        mutating func merge(updates: Commentary) {
+        func merge(updates: Commentary) {
             id = updates.id ?? id
-            document = updates.document ?? document 
+            document = updates.document ?? document
             name = updates.name ?? name
             email = updates.email ?? email
             represents = updates.represents ?? represents
@@ -148,7 +158,6 @@ struct Commentary: Model {
             submitted = updates.submitted
             acknowledgeddate = updates.acknowledgeddate ?? acknowledgeddate
             status = updates.status ?? status
-            
         }
 
     func submitReadiness() -> String? {
@@ -161,13 +170,170 @@ struct Commentary: Model {
         }
         return nil
     }
-    func nodeForJSON()  -> Node? {
-        var result:[String: Node] = [:]
-        if let nm = name {result["name"] = Node(nm)}
-        if let em = email?.value {result["email"] = Node(em)}
-        if let rp = represents {result["represents"] = Node(rp)}
-        if let or = organization {result["organization"] = Node(or)}
-        if let sr = submitReadiness() {result["submitstatus"] = Node(sr)}
+    func updateStatus(to newStatus: String) {
+        switch newStatus {
+        case CommentaryStatus.new where status == nil:
+            status = newStatus
+        case CommentaryStatus.attemptedsubmit where status == CommentaryStatus.new:
+            status = newStatus
+        case CommentaryStatus.submitted, CommentaryStatus.notuseful, CommentaryStatus.abuse, CommentaryStatus.analysis:
+            status = newStatus
+        default:
+            break  // not a recognized state string should log error.
+        }
+    }
+    static let receiveSortOrder: [String: Int] =
+        [CommentaryStatus.submitted: 1,
+         CommentaryStatus.attemptedsubmit: 2,
+         CommentaryStatus.new: 3,
+         CommentaryStatus.analysis: 4,
+         CommentaryStatus.notuseful: 5,
+         CommentaryStatus.abuse: 6]
+    static let analyzeSortOrder: [String: Int] =
+        [CommentaryStatus.submitted: 2,
+         CommentaryStatus.attemptedsubmit: 3,
+         CommentaryStatus.new: 4,
+         CommentaryStatus.analysis: 1,
+         CommentaryStatus.notuseful: 5,
+         CommentaryStatus.abuse: 6]
+
+//swiftlint:disable:next identifier_name
+    static func statusSort (_ a: Commentary, _ b: Commentary, _ sortOrder: [String: Int]) -> Bool {
+        let aOrder = sortOrder[a.status ?? "none"] ?? 0
+        let bOrder = sortOrder[b.status ?? "none"] ?? 0
+
+        if bOrder > aOrder {
+            return true
+        } else if bOrder < aOrder {
+            return false
+        }
+        if let adate = a.submitteddate {
+            if let bdate = b.submitteddate, adate > bdate {
+                return true
+            }
+            return false
+        }
+        if b.submitteddate != nil {
+            return true
+        }
+        return false
+    }
+    //swiftlint:disable:next identifier_name
+    static func receiveSort (_ a: Commentary, _ b: Commentary) -> Bool {
+        return statusSort(a, b, Commentary.receiveSortOrder)
+
+    }
+    //swiftlint:disable:next identifier_name
+    static func analyzeSort (_ a: Commentary, _ b: Commentary) -> Bool {
+        return statusSort(a, b, Commentary.analyzeSortOrder)
+
+    }
+    //swiftlint:disable:next identifier_name
+    static func reviewSort (_ a: Commentary, _ b: Commentary) -> Bool {
+        let aOrder = a.represents ?? ""
+        let bOrder = b.represents ?? ""
+
+        if aOrder < bOrder {
+            return true
+        } else if bOrder < aOrder {
+            return false
+        }
+        if let adate = a.submitteddate {
+            if let bdate = b.submitteddate, adate > bdate {
+                return true
+            }
+            return false
+        }
+        if b.submitteddate != nil {
+            return true
+        }
+        return false
+
+    }
+//    dashboardOrder
+//        CommentaryStatus.submitted
+//         CommentaryStatus.attemptedsubmit
+//         CommentaryStatus.analysis
+//         CommentaryStatus.new
+//         CommentaryStatus.notuseful
+//         CommentaryStatus.abuse: 6
+    static func dashboard(link: String, commentaryCounts: [Int?]) -> String {
+        let buttonText = "View&nbsp;Commentaries"
+        var nCounts: [Int?] = commentaryCounts
+        for _ in 0..<(6 - commentaryCounts.count) {
+            nCounts.append(nil)  //pad a short array in case states are added later
+        }
+        var statusList: String = "<p><ul class=\"list-unstyled\">"
+        if let itemCount = nCounts[0] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-info\">Submitted</span></li>"
+        }
+        if let itemCount = nCounts[1] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">Attempted&nbsp;submit</span></li>"
+        }
+        if let itemCount = nCounts[2] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-success\">Analysis</span></li>"
+        }
+        if let itemCount = nCounts[3] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-primary\">New&nbsp;(in&nbsp;progress)</span></li>"
+        }
+        if let itemCount = nCounts[4] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Not&nbsp;useful</span></li>"
+        }
+        if let itemCount = nCounts[5] {
+            statusList += "<li><samp>\(itemCount)&nbsp;</samp><span class=\"label label-default\">Abuse</span></li>"
+        }
+        statusList += "</ul></p>"
+
+        let output = "<a class=\"btn btn-default\" href=\"\(link)\">\(buttonText)</a>\(statusList)"
+        return output
+    }
+    func htmlStatus() -> String {
+        var statusOutput: String = ""
+        switch status ?? "" {
+        case CommentaryStatus.submitted:
+            statusOutput += "<span class=\"label label-info\">Submitted</span>"
+        case CommentaryStatus.attemptedsubmit:
+            statusOutput += "<span class=\"label label-info\">Attempted&nbsp;submit</span>"
+        case CommentaryStatus.analysis:
+            statusOutput += "<span class=\"label label-success\">Analysis</span>"
+        case CommentaryStatus.new:
+            statusOutput += "<span class=\"label label-primary\">New&nbsp;(in&nbsp;progress)</span>"
+        case CommentaryStatus.notuseful:
+            statusOutput += "<span class=\"label label-default\">Not&nbsp;useful</span>"
+        case CommentaryStatus.abuse:
+            statusOutput += "</samp><span class=\"label label-default\">Abuse</span>"
+        default:
+            statusOutput += "</samp><span class=\"label label-default\">unknown</span>"
+        }
+        return statusOutput
+
+    }
+    func forJSON() -> [String: Node] {
+        var result: [String: Node] = [:]
+        if let em = id, let emu = em.uint {
+            result[CommentaryJSONKeys.id] = Node(emu)
+        }
+        if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
+        if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
+        if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
+        if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
+        if let st = status {
+            result[CommentaryJSONKeys.status] = Node(htmlStatus())  //Node(st)
+            result["commentarystatus" + st] = Node(true)
+        }
+        if let cd = createddate {result[CommentaryJSONKeys.createddate] = Node(dateFormatter.string(from: cd))}
+        if let sd = submitteddate {result[CommentaryJSONKeys.submitteddate] = Node(dateFormatter.string(from: sd))}
+        if let ad = acknowledgeddate {result[CommentaryJSONKeys.acknowledgeddate] = Node(dateFormatter.string(from: ad))}
+        return result
+    }
+
+    func nodeForJSON() -> Node? {
+        var result: [String: Node] = [:]
+        if let nm = name {result[CommentaryJSONKeys.name] = Node(nm)}
+        if let em = email?.value {result[CommentaryJSONKeys.email] = Node(em)}
+        if let rp = represents {result[CommentaryJSONKeys.represents] = Node(rp)}
+        if let or = organization {result[CommentaryJSONKeys.organization] = Node(or)}
+        if let sr = submitReadiness() {result[CommentaryJSONKeys.submitstatus] = Node(sr)}
         return Node(result)
         }
 }
