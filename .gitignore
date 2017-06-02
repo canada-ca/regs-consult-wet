@@ -1,11 +1,14 @@
 Packages
+Package.pins
 .build
 xcuserdata
 *.xcodeproj
 Config/secrets
 node_modules
 Public/dist
+Public/rp-pr
 FilePacks/*
 !FilePacks/2012-129-radiopharma
+
 
 
