@@ -10,8 +10,6 @@ let package = Package(
         .Package(url: "https://github.com/onevcat/Hedwig.git", majorVersion: 1),
         .Package(url: "https://github.com/soffes/Base62.git", majorVersion: 0)
 
-
-
     ],
     exclude: [
         "Config",
