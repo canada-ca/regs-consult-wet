@@ -198,7 +198,7 @@ struct AdminController {
     }
     func createAdminView(_ request: Request, errors: [String]? = nil) throws -> View {
 
-         guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
+        guard let usr = request.storage["userid"] as? User else {throw Abort.badRequest}
         let users = try User.all()
 
         var parameters = try Node(node: [
