@@ -14,4 +14,6 @@ Site for demos now that consultation is closed: https://dev.regconsultation.ca:8
 
 ## Learning
 Story https://www.linkedin.com/pulse/government-minimum-viable-product-learning-from-small-lisa-fast
+
 18F's learning from similar pilot: https://eregs.github.io/features/notice-and-comment/
+Note from Lisa - add deck or video here
