@@ -13,10 +13,12 @@ Gazette page with link to (now closed) consultation with pilot link: http://www.
 Site for demos now that consultation is closed: https://dev.regconsultation.ca:8080/
 
 ## Learning
+
+[What we learned - presented at CFR Conference December 2017](Open Workshop_CFR_12Dec2017.pdf)
+Link to case study by ML Prothko when published
 Story https://www.linkedin.com/pulse/government-minimum-viable-product-learning-from-small-lisa-fast
-Note from Lisa - add deck or video here
 
-18F's learning from similar pilot: https://eregs.github.io/features/notice-and-comment/
+18F's Notice and Comment pilot: https://eregs.github.io/features/notice-and-comment/
 
-18F Final report what did we learn: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
+* Final report on Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
 
