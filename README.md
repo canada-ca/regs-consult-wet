@@ -14,9 +14,11 @@ Site for demos now that consultation is closed: https://dev.regconsultation.ca:8
 
 ## Learning
 
-[What we learned - presented at CFR Conference December 2017](Open Workshop_CFR_12Dec2017.pdf)
+[What we learned - presented at CFR Conference December 2017](Open_Workshop_CFR_12Dec2017.pdf)
+
 Link to case study by ML Prothko when published
-Story https://www.linkedin.com/pulse/government-minimum-viable-product-learning-from-small-lisa-fast
+
+Post about MVP https://www.linkedin.com/pulse/government-minimum-viable-product-learning-from-small-lisa-fast
 
 18F's Notice and Comment pilot: https://eregs.github.io/features/notice-and-comment/
 
