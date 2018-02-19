@@ -10,7 +10,7 @@ In addition the CNSC provides a second short feedback period in which people can
 * Note that this feedback consultation period will not be available in Pilot2, but should be considered for a later iteration.
 
 
-# Waiting to display comments disrupts potential behavioural challenges
+## Waiting to display comments disrupts suboptimal behaviours
 
 * Most organizations already wait to submit comments in the final day(s) of the consultation period - we believe that to avoid "showing their hand" or provoking submissions responding to their comments and thus engendering a cycle of submissions, people would wait even longer, to submit in the final minutes of the consultation period. 
   * Waiting circumvents this - people are free to submit when they like rather than feeling pressured by the deadline

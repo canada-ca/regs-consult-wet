@@ -33,6 +33,6 @@ Decision: providing the option to hide names from public display  will reduce th
 >Examples: “Yes because otherwise people will give fake names, and that erodes credibility.”
 >“No because transparency and accountability is a two-way street.” 
 
-2. Use [email verification](Decisions_email.md) to reduce submissions by bots (and people) with fake names
+2. Use [email verification](Decisions_emails.md) to reduce submissions by bots (and people) with fake names
 
 
