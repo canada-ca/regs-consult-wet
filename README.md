@@ -11,18 +11,17 @@ Pilot1 value: online commenting within the regulatory proposal and an analysis t
 Pilot2 value: public display of all comments. 
 
 * [Prototype of example consultation](https://vation-ca.github.io/p2protos/p2form-1-en.html)
-* [Prototype of public comments for the example consultation - not yet available]()
+* Prototype of public comments for the example consultation - not yet available
 
 ## Design decisions with policy implications
 
    
-* Commenters can hide their name from public view 
-  * [Deciding to hide or not to hide names](Decisions_names.md)
-  * Cannot hide their organization name if submitting on behalf of a 3rd party 
+* Commenters can hide their personal name from public view 
+  * [Background on decision to hide personal names](Decisions_names.md) 
 * Commenters must verify their email address before their submission is accepted
-  *[Deciding to verify or not verify email addresses](Decisions_emails.md)
+  * [Background on decision to verify email addresses](Decisions_emails.md)
 * Display comments publicly at the end of consultation period, not during the consultation 
-  * [Deciding to display comments after the consultation period](Decisions_timing.md)
+  * [Background on decision to display comments after the consultation period](Decisions_timing.md)
 * Format of display of submissions - by submission and by text section, or just by submission
 * No exceptions to public comment display, all submissions - whether submitted online, by email or by snail mail -  are displayed online.
 * No parallel process - all submissions are channelled online - no email submissions will be accepted for the pilot consultation.
