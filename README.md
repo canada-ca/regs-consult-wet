@@ -1,26 +1,28 @@
-# regs-consult-wet
-Prototype development area for regulations and consultations using the Web Experience Toolkit (WET)
- - direct edits in gh-pages branch where you will find all the files.
+eRegs Pilot2 project
+=====
 
-Link to pre-pilot gh-pages demo
-[Regulations Amending the Employment Insurance Regulations - demo](http://canada-ca.github.io/regs-consult-wet/consultation/reg2-en.html)
+Planning and design preparations for second pilot of online regulatory consultations. 
 
-Live consultation pilot closed on May 18th 2017 - 
-https://regconsultation.ca:990/rp-pr/p1/2017/2017-03-04/html/reg2-eng.html
+Pilot1 value: online commenting within the regulatory proposal and an analysis toolkit for the regulatory team
 
-Gazette page with link to (now closed) consultation with pilot link: http://www.gazette.gc.ca/rp-pr/p1/2017/2017-03-04/html/reg2-eng.php#rias
+* Code base for Pilot1 is in this repository
+* [History and links for Pilot1](./Pilot1_history.md)
 
-Site for demos now that consultation is closed: https://dev.regconsultation.ca:8080/
+Pilot2 value: public display of all comments. 
 
-## Learning
+* [Prototype of example consultation](https://vation-ca.github.io/p2protos/p2form-1-en.html)
+* [Prototype of public comments for the example consultation - not yet available]()
 
-[What we learned - presented at CFR Conference December 2017](Open_Workshop_CFR_12Dec2017.pdf)
+## Design decisions with policy implications
 
-Link to case study by ML Prothko when published
-
-Post about MVP https://www.linkedin.com/pulse/government-minimum-viable-product-learning-from-small-lisa-fast
-
-18F's Notice and Comment pilot: https://eregs.github.io/features/notice-and-comment/
-
-* Final report on Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
-
+   
+* Commenters can hide their name from public view 
+  * [Deciding to hide or not to hide names](Decisions_names.md)
+  * Cannot hide their organization name if submitting on behalf of a 3rd party 
+* Commenters must verify their email address before their submission is accepted
+  *[Deciding to verify or not verify email addresses](Decisions_emails.md)
+* Display comments publicly at the end of consultation period, not during the consultation 
+  * [Deciding to display comments after the consultation period](Decisions_timing.md)
+* Format of display of submissions - by submission and by text section, or just by submission
+* No exceptions to public comment display, all submissions - whether submitted online, by email or by snail mail -  are displayed online.
+* No parallel process - all submissions are channelled online - no email submissions will be accepted for the pilot consultation.
