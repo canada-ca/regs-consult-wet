@@ -28,5 +28,5 @@ Pilot2 value: public display of all comments.
 
 ## Iteration plan (draft)
 
-![iteration plan in columns](./img/Iteration plan v1.1 16March2018.png)
+![iteration plan in columns]("./img/Iteration plan v1.1 16March2018.png")
 
