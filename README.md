@@ -25,3 +25,7 @@ Pilot2 value: public display of all comments.
 * Format of display of submissions - by submission and by text section, or just by submission
 * No exceptions to public comment display, all submissions - whether submitted online, by email or by snail mail -  are displayed online.
 * No parallel process - all submissions are channelled online - no email submissions will be accepted for the pilot consultation.
+
+## Iteration plan (draft)
+
+![iteration plan in columns](/img/Iteration plan v1.1 16March2018.png)
