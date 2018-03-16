@@ -13,8 +13,10 @@ Pilot2 MVP: public display of all comments from Open Regulations Portal
 * [Prototype of Open Regulations portal home page](https://vation-ca.github.io/p2protos/p2openregs.html)
 * [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
 * Prototype of public comments for the example consultation - not yet available
+
 * Sketch of Open Regulations flow
-![sketch of portal, open and closed pages](./img/open-regulations-map.png)
+
+![sketch of portal, open and closed pages](./img/open-regulations-map.jpg)
 
 ## Design decisions with policy implications
 
