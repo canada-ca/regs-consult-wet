@@ -10,7 +10,8 @@ Pilot1 value: online commenting within the regulatory proposal and an analysis t
 
 Pilot2 value: public display of all comments. 
 
-* [Prototype of example consultation](https://vation-ca.github.io/p2protos/p2form-1-en.html)
+* [Prototype of Open Regulations portal home page](https://vation-ca.github.io/p2protos/p2openregs.html)
+* [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
 * Prototype of public comments for the example consultation - not yet available
 
 ## Design decisions with policy implications
@@ -29,4 +30,5 @@ Pilot2 value: public display of all comments.
 ## Iteration plan (draft)
 
 ![iteration plan in columns](./img/Iteration_plan_16March2018.png)
+[Download Iteration plan 16March2018 (PPT)](Iteration_plan_16March2018.ppt)
 
