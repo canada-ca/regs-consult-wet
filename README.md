@@ -3,16 +3,18 @@ eRegs Pilot2 project
 
 Planning and design preparations for second pilot of online regulatory consultations. 
 
-Pilot1 value: online commenting within the regulatory proposal and an analysis toolkit for the regulatory team
+Pilot1 MVP: online commenting within the regulatory proposal and an analysis toolkit for the regulatory team
 
 * Code base for Pilot1 is in this repository
 * [History and links for Pilot1](./Pilot1_history.md)
 
-Pilot2 value: public display of all comments. 
+Pilot2 MVP: public display of all comments from Open Regulations Portal 
 
 * [Prototype of Open Regulations portal home page](https://vation-ca.github.io/p2protos/p2openregs.html)
 * [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
 * Prototype of public comments for the example consultation - not yet available
+* Sketch of Open Regulations flow
+![sketch of portal, open and closed pages](./img/open-regulations-map.png)
 
 ## Design decisions with policy implications
 
@@ -30,5 +32,6 @@ Pilot2 value: public display of all comments.
 ## Iteration plan (draft)
 
 ![iteration plan in columns](./img/Iteration_plan_16March2018.png)
+
 [Download Iteration plan 16March2018 (PPT)](Iteration_plan_16March2018.ppt)
 
