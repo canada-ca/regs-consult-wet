@@ -16,7 +16,7 @@ Pilot2 MVP: public display of all comments from Open Regulations Portal
 
 * Sketch of Open Regulations flow
 
-![sketch of portal, open and closed pages](./img/open-regulations-map.jpg)
+![sketch of portal, open and closed pages](./img/eRegs-sketch-1.jpg)
 
 ## Design decisions with policy implications
 
