@@ -14,10 +14,6 @@ Pilot2 MVP: public display of all comments from Open Regulations Portal
 * [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
 * Prototype of public comments for the example consultation - not yet available
 
-* Sketch of Open Regulations flow
-
-![sketch of portal, open and closed pages](./img/eRegs-sketch-1.jpg)
-
 ## Design decisions with policy implications
 
    
@@ -37,3 +33,6 @@ Pilot2 MVP: public display of all comments from Open Regulations Portal
 
 [Download Iteration plan 16March2018 (PPT)](Iteration_plan_16March2018.ppt)
 
+## Sketch of Open Regulations public views
+
+![sketch of portal, open and closed pages](./img/eRegs-sketch-1.jpg)
