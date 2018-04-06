@@ -10,9 +10,9 @@ Pilot1 MVP: 1st online consultation with inline commenting on the regulatory pro
 
 Pilot2 MVP: 2nd consultation pilot of a regulatory proposal with new functionality of public display of all comments from Open Regulations Platform 
 
-* [Prototype of eRegulations site home page](https://vation-ca.github.io/p2protos/p2openregs.html)
+* [Prototype of eRegulations site - home page](https://vation-ca.github.io/p2protos/p2openregs.html)
 * [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
-* Prototype of public comments for the example consultation - not yet available
+* [Prototype of view public comments for an example consultation] (https://vation-ca.github.io/p2protos/p2view-subs-en.html)
 
 ## Design decisions with policy implications
 
@@ -36,3 +36,7 @@ Pilot2 MVP: 2nd consultation pilot of a regulatory proposal with new functionali
 ## Sketch of Open Regulations public views
 
 ![sketch of platform, open and closed pages](./img/eRegs-sketch-1.jpg)
+
+## Compare Canada - US - Mexico regulatory platforms
+
+![Comparison of regulatory platforms](./img/eRegs-compare-countries.png)
