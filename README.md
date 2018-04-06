@@ -12,7 +12,7 @@ Pilot2 MVP: 2nd consultation pilot of a regulatory proposal with new functionali
 
 * [Prototype of eRegulations site - home page](https://vation-ca.github.io/p2protos/p2openregs.html)
 * [Prototype of example consultation with privacy, email, rules etc.](https://vation-ca.github.io/p2protos/p2form-1-en.html)
-* [Prototype of view public comments for an example consultation] (https://vation-ca.github.io/p2protos/p2view-subs-en.html)
+* [Prototype of view public comments for an example consultation](https://vation-ca.github.io/p2protos/p2view-subs-en.html)
 
 ## Design decisions with policy implications
 
