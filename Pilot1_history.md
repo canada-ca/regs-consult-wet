@@ -38,22 +38,36 @@ Components map
 
 # Screenshots of commenter view
 
+Commenter view of top of regulatory proposal
+
 ![Commenter view of top of regulatory proposal](./img/Pilot_comment_box.png "Screen shot of the regulatory proposal with name field at top")
 
-![Commenter adding a comment - Save button was added for commenter confidence - actually it is auto-saving constantly](./img/Save_comment.gif "Screen shot of typing into comment box and clicking save")
+Commenter adding a comment - Save button was added for commenter confidence - auto-saves 
+
+![Commenter adding a comment - Save button was added for commenter confidence - auto-saves ](./img/Save_comment.gif "Screen shot of typing into comment box and clicking save")
 
 
 # Screenshots of analyst view after sign-in
 
+Receive view
+
 ![Recieve view](./img/Receive_total.png "Screen shot with name of consultation and total number of comments")
+
+Commentary view - all submissions - names of submitters are blurred
 
 ![Commentary view - names of submitters are blurred](./img/Commentary_view_blurred.png "Screen shot")
 
+View by comment - list of all comments by document section
+
 ![View by comment - list of all comments by document section](./img/Comments.png "Screen shot")
+
+Adding a note
 
 ![Adding a note](./img/Adding_a_note.png "Screen shot")
 
-![Review comments for a particular section with the section of regulatory text visible](./img/View_regtext_context_comment.png "Screen shot")
+Review comments for a particular section with the section of regulatory text visible
+
+![Review comments for a particular section with the section of regulatory text visible](./img/View_regtext_context _comment.png "Screen shot")
 
 
 
