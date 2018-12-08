@@ -11,7 +11,7 @@ User-centred design - iterative design research sessions were held with reps fro
 
 ## Learning
 
-[What we learned - presented at CFR Conference December 2017](Open_Workshop_CFR_12Dec2017.pdf)
+[What we learned - presented at CFR Conference December 2017 (PDF)](Open_Workshop_CFR_12Dec2017.pdf)
 
 Link to case study by ML Prothko when published
 
@@ -24,7 +24,7 @@ Steve Hume talks innovation and the technology choices for Pilot 1 https://vatio
 * Final report on Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
 
 CFR eRegs Pilot team honored with Deputy Minister's Award for Excellence in the category of Innovation and Creativity on June 15th, 2018
-![The team collage - prepared for ADM Award of Excellence](./img/eRegs-team-collage.png "Data Model for pilot online consultation")
+![The team collage - prepared for ADM Award of Excellence](./img/eRegs-team_collage.png "Snapshots of team members")
 
 
 ## Architecture
@@ -35,5 +35,24 @@ Data Model for Pilot 1
 
 Components map 
 ![Components map shows browser - Nginx - Vapor - MySQL](./img/componentsmap-pilot1.png "Component map of 1st pilot online consultation")
+
+# Screenshots of commenter view
+
+![Commenter view of top of regulatory proposal](./img/Pilot_comment_box.png "Screen shot of the regulatory proposal with name field at top")
+
+![Commenter view of summary of their comments prior to submission](./img/Pilot_comment_box.png "Screen shot with list of comments by section")
+
+# Screenshots of analyst view after sign-in
+
+![Recieve view](./img/Receive_total.png "Screen shot with name of consultation and total number of comments")
+
+![Commentary view - names of submitters are blurred](./img/Commentary_view_ blurred.png "Screen shot")
+
+![View by comment - list of all comments by document section](./img/Comments.png "Screen shot")
+
+![Adding a note](./img/Adding a note.png "Screen shot")
+
+![Review comments for a particular section with the section of regulatory text visible](./img/View_regtext_context_comment.png "Screen shot")
+
 
 
