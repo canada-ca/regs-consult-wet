@@ -3,14 +3,11 @@
 Prototype development area for regulations and consultations using the Web Experience Toolkit (WET)
  - direct edits in gh-pages branch where you will find all the files.
 
-Live consultation pilot closed on May 18th 2017 - 
-https://regconsultation.ca:990/rp-pr/p1/2017/2017-03-04/html/reg2-eng.html
+Gazette page with link to (now closed) bilingual consultation with pilot link: http://www.gazette.gc.ca/rp-pr/p1/2017/2017-03-04/html/reg2-eng.php#rias
 
-Gazette page with link to (now closed) consultation with pilot link: http://www.gazette.gc.ca/rp-pr/p1/2017/2017-03-04/html/reg2-eng.php#rias
+User-centred design - iterative design research sessions were held with reps from stakeholder associations and after the launch, detailed co-design workshops with the regulatory team at Health Canada for the process of accepting, analyzing, decisions and review. 
+![Notes from first design journey session](./img/eRegs-design-session.png "Data Model for pilot online consultation")
 
-Site for demos now that consultation is closed: https://dev.regconsultation.ca:8080/
-
-Login to Pilot1 demo analyst toolkit (requires account) https://dev.regconsultation.ca:8080/admin/login
 
 ## Learning
 
@@ -26,6 +23,9 @@ Steve Hume talks innovation and the technology choices for Pilot 1 https://vatio
 
 * Final report on Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
 
+CFR eRegs Pilot team honored with Deputy Minister's Award for Excellence in the category of Innovation and Creativity on June 15th, 2018
+![The team collage - prepared for ADM Award of Excellence](./img/eRegs-team-collage.png "Data Model for pilot online consultation")
+
 
 ## Architecture
 
@@ -35,3 +35,5 @@ Data Model for Pilot 1
 
 Components map 
 ![Components map shows browser - Nginx - Vapor - MySQL](./img/componentsmap-pilot1.png "Component map of 1st pilot online consultation")
+
+
