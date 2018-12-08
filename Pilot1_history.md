@@ -47,11 +47,11 @@ Components map
 
 ![Recieve view](./img/Receive_total.png "Screen shot with name of consultation and total number of comments")
 
-![Commentary view - names of submitters are blurred](./img/Commentary_view_ blurred.png "Screen shot")
+![Commentary view - names of submitters are blurred](./img/Commentary_view_blurred.png "Screen shot")
 
 ![View by comment - list of all comments by document section](./img/Comments.png "Screen shot")
 
-![Adding a note](./img/Adding a note.png "Screen shot")
+![Adding a note](./img/Adding_a_note.png "Screen shot")
 
 ![Review comments for a particular section with the section of regulatory text visible](./img/View_regtext_context_comment.png "Screen shot")
 
