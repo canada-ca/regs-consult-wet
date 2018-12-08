@@ -40,7 +40,9 @@ Components map
 
 ![Commenter view of top of regulatory proposal](./img/Pilot_comment_box.png "Screen shot of the regulatory proposal with name field at top")
 
-![Commenter view of summary of their comments prior to submission](./img/Pilot_comment_box.png "Screen shot with list of comments by section")
+![Commenter adding a comment - Save button was added for commenter confidence - actually it is auto-saving constantly](./img/Save_comment.gif "Screen shot of typing into comment box and clicking save")
+
+![Commenter view of summary of their comments prior to submission](./img/Summary_view _shortened.png "Screen shot with list of comments by section")
 
 # Screenshots of analyst view after sign-in
 
