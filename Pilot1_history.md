@@ -19,13 +19,11 @@ Lisa Fast talks about small failures and learning from Minimum Viable Product it
 
 Steve Hume talks innovation and the technology choices for Pilot 1 https://vation.ca/post/2017/why-swift/
 
-18F's Notice and Comment pilot: https://eregs.github.io/features/notice-and-comment/
+USA: 18F's Notice and Comment pilot: https://eregs.github.io/features/notice-and-comment/
 
-* Final report on Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
+* Final report on 18F Notice & Comment pilot learning: https://github.com/18F/epa-notice/files/548513/FinalDemo-Phase3UserResearchFindings.pdf
 
 CFR eRegs Pilot team honored with Deputy Minister's Award for Excellence in the category of Innovation and Creativity on June 15th, 2018
-![The team collage - prepared for ADM Award of Excellence](./img/eRegs-team_collage.png "Snapshots of team members")
-
 
 ## Architecture
 
