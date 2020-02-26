@@ -6,7 +6,6 @@ Prototype development area for regulations and consultations using the Web Exper
 Gazette page with link to (now closed) bilingual consultation with pilot link: http://www.gazette.gc.ca/rp-pr/p1/2017/2017-03-04/html/reg2-eng.php#rias
 
 User-centred design - iterative design research sessions were held with reps from stakeholder associations and after the launch, detailed co-design workshops with the regulatory team at Health Canada for the process of accepting, analyzing, decisions and review. 
-![Notes from first design journey session](./img/eRegs-design-session.png "Data Model for pilot online consultation")
 
 
 ## Learning
