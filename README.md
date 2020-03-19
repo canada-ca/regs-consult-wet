@@ -1,6 +1,8 @@
 eRegs Pilot2 project
 =====
 
+* This content is archived - no work on this service since 2018. If you have questions, contact lisa at vation.ca or post an issue. Canada Gazette team at PWGSC has taken on the regulatory consultation project.   
+
 Planning and design preparations for second pilot of online regulatory consultations. 
 
 Pilot1 MVP: 1st online Gazette 1 consultation with inline commenting on the regulatory proposal and an admin/analysis toolkit for the regulatory team to prepare, receive, analyze and review comment submissions
